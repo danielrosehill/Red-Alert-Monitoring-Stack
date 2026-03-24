@@ -98,6 +98,25 @@ Use these slash commands to walk through interactive setup:
 | `/setup-snapcast` | Configure Snapcast whole-house audio integration |
 | `/setup-tunnel` | Set up Cloudflare Tunnel for secure remote access |
 
+## Alert Architecture
+
+The actuator distinguishes between two types of alerting conditions:
+
+### Localized Alerts
+Specific to the user's configured `ALERT_AREA` (e.g., `ירושלים - דרום`). These are direct threats:
+- **warning** (category 14): Early warning — seek shelter soon
+- **active** (categories 1–12): Immediate threat — take cover now
+- **clear** (category 13): Threat has passed
+
+Localized alerts trigger the **full response**: lights, sirens/alarms, TTS, user scripts, and prompt runner for AI intelligence.
+
+### General Alerts
+Nationwide volume-based thresholds (50, 100, 200, ... 1000 simultaneous alert areas). These are situational awareness — not a direct threat to the user's location.
+
+General alerts trigger **TTS announcements and scripts only**. Lights are set to red as an informational indicator only when no localized alert is already active.
+
+The code for these lives in `AlertMonitor._process_localized_alerts()` and `AlertMonitor._process_general_alerts()` respectively.
+
 ## Key Files
 
 - `.env.example` — All configuration variables with documentation

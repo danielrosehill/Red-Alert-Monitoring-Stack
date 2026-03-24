@@ -317,17 +317,26 @@ class AlertMonitor:
             return
         self.prev_alert_ids = current_ids
 
-        # Classify
+        # Classify all alerts
         active = [a for a in alerts if a.get("category", 0) in ACTIVE_CATEGORIES]
         active_areas = {a.get("data", "") for a in active}
         active_count = len(active_areas)
 
-        red_alerts = [a for a in alerts if a.get("category", 0) in RED_CATEGORIES]
-        warnings = [a for a in alerts if a.get("category", 0) == 14]
-        all_clears = [a for a in alerts if a.get("category", 0) == 13]
+        # Process the two alert types independently
+        self._process_localized_alerts(alerts)
+        self._process_general_alerts(active_count)
 
-        # ── Local area state ─────────────────────────────────────────────
+    def _process_localized_alerts(self, alerts: list[dict]):
+        """Handle alerts specific to the user's configured ALERT_AREA.
 
+        Localized alerts are direct threats to the user's location:
+          - warning (category 14): early warning, seek shelter soon
+          - active (categories 1-12): immediate threat, take cover now
+          - clear (category 13): threat has passed
+
+        These trigger the full response: lights, sirens, TTS, scripts,
+        and prompt runner for immediate intelligence.
+        """
         local_state = ""
         for a in alerts:
             if a.get("data", "") == LOCAL_AREA:
@@ -340,52 +349,60 @@ class AlertMonitor:
                 elif cat == 13:
                     local_state = "clear"
 
-        if local_state != self.prev_local_state:
-            if local_state == "active":
-                self.lights.set_color("red")
-                self.tts.play("red_alert")
-                if self.alarms:
-                    self.alarms.activate()
-                self.last_active_time = time.time()
-                self.all_clear_sent = False
-                _run_alert_script("red_alert")
-                # Trigger prompt runner for immediate intelligence
-                asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
-            elif local_state == "warning":
-                self.lights.set_color("orange")
-                self.tts.play("early_warning")
-                if self.alarms:
-                    self.alarms.activate()
-                self.last_active_time = time.time()
-                self.all_clear_sent = False
-                _run_alert_script("early_warning")
-            elif local_state == "clear" and self.prev_local_state in (
-                "active",
-                "warning",
-            ):
+        if local_state == self.prev_local_state:
+            return
+
+        if local_state == "active":
+            self.lights.set_color("red")
+            self.tts.play("red_alert")
+            if self.alarms:
+                self.alarms.activate()
+            self.last_active_time = time.time()
+            self.all_clear_sent = False
+            _run_alert_script("red_alert")
+            asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
+
+        elif local_state == "warning":
+            self.lights.set_color("orange")
+            self.tts.play("early_warning")
+            if self.alarms:
+                self.alarms.activate()
+            self.last_active_time = time.time()
+            self.all_clear_sent = False
+            _run_alert_script("early_warning")
+
+        elif local_state == "clear" and self.prev_local_state in ("active", "warning"):
+            self.lights.set_color("green")
+            self.tts.play("all_clear")
+            if self.alarms:
+                self.alarms.deactivate()
+            self.all_clear_sent = True
+            _run_alert_script("all_clear")
+
+        elif local_state == "" and self.prev_local_state:
+            # Area dropped from alerts entirely
+            if not self.all_clear_sent and self.prev_local_state in ("active", "warning"):
                 self.lights.set_color("green")
                 self.tts.play("all_clear")
                 if self.alarms:
                     self.alarms.deactivate()
                 self.all_clear_sent = True
                 _run_alert_script("all_clear")
-            elif local_state == "" and self.prev_local_state:
-                # Area dropped from alerts entirely
-                if not self.all_clear_sent and self.prev_local_state in (
-                    "active",
-                    "warning",
-                ):
-                    self.lights.set_color("green")
-                    self.tts.play("all_clear")
-                    if self.alarms:
-                        self.alarms.deactivate()
-                    self.all_clear_sent = True
-                    _run_alert_script("all_clear")
 
-            self.prev_local_state = local_state
+        self.prev_local_state = local_state
 
-        # ── Nationwide thresholds ────────────────────────────────────────
+    def _process_general_alerts(self, active_count: int):
+        """Handle nationwide volume-based threshold alerts.
 
+        General alerts are country-wide situational awareness based on
+        the total number of simultaneously active alert areas. They provide
+        escalating notifications as the situation intensifies:
+          - 50, 100, 200, ... 1000 simultaneous areas
+
+        These trigger TTS announcements and scripts only. Lights are set
+        to red as an informational indicator (not a direct threat response)
+        only when no localized alert is already active.
+        """
         current_threshold = 0
         for t in THRESHOLD_LEVELS:
             if active_count >= t:
@@ -396,8 +413,9 @@ class AlertMonitor:
             audio_name = f"threshold_{current_threshold}"
             self.tts.play(audio_name)
             _run_alert_script(audio_name)
-            # If no local alert is active, flash red for nationwide threshold
-            if not local_state or local_state == "clear":
+
+            # Informational light indicator — only if no localized alert is active
+            if not self.prev_local_state or self.prev_local_state == "clear":
                 self.lights.set_color("red")
                 self.last_active_time = time.time()
                 self.all_clear_sent = False
