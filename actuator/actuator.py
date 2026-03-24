@@ -183,20 +183,21 @@ class AlertMonitor:
         # Check idle restore
         await self._check_idle_restore()
 
-        # Detect changes
+        # Classify all alerts (always, for threshold checks)
+        active = [a for a in alerts if a.get("category", 0) in ACTIVE_CATEGORIES]
+        active_areas = {a.get("data", "") for a in active}
+        active_count = len(active_areas)
+
+        # Thresholds are checked every poll — don't gate on ID changes
+        await self._process_general_alerts(active_count)
+
+        # Localized alerts only fire on actual changes
         current_ids = {f"{a.get('data', '')}:{a.get('category', 0)}" for a in alerts}
         if current_ids == self.prev_alert_ids:
             return
         self.prev_alert_ids = current_ids
 
-        # Classify all alerts
-        active = [a for a in alerts if a.get("category", 0) in ACTIVE_CATEGORIES]
-        active_areas = {a.get("data", "") for a in active}
-        active_count = len(active_areas)
-
-        # Process the two alert types independently
         await self._process_localized_alerts(alerts)
-        await self._process_general_alerts(active_count)
 
     async def _process_localized_alerts(self, alerts: list[dict]):
         """Handle alerts specific to the user's configured ALERT_AREA."""
@@ -266,6 +267,7 @@ class AlertMonitor:
         if elapsed > 120:
             await self.ha.set_state("idle", self.http_client)
             self.last_active_time = 0
+            self.prev_threshold = 0  # reset so thresholds re-fire on next ramp
 
 
 # ── Shared state (set during lifespan) ───────────────────────────────────
