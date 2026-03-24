@@ -3,6 +3,7 @@
 Consumes alert data from the Oref Alert Proxy and triggers physical actions:
   - Snapcast TTS announcements via pipe (pre-recorded audio files)
   - MQTT smart light color changes (red/orange/green/off)
+  - User-configurable scripts per alert level (subprocess)
 
 Sits downstream of the Oref Alert Proxy as part of the Red Alert Stack.
 
@@ -13,6 +14,7 @@ import asyncio
 import json
 import logging
 import os
+import subprocess
 import time
 import wave
 from contextlib import asynccontextmanager
@@ -85,7 +87,28 @@ class TestAlertRequest(BaseModel):
 # Alert categories
 ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
 RED_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12}
-THRESHOLD_LEVELS = [1000, 500, 200, 100]  # checked high to low
+THRESHOLD_LEVELS = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50]  # checked high to low
+
+# ── User Scripts (optional shell commands per alert level) ────────────────────
+# Each SCRIPT_* env var holds a shell command to run when that alert fires.
+# Scripts run async (fire-and-forget) and won't block alert processing.
+
+ALERT_SCRIPTS = {
+    "early_warning": os.environ.get("SCRIPT_EARLY_WARNING", ""),
+    "red_alert": os.environ.get("SCRIPT_RED_ALERT", ""),
+    "all_clear": os.environ.get("SCRIPT_ALL_CLEAR", ""),
+    "threshold_50": os.environ.get("SCRIPT_THRESHOLD_50", ""),
+    "threshold_100": os.environ.get("SCRIPT_THRESHOLD_100", ""),
+    "threshold_200": os.environ.get("SCRIPT_THRESHOLD_200", ""),
+    "threshold_300": os.environ.get("SCRIPT_THRESHOLD_300", ""),
+    "threshold_400": os.environ.get("SCRIPT_THRESHOLD_400", ""),
+    "threshold_500": os.environ.get("SCRIPT_THRESHOLD_500", ""),
+    "threshold_600": os.environ.get("SCRIPT_THRESHOLD_600", ""),
+    "threshold_700": os.environ.get("SCRIPT_THRESHOLD_700", ""),
+    "threshold_800": os.environ.get("SCRIPT_THRESHOLD_800", ""),
+    "threshold_900": os.environ.get("SCRIPT_THRESHOLD_900", ""),
+    "threshold_1000": os.environ.get("SCRIPT_THRESHOLD_1000", ""),
+}
 
 # Light colors
 COLORS = {
@@ -325,13 +348,17 @@ class AlertMonitor:
                     self.alarms.activate()
                 self.last_active_time = time.time()
                 self.all_clear_sent = False
+                _run_alert_script("red_alert")
                 # Trigger prompt runner for immediate intelligence
                 asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
             elif local_state == "warning":
                 self.lights.set_color("orange")
                 self.tts.play("early_warning")
+                if self.alarms:
+                    self.alarms.activate()
                 self.last_active_time = time.time()
                 self.all_clear_sent = False
+                _run_alert_script("early_warning")
             elif local_state == "clear" and self.prev_local_state in (
                 "active",
                 "warning",
@@ -341,6 +368,7 @@ class AlertMonitor:
                 if self.alarms:
                     self.alarms.deactivate()
                 self.all_clear_sent = True
+                _run_alert_script("all_clear")
             elif local_state == "" and self.prev_local_state:
                 # Area dropped from alerts entirely
                 if not self.all_clear_sent and self.prev_local_state in (
@@ -352,6 +380,7 @@ class AlertMonitor:
                     if self.alarms:
                         self.alarms.deactivate()
                     self.all_clear_sent = True
+                    _run_alert_script("all_clear")
 
             self.prev_local_state = local_state
 
@@ -366,6 +395,7 @@ class AlertMonitor:
         if current_threshold > self.prev_threshold:
             audio_name = f"threshold_{current_threshold}"
             self.tts.play(audio_name)
+            _run_alert_script(audio_name)
             # If no local alert is active, flash red for nationwide threshold
             if not local_state or local_state == "clear":
                 self.lights.set_color("red")
@@ -417,6 +447,11 @@ async def lifespan(app: FastAPI):
     log.info("MQTT lights: %d topics", len(MQTT_LIGHT_TOPICS))
     log.info("MQTT alarms: %d topics", len(MQTT_ALARM_TOPICS))
     log.info("TTS: %s (cooldown: %ds)", "enabled" if TTS_ENABLED else "disabled", TTS_COOLDOWN)
+    configured_scripts = {k: v for k, v in ALERT_SCRIPTS.items() if v}
+    if configured_scripts:
+        log.info("User scripts configured: %s", ", ".join(configured_scripts.keys()))
+    else:
+        log.info("No user scripts configured (SCRIPT_* env vars)")
 
     # Start polling loop as background task
     poll_task = asyncio.create_task(_poll_loop())
@@ -460,6 +495,8 @@ async def health():
         "mqtt_alarms": len(MQTT_ALARM_TOPICS),
         "tts_enabled": TTS_ENABLED,
         "current_state": _monitor.prev_local_state if _monitor else "unknown",
+        "scripts_configured": [k for k, v in ALERT_SCRIPTS.items() if v],
+        "threshold_levels": THRESHOLD_LEVELS,
     }
 
 
@@ -471,46 +508,82 @@ async def test_alert(req: TestAlertRequest):
 
     alert_type = req.alert_type.lower()
 
+    # Play test preamble TTS
+    _tts.last_played.pop("test_begin", None)
+    _tts.play("test_begin")
+
+    script_key = None
+
     if alert_type in ("red_alert", "red"):
+        script_key = "red_alert"
         _lights.current_color = ""  # force change
         _lights.set_color("red")
         _tts.last_played.pop("red_alert", None)  # bypass cooldown for test
         _tts.play("red_alert")
         if _alarms:
             _alarms.activate()
+        _run_alert_script(script_key)
         # Trigger prompt runner for immediate intel if configured
         asyncio.create_task(_trigger_prompt_runner(req.area or LOCAL_AREA))
-        return {"status": "ok", "triggered": "red_alert", "lights": "red", "tts": "red_alert", "alarms": "on"}
+        return {"status": "ok", "triggered": "red_alert", "lights": "red", "tts": "red_alert", "alarms": "on",
+                "script": ALERT_SCRIPTS.get(script_key, "") or None}
 
     elif alert_type in ("early_warning", "warning"):
+        script_key = "early_warning"
         _lights.current_color = ""
         _lights.set_color("orange")
         _tts.last_played.pop("early_warning", None)
         _tts.play("early_warning")
-        return {"status": "ok", "triggered": "early_warning", "lights": "orange", "tts": "early_warning"}
+        if _alarms:
+            _alarms.activate()
+        _run_alert_script(script_key)
+        return {"status": "ok", "triggered": "early_warning", "lights": "orange", "tts": "early_warning", "alarms": "on",
+                "script": ALERT_SCRIPTS.get(script_key, "") or None}
 
     elif alert_type in ("all_clear", "clear"):
+        script_key = "all_clear"
         _lights.current_color = ""
         _lights.set_color("green")
         _tts.last_played.pop("all_clear", None)
         _tts.play("all_clear")
         if _alarms:
             _alarms.deactivate()
-        return {"status": "ok", "triggered": "all_clear", "lights": "green", "tts": "all_clear", "alarms": "off"}
+        _run_alert_script(script_key)
+        return {"status": "ok", "triggered": "all_clear", "lights": "green", "tts": "all_clear", "alarms": "off",
+                "script": ALERT_SCRIPTS.get(script_key, "") or None}
 
-    elif alert_type.startswith("threshold"):
+    elif alert_type.startswith("threshold_"):
+        script_key = alert_type
         _lights.current_color = ""
         _lights.set_color("red")
         _tts.last_played.pop(alert_type, None)
         _tts.play(alert_type)
-        return {"status": "ok", "triggered": alert_type, "lights": "red", "tts": alert_type}
+        _run_alert_script(script_key)
+        return {"status": "ok", "triggered": alert_type, "lights": "red", "tts": alert_type,
+                "script": ALERT_SCRIPTS.get(script_key, "") or None}
 
     elif alert_type == "lights_off":
         _lights.current_color = ""
         _lights.set_color("off")
         return {"status": "ok", "triggered": "lights_off", "lights": "off"}
 
-    return {"error": f"Unknown alert type: {alert_type}"}
+    return {"error": f"Unknown alert type: {alert_type}",
+            "valid_types": ["red_alert", "early_warning", "all_clear", "lights_off"]
+            + [f"threshold_{t}" for t in THRESHOLD_LEVELS]}
+
+
+@app.post("/api/test-alert/end")
+async def test_alert_end():
+    """Play the 'test ended' TTS and restore lights to off."""
+    if not _lights or not _tts:
+        return {"error": "Actuator not initialized"}
+    _tts.last_played.pop("test_ended", None)
+    _tts.play("test_ended")
+    _lights.current_color = ""
+    _lights.set_color("off")
+    if _alarms:
+        _alarms.active = False  # reset without sending MQTT if already off
+    return {"status": "ok", "triggered": "test_ended", "lights": "off"}
 
 
 async def _trigger_prompt_runner(area: str):
@@ -525,6 +598,18 @@ async def _trigger_prompt_runner(area: str):
             log.info("Prompt runner triggered for area: %s", area)
     except Exception as e:
         log.debug("Prompt runner not available: %s", e)
+
+
+def _run_alert_script(alert_key: str):
+    """Run user-configured script for an alert level (fire-and-forget subprocess)."""
+    cmd = ALERT_SCRIPTS.get(alert_key, "")
+    if not cmd:
+        return
+    try:
+        subprocess.Popen(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        log.info("Script fired for %s: %s", alert_key, cmd)
+    except Exception as e:
+        log.error("Script error for %s: %s", alert_key, e)
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
