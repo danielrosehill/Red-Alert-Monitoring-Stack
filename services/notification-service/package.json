@@ -1,0 +1,6 @@
+{
+  "name": "notification-service",
+  "version": "0.1.0",
+  "description": "Dispatches alert notifications via ntfy, Telegram, Pushover, etc.",
+  "private": true
+}
