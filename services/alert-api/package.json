@@ -1,6 +1,0 @@
-{
-  "name": "alert-api",
-  "version": "0.1.0",
-  "description": "REST API and WebSocket server for alert data",
-  "private": true
-}

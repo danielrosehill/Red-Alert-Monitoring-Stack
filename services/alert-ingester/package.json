@@ -1,6 +1,0 @@
-{
-  "name": "alert-ingester",
-  "version": "0.1.0",
-  "description": "Polls Pikud HaOref alert API, persists to Postgres, publishes to Redis",
-  "private": true
-}

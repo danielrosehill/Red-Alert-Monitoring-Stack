@@ -1,6 +1,0 @@
-{
-  "name": "home-automation",
-  "version": "0.1.0",
-  "description": "Bridges alerts to Home Assistant, MQTT, and smart home devices",
-  "private": true
-}

@@ -1,6 +1,0 @@
-{
-  "name": "dashboard",
-  "version": "0.1.0",
-  "description": "Real-time alert dashboard with map visualization and timeline",
-  "private": true
-}
