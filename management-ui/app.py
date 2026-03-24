@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 
 logging.basicConfig(
     level=logging.INFO,
@@ -81,6 +82,13 @@ SERVICES = {
         "port": 8786,
         "description": "AI agent tools for alert data access",
     },
+    "prompt-runner": {
+        "name": "Prompt Runner",
+        "url": os.getenv("PROMPT_RUNNER_URL", "http://prompt-runner:8787"),
+        "health": "/health",
+        "port": int(os.getenv("PROMPT_RUNNER_PORT", "8787")),
+        "description": "Templated AI prompt execution for intel reports",
+    },
     "mosquitto": {
         "name": "Mosquitto MQTT",
         "url": None,  # MQTT doesn't have HTTP health
@@ -90,6 +98,13 @@ SERVICES = {
         "tcp_check": os.getenv("MQTT_BROKER", "mosquitto:1883"),
     },
 }
+
+ACTUATOR_URL = os.getenv("ACTUATOR_URL", "http://actuator:8782")
+
+
+class TestAlertRequest(BaseModel):
+    alert_type: str = "red_alert"
+    area: str = ""
 
 
 async def check_http(client: httpx.AsyncClient, url: str, path: str) -> dict:
@@ -165,3 +180,19 @@ async def health():
 async def api_statuses():
     statuses = await get_all_statuses()
     return {"statuses": statuses, "checked_at": datetime.now(timezone.utc).isoformat()}
+
+
+@app.post("/api/test-alert")
+async def test_alert(req: TestAlertRequest):
+    """Forward a test alert to the actuator service."""
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.post(
+                f"{ACTUATOR_URL}/api/test-alert",
+                json={"alert_type": req.alert_type, "area": req.area},
+                timeout=10,
+            )
+            return resp.json()
+        except Exception as e:
+            log.error("Test alert failed: %s", e)
+            return {"error": str(e), "actuator_url": ACTUATOR_URL}

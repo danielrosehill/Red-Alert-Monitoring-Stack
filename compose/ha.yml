@@ -7,7 +7,7 @@
 #
 # Usage:
 #   cp .env.example .env   # fill in your values
-#   docker compose -f compose/ha.yml up -d
+#   docker compose -f compose/ha.yml up -d --build
 #
 # Home Assistant integration:
 #   Point an HA REST sensor at http://<stack-ip>:8764/api/alerts to poll
@@ -17,11 +17,15 @@
 services:
   # -- Data Source -------------------------------------------------------------
   oref-proxy:
-    image: danielrosehill/red-alert-proxy:latest
+    build:
+      context: ../oref-proxy
+      dockerfile: Dockerfile
     container_name: oref-proxy
     restart: unless-stopped
     ports:
-      - "8764:8764"
+      - "${OREF_PROXY_PORT:-8764}:${OREF_PROXY_PORT:-8764}"
+    environment:
+      - PORT=${OREF_PROXY_PORT:-8764}
     networks:
       - redalert
 
@@ -31,7 +35,7 @@ services:
     container_name: influxdb
     restart: unless-stopped
     ports:
-      - "8086:8086"
+      - "${INFLUXDB_PORT:-8086}:8086"
     volumes:
       - influxdb-data:/var/lib/influxdb2
     environment:
@@ -46,17 +50,20 @@ services:
 
   # -- Dashboard ---------------------------------------------------------------
   geodash:
-    image: danielrosehill/red-alert-geodash:latest
+    build:
+      context: ../geodash
+      dockerfile: Dockerfile
     container_name: geodash
     restart: unless-stopped
     ports:
-      - "8083:8083"
+      - "${GEODASH_PORT:-8083}:${GEODASH_PORT:-8083}"
     environment:
-      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
-      - INFLUXDB_URL=${INFLUXDB_URL:-http://influxdb:8086}
-      - INFLUXDB_ORG=${INFLUXDB_ORG:-redalert}
-      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET:-alerts}
-      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+      - PORT=${GEODASH_PORT:-8083}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - INFLUX_URL=${INFLUXDB_URL:-http://influxdb:8086}
+      - INFLUX_ORG=${INFLUXDB_ORG:-redalert}
+      - INFLUX_BUCKET=${INFLUXDB_BUCKET:-alerts}
+      - INFLUX_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
       - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
@@ -66,11 +73,13 @@ services:
 
   # -- Notifications -----------------------------------------------------------
   pushover:
-    image: danielrosehill/red-alert-pushover:latest
+    build:
+      context: ../pushover
+      dockerfile: Dockerfile
     container_name: pushover
     restart: unless-stopped
     environment:
-      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}/api/alerts
       - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN}
       - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY}
       - ALERT_AREA=${ALERT_AREA:-}
@@ -80,30 +89,59 @@ services:
       - redalert
 
   telegram-bot:
-    image: danielrosehill/red-alert-telegram:latest
+    build:
+      context: ../telegram-bot
+      dockerfile: Dockerfile
     container_name: telegram-bot
     restart: unless-stopped
+    ports:
+      - "${TELEGRAM_BOT_PORT:-8781}:${TELEGRAM_BOT_PORT:-8781}"
     environment:
-      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - ALERT_AREA=${ALERT_AREA:-}
+    volumes:
+      - telegram-data:/app/data
     depends_on:
       - oref-proxy
     networks:
       - redalert
 
+  # -- AI Prompt Runner --------------------------------------------------------
+  prompt-runner:
+    build:
+      context: ../prompt-runner
+      dockerfile: Dockerfile
+    container_name: prompt-runner
+    restart: unless-stopped
+    ports:
+      - "${PROMPT_RUNNER_PORT:-8787}:${PROMPT_RUNNER_PORT:-8787}"
+    environment:
+      - PORT=${PROMPT_RUNNER_PORT:-8787}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
+      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - ALERT_AREA=${ALERT_AREA:-}
+    depends_on:
+      - oref-proxy
+      - rss-cache
+    networks:
+      - redalert
+
   # -- Caching -----------------------------------------------------------------
   rss-cache:
-    image: danielrosehill/red-alert-rss-cache:latest
     build:
       context: ../rss-cache
       dockerfile: Dockerfile
     container_name: rss-cache
     restart: unless-stopped
     ports:
-      - "8785:8785"
+      - "${RSS_CACHE_PORT:-8785}:${RSS_CACHE_PORT:-8785}"
     environment:
+      - PORT=${RSS_CACHE_PORT:-8785}
       - RSS_FEED_1_URL=${RSS_FEED_1_URL:-}
       - RSS_FEED_1_NAME=${RSS_FEED_1_NAME:-}
       - RSS_FEED_2_URL=${RSS_FEED_2_URL:-}
@@ -116,17 +154,16 @@ services:
 
   # -- MCP Server --------------------------------------------------------------
   mcp-server:
-    image: danielrosehill/red-alert-mcp:latest
     build:
       context: ../mcp-server
       dockerfile: Dockerfile
     container_name: mcp-server
     restart: unless-stopped
     ports:
-      - "8786:8786"
+      - "${MCP_SERVER_PORT:-8786}:${MCP_SERVER_PORT:-8786}"
     environment:
-      - OREF_PROXY_URL=http://oref-proxy:8764
-      - RSS_CACHE_URL=http://rss-cache:8785
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
       - ALERT_AREA=${ALERT_AREA:-}
     volumes:
       - mcp-data:/app/data
@@ -138,20 +175,21 @@ services:
 
   # -- Management --------------------------------------------------------------
   management-ui:
-    image: danielrosehill/red-alert-management:latest
     build:
       context: ../management-ui
       dockerfile: Dockerfile
     container_name: management-ui
     restart: unless-stopped
     ports:
-      - "8888:8888"
+      - "${MANAGEMENT_UI_PORT:-8888}:${MANAGEMENT_UI_PORT:-8888}"
     environment:
+      - PORT=${MANAGEMENT_UI_PORT:-8888}
       - STACK_NAME=${STACK_NAME:-Red Alert Monitoring Stack (HA Edition)}
-      - OREF_PROXY_URL=http://oref-proxy:8764
-      - GEODASH_URL=http://geodash:8083
-      - INFLUXDB_URL=http://influxdb:8086
-      - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:8083}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
+      - INFLUXDB_URL=http://influxdb:${INFLUXDB_PORT:-8086}
+      - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
+      - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
       - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
@@ -166,3 +204,4 @@ networks:
 volumes:
   influxdb-data:
   mcp-data:
+  telegram-data:

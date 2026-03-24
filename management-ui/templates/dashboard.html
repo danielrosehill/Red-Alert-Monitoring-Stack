@@ -169,7 +169,7 @@
 
     <div class="section-title">Automation &amp; Infrastructure</div>
     <div class="grid">
-        {% for svc_id in ['actuator', 'mosquitto', 'rss-cache', 'mcp-server'] %}
+        {% for svc_id in ['actuator', 'prompt-runner', 'mosquitto', 'rss-cache', 'mcp-server'] %}
         {% set svc = services[svc_id] %}
         {% set st = statuses.get(svc_id, {}) %}
         <div class="card">
@@ -192,7 +192,72 @@
         {% endfor %}
     </div>
 
+    <div class="section-title">Test Alerts</div>
+    <div class="card" style="max-width: 640px;">
+        <div class="card-header">
+            <div class="card-title">Send Test Alert to Actuator</div>
+        </div>
+        <div class="card-desc">Triggers lights and TTS without affecting alert state tracking. Red alert tests also trigger the Prompt Runner for immediate intelligence.</div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem;">
+            <button class="test-btn test-red" onclick="sendTest('red_alert')">Red Alert</button>
+            <button class="test-btn test-orange" onclick="sendTest('early_warning')">Early Warning</button>
+            <button class="test-btn test-green" onclick="sendTest('all_clear')">All Clear</button>
+            <button class="test-btn test-off" onclick="sendTest('lights_off')">Lights Off</button>
+        </div>
+        <div id="test-result" style="margin-top: 0.75rem; font-size: 0.82rem; color: var(--muted); display: none;"></div>
+    </div>
+
+    <style>
+        .test-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            color: var(--text);
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .test-btn:hover { opacity: 0.8; }
+        .test-red { border-color: #ef4444; color: #ef4444; }
+        .test-red:hover { background: rgba(239,68,68,0.15); }
+        .test-orange { border-color: #f59e0b; color: #f59e0b; }
+        .test-orange:hover { background: rgba(245,158,11,0.15); }
+        .test-green { border-color: #22c55e; color: #22c55e; }
+        .test-green:hover { background: rgba(34,197,94,0.15); }
+        .test-off { border-color: var(--muted); color: var(--muted); }
+        .test-off:hover { background: rgba(161,161,170,0.15); }
+    </style>
+
     <script>
+        async function sendTest(alertType) {
+            const el = document.getElementById('test-result');
+            el.style.display = 'block';
+            el.textContent = 'Sending...';
+            el.style.color = 'var(--muted)';
+            try {
+                const resp = await fetch('/api/test-alert', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({alert_type: alertType})
+                });
+                const data = await resp.json();
+                if (data.error) {
+                    el.textContent = 'Error: ' + data.error;
+                    el.style.color = 'var(--down)';
+                } else {
+                    el.textContent = 'Triggered: ' + (data.triggered || alertType) +
+                        (data.lights ? ' | Lights: ' + data.lights : '') +
+                        (data.tts ? ' | TTS: ' + data.tts : '');
+                    el.style.color = 'var(--up)';
+                }
+            } catch (e) {
+                el.textContent = 'Failed: ' + e.message;
+                el.style.color = 'var(--down)';
+            }
+        }
+
         // Auto-refresh every 30 seconds
         setTimeout(() => location.reload(), 30000);
     </script>

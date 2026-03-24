@@ -4,3 +4,15 @@
 !.env.example
 docker-compose.override.yml
 compose/override.yml
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Telegram bot data
+telegram-bot/data/

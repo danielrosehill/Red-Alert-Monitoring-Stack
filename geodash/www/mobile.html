@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Red Alert Geodash</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .mobile-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            height: 100dvh; /* dynamic viewport height for mobile browsers */
+        }
+
+        /* ── Compact Header ─────────────────────────────────── */
+        .mobile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background: #16213e;
+            border-bottom: 2px solid #0f3460;
+            flex-shrink: 0;
+            min-height: 44px;
+            z-index: 100;
+        }
+
+        .mobile-header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mobile-header-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .mobile-header h1 {
+            font-size: 0.95rem;
+            color: #7eddb8;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .mobile-header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #alert-count {
+            background: #e94560;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.78rem;
+            display: none;
+            white-space: nowrap;
+        }
+        #alert-count.active { display: inline-block; }
+
+        #status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #7eddb8;
+            flex-shrink: 0;
+            animation: pulse 3s infinite;
+        }
+        #status-indicator.error { background: #e94560; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .clock-compact {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #7eddb8;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .menu-btn {
+            background: none;
+            border: 1px solid #0f3460;
+            color: #aab;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* ── Map ────────────────────────────────────────────── */
+        .map-container {
+            flex: 1;
+            position: relative;
+            min-height: 0;
+        }
+
+        #map-full {
+            width: 100%;
+            height: 100%;
+        }
+
+        .leaflet-container { background: #e8e8e8; }
+
+        /* Make Leaflet controls touch-friendly */
+        .leaflet-control-zoom a {
+            width: 40px !important;
+            height: 40px !important;
+            line-height: 40px !important;
+            font-size: 20px !important;
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 10px;
+            left: 8px;
+            z-index: 1000;
+            background: rgba(22, 33, 62, 0.92);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 2px 0;
+            color: #dde;
+        }
+        .legend-swatch {
+            width: 14px;
+            height: 10px;
+            border-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* ── Alert Flash Bar ─────────────────────────────────── */
+        .alert-flash-bar {
+            background: #16213e;
+            border-top: 2px solid #0f3460;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            min-height: 42px;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .alert-flash-bar.alert-active {
+            background: #e94560;
+            border-top-color: #ff2244;
+            animation: flashbar-red 1s infinite;
+        }
+
+        .alert-flash-bar.warning-active {
+            background: #ff9800;
+            border-top-color: #ffb300;
+            animation: flashbar-orange 1.2s infinite;
+        }
+
+        .alert-flash-bar.allclear-active {
+            background: #1a3a2a;
+            border-top-color: #4ecca3;
+        }
+
+        .flashbar-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #7eddb8;
+            flex-shrink: 0;
+        }
+
+        .alert-flash-bar.alert-active .flashbar-label,
+        .alert-flash-bar.warning-active .flashbar-label {
+            color: #fff;
+            font-size: 0.82rem;
+        }
+
+        .alert-flash-bar.allclear-active .flashbar-label {
+            color: #4ecca3;
+        }
+
+        .flashbar-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #889;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .alert-flash-bar.alert-active .flashbar-text,
+        .alert-flash-bar.warning-active .flashbar-text {
+            color: #fff;
+        }
+
+        .alert-flash-bar.allclear-active .flashbar-text {
+            color: #7eddb8;
+        }
+
+        .flashbar-count {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #fff;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 10px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            display: none;
+            white-space: nowrap;
+        }
+
+        .alert-flash-bar.alert-active .flashbar-count,
+        .alert-flash-bar.warning-active .flashbar-count {
+            display: inline-block;
+        }
+
+        @keyframes flashbar-red {
+            0%, 100% { background: #e94560; }
+            50% { background: #c0243a; }
+        }
+
+        @keyframes flashbar-orange {
+            0%, 100% { background: #ff9800; }
+            50% { background: #e07800; }
+        }
+
+        /* ── Local Alert Overlay ─────────────────────────────── */
+        #local-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            justify-content: center;
+            align-items: center;
+        }
+        #local-alert-overlay.active-red,
+        #local-alert-overlay.active-warning,
+        #local-alert-overlay.active-allclear {
+            display: flex;
+            pointer-events: auto;
+        }
+        #local-alert-overlay.active-red {
+            animation: flash-red 0.5s infinite;
+        }
+        #local-alert-overlay.active-warning {
+            animation: flash-orange 0.8s infinite;
+        }
+        #local-alert-overlay.active-allclear {
+            background: rgba(78, 204, 163, 0.15);
+        }
+        #local-alert-text {
+            font-size: 1.6rem;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            padding: 20px 28px;
+            border-radius: 12px;
+            text-shadow: 0 0 16px rgba(0,0,0,0.8);
+            letter-spacing: 1px;
+            max-width: 90vw;
+        }
+        #local-alert-overlay.active-red #local-alert-text {
+            color: #fff;
+            background: rgba(233, 69, 96, 0.9);
+            box-shadow: 0 0 40px rgba(233, 69, 96, 0.6);
+        }
+        #local-alert-overlay.active-warning #local-alert-text {
+            color: #fff;
+            background: rgba(255, 152, 0, 0.9);
+            box-shadow: 0 0 40px rgba(255, 152, 0, 0.6);
+        }
+        #local-alert-overlay.active-allclear #local-alert-text {
+            color: #fff;
+            background: rgba(78, 204, 163, 0.9);
+            box-shadow: 0 0 40px rgba(78, 204, 163, 0.6);
+        }
+
+        #local-alert-dismiss {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        #local-alert-overlay.active-red #local-alert-dismiss,
+        #local-alert-overlay.active-warning #local-alert-dismiss,
+        #local-alert-overlay.active-allclear #local-alert-dismiss {
+            display: flex;
+        }
+
+        @keyframes flash-red {
+            0%, 100% { background: rgba(233, 69, 96, 0.15); }
+            50% { background: rgba(233, 69, 96, 0.35); }
+        }
+        @keyframes flash-orange {
+            0%, 100% { background: rgba(255, 152, 0, 0.1); }
+            50% { background: rgba(255, 152, 0, 0.25); }
+        }
+
+        /* ── Nav Drawer ──────────────────────────────────────── */
+        .nav-drawer-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 5000;
+        }
+        .nav-drawer-backdrop.open { display: block; }
+
+        .nav-drawer {
+            position: fixed;
+            top: 0; right: -280px;
+            width: 260px;
+            height: 100%;
+            background: #16213e;
+            z-index: 5001;
+            transition: right 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 16px 0;
+        }
+        .nav-drawer-backdrop.open .nav-drawer { right: 0; }
+
+        .nav-drawer-title {
+            padding: 8px 20px 16px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #7eddb8;
+            font-weight: 700;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .nav-drawer a {
+            display: block;
+            padding: 14px 20px;
+            color: #ccd;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-bottom: 1px solid #0a1a3a;
+            transition: background 0.2s;
+        }
+        .nav-drawer a:hover,
+        .nav-drawer a:active { background: #0f3460; color: #fff; }
+        .nav-drawer a.active { color: #7eddb8; }
+
+        .nav-drawer-section {
+            padding: 12px 20px 6px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #556;
+            font-weight: 700;
+        }
+
+        /* ── Area Selector (bottom sheet style) ──────────────── */
+        .area-selector-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #0f1a30;
+            border-top: 1px solid #0f3460;
+            flex-shrink: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .area-selector-bar::-webkit-scrollbar { display: none; }
+
+        .area-selector-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #556;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .area-btn {
+            background: #1a2a50;
+            border: 1px solid #0f3460;
+            color: #aab;
+            padding: 5px 12px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .area-btn.active {
+            background: #7eddb8;
+            color: #1a1a2e;
+            border-color: #7eddb8;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-wrapper">
+        <!-- Compact header -->
+        <div class="mobile-header">
+            <div class="mobile-header-left">
+                <a href="/" style="display:flex;align-items:center;gap:6px;text-decoration:none">
+                    <img src="/static/icon.png" alt="" class="mobile-header-icon">
+                    <h1>Red Alert</h1>
+                </a>
+                <span id="alert-count"></span>
+            </div>
+            <div class="mobile-header-right">
+                <span class="clock-compact" id="clock-local">--:--</span>
+                <div id="status-indicator"></div>
+                <button class="menu-btn" id="menu-btn" aria-label="Menu">&#9776;</button>
+            </div>
+        </div>
+
+        <!-- Area selector strip -->
+        <div class="area-selector-bar" id="area-selector-bar">
+            <span class="area-selector-label">Area:</span>
+        </div>
+
+        <!-- Full-screen map -->
+        <div class="map-container">
+            <div id="map-full"></div>
+        </div>
+
+        <!-- Alert flash bar -->
+        <div class="alert-flash-bar" id="alert-flash-bar">
+            <span class="flashbar-label" id="flashbar-label">LIVE</span>
+            <span class="flashbar-text" id="flashbar-text">No active alerts</span>
+            <span class="flashbar-count" id="flashbar-count"></span>
+        </div>
+    </div>
+
+    <!-- Local alert overlay -->
+    <div id="local-alert-overlay">
+        <div id="local-alert-text"></div>
+        <button id="local-alert-dismiss" title="Dismiss" aria-label="Dismiss alert">&#10005;</button>
+    </div>
+
+    <!-- Nav drawer -->
+    <div class="nav-drawer-backdrop" id="nav-drawer-backdrop">
+        <div class="nav-drawer">
+            <div class="nav-drawer-title">Navigation</div>
+            <a href="/">Home (Desktop)</a>
+            <a href="/map">Full Map</a>
+            <a href="/mobile" class="active">Mobile</a>
+            <a href="/history">History</a>
+            <a href="/news">News</a>
+            <div class="nav-drawer-section">Display</div>
+            <a href="/tablet">Tablet</a>
+            <a href="/tv">TV</a>
+            <div class="nav-drawer-section">External</div>
+            <a href="https://www.oref.org.il/eng" target="_blank" rel="noopener">HFC Official</a>
+            <a href="/settings">Settings</a>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/mobile.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — Red Alert Geodash</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header/nav handled by components.js */
+
+        .settings-container {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .settings-section {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+
+        .settings-section h2 {
+            font-size: 1rem;
+            color: #7eddb8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(15, 52, 96, 0.5);
+        }
+
+        .setting-row:last-child { border-bottom: none; }
+
+        .setting-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #dde;
+        }
+
+        .setting-desc {
+            font-size: 0.8rem;
+            color: #889;
+            margin-top: 2px;
+        }
+
+        select, input[type="text"] {
+            background: #0f3460;
+            color: #eee;
+            border: 1px solid #1a3a6e;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            min-width: 200px;
+        }
+        select:focus, input:focus { outline: none; border-color: #7eddb8; }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+        .toggle input { display: none; }
+        .toggle-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #0f3460;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px; height: 20px;
+            left: 3px; bottom: 3px;
+            background: #889;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .toggle input:checked + .toggle-slider { background: #7eddb8; }
+        .toggle input:checked + .toggle-slider::before {
+            transform: translateX(22px);
+            background: #1a1a2e;
+        }
+
+        .save-btn {
+            background: #7eddb8;
+            color: #1a1a2e;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .save-btn:hover { background: #5ecda0; }
+
+        .save-status {
+            margin-left: 12px;
+            font-size: 0.85rem;
+            color: #7eddb8;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-status.show { opacity: 1; }
+
+        .disclaimer {
+            background: #1c2a4a;
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #dde;
+        }
+
+        .disclaimer h3 {
+            color: #ff9800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .disclaimer p {
+            margin-bottom: 6px;
+        }
+
+        .disclaimer strong { color: #fff; }
+
+        .motto-footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #7eddb8;
+            direction: rtl;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div id="geodash-header"></div>
+
+    <div class="settings-container">
+        <div class="disclaimer">
+            <h3>⚠ Important Disclaimer</h3>
+            <p><strong>This is not an official Home Front Command (Pikud HaOref) resource.</strong></p>
+            <p>Do not rely on this dashboard as your primary alert or emergency preparedness tool. Always use the official Red Alert app and follow Pikud HaOref instructions.</p>
+            <p>This dashboard is intended to make it easier to visualize what is happening across Israel from the public Red Alert feed, providing a country-level situational awareness view.</p>
+        </div>
+
+        <div class="settings-section">
+            <h2>Alert Area</h2>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">Your Monitoring Area</div>
+                    <div class="setting-desc">Local alerts, audio, and speech will trigger for this area</div>
+                </div>
+                <select id="setting-area"></select>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Notifications</h2>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">Alert Audio</div>
+                    <div class="setting-desc">Play siren tone when your area is under alert</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-audio" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">Speech Announcements</div>
+                    <div class="setting-desc">Speak alert type and area name aloud</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-speech" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Display</h2>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">Hebrew Date</div>
+                    <div class="setting-desc">Show Hebrew calendar date in the header</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-hebrew-date" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">Shabbat Times</div>
+                    <div class="setting-desc">Show candle lighting and havdalah times on Fridays/Saturdays (Jerusalem)</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="setting-shabbat" checked>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div style="display:flex;align-items:center;margin-bottom:20px;">
+            <button class="save-btn" id="save-btn">Save Settings</button>
+            <span class="save-status" id="save-status">Saved!</span>
+        </div>
+
+        <div class="motto-footer">ביחד ננצח 🇮🇱</div>
+    </div>
+
+    <div id="geodash-footer"></div>
+
+    <script src="/static/components.js?v=14"></script>
+    <script>renderHeader('settings'); renderFooter();</script>
+    <script>
+        // Area options — same as dashboard
+        const AREA_OPTIONS = [
+            { he: "ירושלים - דרום", en: "Jerusalem — South" },
+            { he: "ירושלים - מרכז", en: "Jerusalem — Center" },
+            { he: "ירושלים - צפון", en: "Jerusalem — North" },
+            { he: "ירושלים - מערב", en: "Jerusalem — West" },
+            { he: "ירושלים - מזרח", en: "Jerusalem — East" },
+            { he: "ירושלים - כפר עקב", en: "Jerusalem — Kafr Aqab" },
+            { he: "ירושלים - אזור תעשייה עטרות", en: "Jerusalem — Atarot" },
+            { he: "תל אביב - מרכז העיר", en: "Tel Aviv — Center" },
+            { he: "חיפה - כרמל ועיר תחתית", en: "Haifa — Carmel" },
+            { he: "באר שבע - מערב", en: "Beer Sheva — West" },
+        ];
+
+        function init() {
+            const select = document.getElementById('setting-area');
+            const savedArea = localStorage.getItem('geodash-local-area') || AREA_OPTIONS[0].he;
+            const audioEnabled = localStorage.getItem('geodash-audio') !== 'false';
+            const speechEnabled = localStorage.getItem('geodash-speech') !== 'false';
+            const hebrewDateEnabled = localStorage.getItem('geodash-hebrew-date') !== 'false';
+            const shabbatEnabled = localStorage.getItem('geodash-shabbat') !== 'false';
+
+            for (const opt of AREA_OPTIONS) {
+                const el = document.createElement('option');
+                el.value = opt.he;
+                el.textContent = opt.en;
+                el.selected = opt.he === savedArea;
+                select.appendChild(el);
+            }
+
+            document.getElementById('setting-audio').checked = audioEnabled;
+            document.getElementById('setting-speech').checked = speechEnabled;
+            document.getElementById('setting-hebrew-date').checked = hebrewDateEnabled;
+            document.getElementById('setting-shabbat').checked = shabbatEnabled;
+
+            document.getElementById('save-btn').addEventListener('click', save);
+        }
+
+        function save() {
+            const area = document.getElementById('setting-area').value;
+            const audio = document.getElementById('setting-audio').checked;
+            const speech = document.getElementById('setting-speech').checked;
+
+            const hebrewDate = document.getElementById('setting-hebrew-date').checked;
+            const shabbat = document.getElementById('setting-shabbat').checked;
+
+            localStorage.setItem('geodash-local-area', area);
+            localStorage.setItem('geodash-audio', audio);
+            localStorage.setItem('geodash-speech', speech);
+            localStorage.setItem('geodash-hebrew-date', hebrewDate);
+            localStorage.setItem('geodash-shabbat', shabbat);
+
+            const status = document.getElementById('save-status');
+            status.classList.add('show');
+            setTimeout(() => status.classList.remove('show'), 2000);
+        }
+
+        init();
+    </script>
+</body>
+</html>

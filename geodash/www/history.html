@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History — Red Alert Geodash</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Main layout: map + event list side by side */
+        .main-content {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .map-side {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            border: 2px solid #ff9800;
+            border-bottom: none;
+            border-left: none;
+        }
+
+        .map-wrap {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+
+        .map-wrap > div {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(22, 33, 62, 0.85);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
+        .event-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid #0f3460;
+            min-width: 280px;
+            max-width: 400px;
+        }
+
+        .event-header {
+            background: #16213e;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #7eddb8;
+            border-bottom: 1px solid #0f3460;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-count {
+            color: #aab;
+            font-weight: 400;
+            font-size: 0.75rem;
+        }
+
+        .event-scope-toggle {
+            display: flex;
+            padding: 6px 8px;
+            gap: 4px;
+            background: #16213e;
+            border-bottom: 1px solid #0f3460;
+            flex-shrink: 0;
+        }
+
+        .scope-btn {
+            flex: 1;
+            background: #0f3460;
+            color: #aab;
+            border: 1px solid #1a3a6e;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .scope-btn:hover { color: #eee; }
+
+        .scope-btn.active {
+            background: #7eddb8;
+            color: #1a1a2e;
+            border-color: #7eddb8;
+        }
+
+        .scope-area-info {
+            padding: 4px 8px;
+            background: #16213e;
+            border-bottom: 1px solid #0f3460;
+            font-size: 0.72rem;
+            color: #889;
+            display: none;
+        }
+
+        .scope-area-info.visible { display: block; }
+
+        .event-filter {
+            padding: 6px 8px;
+            background: #16213e;
+            border-bottom: 1px solid #0f3460;
+            flex-shrink: 0;
+        }
+
+        .event-filter select {
+            width: 100%;
+            background: #0f3460;
+            color: #eee;
+            border: 1px solid #1a3a6e;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: inherit;
+        }
+        .event-filter select:focus { outline: none; border-color: #7eddb8; }
+
+        .event-list {
+            flex: 1;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            background: #1a1a2e;
+        }
+
+        .event-list::-webkit-scrollbar { width: 4px; }
+        .event-list::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 2px; }
+
+        /* Timeline bar */
+        .timeline-bar {
+            background: #1c1a3e;
+            border-top: 2px solid #ff9800;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .timeline-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #ff9800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .timeline-time {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #7eddb8;
+            font-variant-numeric: tabular-nums;
+            min-width: 70px;
+        }
+
+        #timeline-slider {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #0f3460;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        #timeline-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ff9800;
+            cursor: pointer;
+            border: 2px solid #16213e;
+        }
+
+        .log-count {
+            font-size: 0.7rem;
+            color: #aab;
+            min-width: 90px;
+            text-align: right;
+        }
+
+        /* Event entries */
+        .history-event {
+            padding: 5px 8px;
+            border-bottom: 1px solid rgba(15, 52, 96, 0.4);
+            direction: ltr;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .history-event:hover { background: rgba(78, 204, 163, 0.08); }
+
+        .history-event.active {
+            background: rgba(255, 152, 0, 0.12);
+            border-left: 3px solid #ff9800;
+        }
+
+        .history-event-time {
+            font-size: 0.75rem;
+            color: #dde;
+            font-variant-numeric: tabular-nums;
+            min-width: 75px;
+            flex-shrink: 0;
+        }
+
+        .history-event-area {
+            font-size: 0.8rem;
+            flex: 1;
+            color: #eef;
+            font-weight: 600;
+        }
+
+        .history-event-cat {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .history-event-title {
+            font-size: 0.75rem;
+            color: #bbc;
+            flex-shrink: 0;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .no-data {
+            color: #889;
+            font-style: italic;
+            padding: 12px;
+        }
+
+        .leaflet-container { background: #e8e8e8; }
+
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(22, 33, 62, 0.9);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 3px 0;
+        }
+
+        .legend-swatch {
+            width: 16px;
+            height: 12px;
+            border-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="geodash-header"></div>
+
+    <div class="main-content">
+        <div class="map-side">
+            <div class="map-wrap">
+                <div class="map-label">Israel — Country View</div>
+                <div id="map-country"></div>
+            </div>
+        </div>
+
+        <div class="event-side">
+            <div class="event-header">
+                Alert Events
+                <span class="event-count" id="history-event-count"></span>
+            </div>
+            <div class="event-scope-toggle">
+                <button class="scope-btn active" id="scope-all" title="Show all alerts nationwide">All Alerts</button>
+                <button class="scope-btn" id="scope-local" title="Show alerts in your area and region">In Your Area</button>
+            </div>
+            <div class="scope-area-info" id="scope-area-info"></div>
+            <div class="event-filter">
+                <select id="area-filter">
+                    <option value="">All Areas</option>
+                </select>
+            </div>
+            <div class="event-list" id="history-event-list">
+                <div class="no-data">Loading alert history from database...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="timeline-bar">
+        <span class="timeline-label">PLAYBACK</span>
+        <span class="timeline-time" id="timeline-time">--:--</span>
+        <input type="range" id="timeline-slider" min="0" max="0" value="0" />
+        <span class="log-count" id="log-count">0 events</span>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <div id="geodash-footer"></div>
+
+    <script src="/static/components.js?v=14"></script>
+    <script src="/static/history.js?v=8"></script>
+    <script>renderHeader('history'); renderFooter();</script>
+</body>
+</html>

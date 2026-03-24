@@ -1,0 +1,5802 @@
+{
+  "אבו גוש": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "אבו סנאן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אבו קרינאת": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "אבו תלול": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "אבטליון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אביאל": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אביבים": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אביגדור": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אביגיל": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "אביחיל": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אביעזר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אבירים": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אביתר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אבן יהודה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "אבן מנחם": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אבן ספיר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "אבן שמואל": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אבני איתן": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אבני חפץ": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אבנת": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "אבשלום": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "אדורה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אדורים": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "אדמית": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אדרת": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אודים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "אודם": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אום אל פחם": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "אום אל קוטוף": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "אום בטין": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "אופקים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אור הגנוז": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אור הנר": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "אור יהודה": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "אור עקיבא": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אורה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "אורות": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אורטל": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אורים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אורנים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אורנית": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אושה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "אזור תעשייה אלון התבור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה אפק ולב הארץ": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אזור תעשייה אריאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אזור תעשייה באר טוביה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה בני יהודה": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אזור תעשייה בר-לב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה בראון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אזור תעשייה ברוש": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה ברקן": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אזור תעשייה גדרה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה דימונה": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אזור תעשייה הדרומי אשקלון": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "אזור תעשייה הר טוב - צרעה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה חבל מודיעין שוהם": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "אזור תעשייה יקנעם עילית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה כנות": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה כפר יונה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אזור תעשייה כרמיאל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה מבוא כרמל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה מבואות הגלבוע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה מישור אדומים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "אזור תעשייה מיתרים": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "אזור תעשייה נ.ע.מ": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אזור תעשייה ניר עציון": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "אזור תעשייה נשר - רמלה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "אזור תעשייה עד הלום": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אזור תעשייה עידן הנגב": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אזור תעשייה עמק חפר": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אזור תעשייה צ.ח.ר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה ציפורית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה צפוני אשקלון": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "אזור תעשייה קדמת גליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה קיסריה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אזור תעשייה קריית ביאליק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה קריית גת": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה רבדים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה רותם": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אזור תעשייה רמת דלתון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אזור תעשייה שחורת": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אזור תעשייה שחק": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "אזור תעשייה שער בנימין": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אזור תעשייה שער נעמן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אזור תעשייה תימורים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אזור תעשייה תרדיון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אחווה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אחוזם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אחוזת ברק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אחיה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אחיהוד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אחיטוב": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אחיסמך": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "אחיעזר": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "איבטין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "איבי הנחל": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "איזור תעשייה מילואות צפון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אייל": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "איילת השחר": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "איירפורט סיטי": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "אילון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אילות": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אילניה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אילת": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אירוס": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "איתמר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "איתן": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אכסאל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אל סייד": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "אל עזי": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אל עמארני, אל מסק": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "אל עריאן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "אל פורעה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אל רום": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אלומה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אלומות": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אלון": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אלון הגליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אלון מורה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אלון שבות": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "אלוני אבא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אלוני הבשן": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אלוני יצחק": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "אלונים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אלי עד": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אליאב": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אליכין": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אליפז ומכרות תמנע": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אליפלט": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אליקים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אלישיב": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אלישמע": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "אלמגור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אלמוג": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אלעד": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "אלעזר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "אלפי מנשה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אלקוש": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "אלקנה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אמונים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אמירים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אמנון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אמץ": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "אניעם": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אעבלין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אעירה השחר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אפיק": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "אפיקים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אפק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אפקה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "אפרת": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ארבל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ארגמן": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ארז": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "אריאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "ארסוף": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "אש קודש": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "אשבול": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אשבל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אשדוד - א,ב,ד,ה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אשדוד - איזור תעשייה צפוני": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אשדוד - ג,ו,ז": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אשדוד - ח,ט,י,יג,יד,טז": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אשדוד -יא,יב,טו,יז,מרינה,סיטי": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "אשדות יעקב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אשחר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אשכולות": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אשל הנשיא": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אשלים": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "אשקלון - דרום": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "אשקלון - צפון": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "אשרת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "אשתאול": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "אשתמוע": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "אתר דודאים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "אתר ההנצחה גולני": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "באקה אל גרבייה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "באר אורה": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "באר גנים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "באר טוביה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "באר יעקב": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "באר מילכה": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "באר שבע - דרום": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "באר שבע - מזרח": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "באר שבע - מערב": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "באר שבע - צפון": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "בארות יצחק": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בארותיים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בארי": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "בוסתן הגליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בועיינה-נוג'ידאת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בוקעתא": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "בורגתה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בחלק מהאזורים בארץ": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "בחן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "בטחה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "בי\"ס כרמים בנימינה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "ביצרון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "ביר אלמכסור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ביר הדאג'": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "ביריה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית אורן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית אל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "בית אלעזרי": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בית אלפא וחפציבה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "בית אריה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "בית ברל": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בית ג'אן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית גוברין": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בית גמליאל": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בית דגן": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "בית הברכה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "בית הגדי": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "בית הלוי": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בית הלל": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "בית העלמין החדש נהריה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "בית העלמין החדש עכו": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית העמק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית הערבה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בית השיטה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית זית": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "בית זרע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית חג\"י": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "בית חגלה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בית חורון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "בית חלקיה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בית חנן": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בית חנניה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בית חרות": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בית חשמונאי": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בית יהושע": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בית יוסף": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית ינאי": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בית יצחק - שער חפר": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בית ירח": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית יתיר": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "בית לחם הגלילית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית מאיר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בית נחמיה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בית ניר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בית נקופה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "בית סוהר צלמון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית סוהר קישון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית ספר שדה מירון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "בית עובד": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בית עוזיאל": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בית עזרא": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בית עלמין מורשה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בית עלמין תל רגב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית עריף": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בית צבי": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "בית קמה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "בית קשת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית רימון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית שאן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "בית שמש": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בית שערים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בית שקמה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ביתן אהרן": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "ביתר עילית": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "בלפוריה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בן זכאי": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בן עמי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "בן שמן": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בני אדם": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "בני ברק": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בני דקלים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "בני דרום": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "בני דרור": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בני יהודה וגבעת יואב": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "בני נצרים": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "בני עטרות": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בני עי''ש": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בני ציון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בני ראם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בניה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בנימינה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בסמת טבעון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בענה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בצרה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "בצת": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "בקוע": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "בקעות": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "בר גיורא": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "בר יוחאי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בר כוכבא": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ברוכין": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "ברור חיל": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ברוש": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "ברטעה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "ברכיה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ברעם": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ברקאי": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "ברקן": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "ברקת": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "בת הדר": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "בת חן": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בת חפר": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "בת ים": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "בת עין": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "בת שלמה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "בתי מלון ים המלח": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "בתרונות": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ג'דידה מכר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ג'וליס": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ג'לג'וליה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ג'סר א-זרקא": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "ג'ש - גוש חלב": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ג'ת": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "גאולי תימן": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גאולים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גאליה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "גבולות": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "גבים, מכללת ספיר": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "גבע בנימין": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "גבע כרמל": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "גבעון החדשה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "גבעות": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "גבעות בר": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "גבעות עדן": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גבעת אבני": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גבעת אלה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גבעת אסף": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גבעת ברנר": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גבעת הראל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גבעת הרואה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גבעת השלושה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גבעת וולפסון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גבעת וושינגטון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גבעת זאב": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גבעת חיים איחוד": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גבעת חיים מאוחד": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גבעת חן": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גבעת יערים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "גבעת ישעיהו": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גבעת כ''ח": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גבעת ניל''י": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "גבעת עדה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "גבעת עוז": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גבעת פורת יוסף": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גבעת שמואל": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גבעת שפירא": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גבעתי": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "גבעתיים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גברעם": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "גבת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גדות": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "גדעונה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "גדרה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גונן": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "גופנה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גורן": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "גורנות הגליל": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "גזית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גזר": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גיאה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "גיבתון": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גיזו": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גילת": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "גינוסר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גינתון": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גיתה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גיתית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גלאון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גלגל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "גלעד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גמזו": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גן הדרום": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גן השומרון": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גן חיים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גן יאשיה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גן יבנה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גן נר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "גן שורק": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "גן שלמה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "גן שמואל": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גנות": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "גנות הדר": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "גני הדר": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גני חוגה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "גני טל": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גני יוחנן": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "גני עם": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גני תקווה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "גניגר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "געש": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "געתון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "גפן": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גרופית": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "גשור": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "גשר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "גשר הזיו": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "גת": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "גת רימון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "דבוריה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דביר": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "דברת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דגניה א": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דגניה ב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דוב''ב": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "דולב": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "דור, נחשולים": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "דורות": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "דורות עילית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "דחי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דימונה": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "דיר אל-אסד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דיר חנא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דישון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "דליה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דלית אל כרמל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דלתון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "דמיידה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "דפנה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "דקל": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "האון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "הבונים": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "הגבעה הצהובה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "הגושרים": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "הדר עם": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "הוד השרון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "הודיה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "הודיות": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "הושעיה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "הזורעים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "החווה של אורי כהן": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "החווה של זוהר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "החווה של יאיא": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "החווה של מנחם": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "החווה של עשהאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "החותרים": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "היוגב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "היישוב היהודי חברון": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "הילה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "המעפיל": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "המרכז האקדמי רופין": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "הסוללים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "העוגן": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "הר אדר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "הר ברכה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "הר גילה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "הר חלוץ": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "הר עמשא": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "הראל": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "הרדוף": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "הרצליה - מערב": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "הרצליה - מרכז וגליל ים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "הררית יחד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ואדי אל חמאם": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ואדי אל נעם דרום": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "ורד יריחו": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ורדון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "זבדיאל": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "זוהר": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "זיקים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "זיתן": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "זכרון יעקב": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "זכריה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "זמר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "זמרת, שובה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "זנוח": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "זרועה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "זרזיר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "זרחיה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "זרעית": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "חבצלת השרון וצוקי ים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חג'אג'רה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חגור": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "חגלה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חד נס": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חדיד": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "חדרה - מזרח": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חדרה - מערב": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חדרה - מרכז": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חדרה - נווה חיים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חוות אביה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חוות אביחי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות אל נווה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חוות אלחי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות ארץ האיילים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "חוות אשכולות": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "חוות בניהו": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות גלעד": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות גנות": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות דרומא": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות הרועה העברי": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "חוות הרשאש": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות חנינא": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות טואמין": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות טליה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות יאיר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות יד השומר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות יויו": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות ינון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות מגדלים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות מגנזי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות מדבר חבר": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות מור ואברהם": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "חוות מלאכי אברהם": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות מלכיאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות מנחם": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות מעלה אהוביה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות מקנה יהודה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות מרום שמואל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות נווה צוף": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות נוף אב\"י": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות נחל שילה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות נחלת אבות": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "חוות נחלת צבי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות עדן": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "חוות עולם חסד": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות עמיאל": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חוות פריאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות צאן קדר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "חוות צרידה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות קשואלה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "חוות ראש תאנה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות שדה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות שוביאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות שחרית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוות תלם צפון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "חולדה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "חולון": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "חולית": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "חולתה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "חומש": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חוסן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חוסנייה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חוף אכזיב": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "חוף בצת": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "חוף זיקים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "חוף קליה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "חופית": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חוקוק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חורה": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "חורפיש": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "חורשים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "חזון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חיבת ציון": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חיננית": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חיפה - בת גלים ק.אליעזר": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "חיפה - כרמל, הדר ועיר תחתית": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "חיפה - מערב": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "חיפה - מפרץ": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חיפה - נווה שאנן ורמות כרמל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חיפה - קריית חיים ושמואל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חירן": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "חלץ": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "חמד": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "חמדיה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חמדת": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "חמדת ימים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חמרה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חמת גדר": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "חניאל": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חניון רעים אנדרטת הנובה": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "חניתה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "חנתון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חספין": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "חפץ חיים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "חצב": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "חצבה": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "חצור": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "חצור הגלילית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חצרים": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "חרב לאת": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "חרוצים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "חרות": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "חריש": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חרמש": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חרמש דרום": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "חרשה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "חרשים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "חשמונאים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "טבריה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טובא זנגריה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טורעאן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טייבה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "טייבה בגלבוע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טירה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "טירת יהודה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "טירת כרמל": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "טירת צבי": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "טל - אל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טל מנשה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "טל שחר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "טללים": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "טלמון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "טמרה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טמרה בגלבוע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "טנא עומרים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "טפחות": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יבוא דודי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "יבול": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "יבנאל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יבנה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "יגור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יגל": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "יד בנימין": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "יד השמונה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "יד חנה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "יד מרדכי": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "יד נתן": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "יד רמב''ם": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "יהוד מונוסון": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "יהל": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "יובלים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יודפת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יונתן": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "יושיביה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "יזרעאל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יחיעם": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יטבתה": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "ייט''ב": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "יכיני": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ינוב": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "ינוח ג'ת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ינון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "יסוד המעלה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "יסודות": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "יסעור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יעבץ, יעף": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "יעד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יערה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "יפיע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יפית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "יפעת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יפתח": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "יצהר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "יציץ": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "יקום": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "יקיר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "יקנעם המושבה והזורע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יקנעם עילית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "יראון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ירדנה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ירוחם": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "ירושלים - אזור תעשייה עטרות": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "ירושלים - דרום": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ירושלים - כפר עקב": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "ירושלים - מזרח": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ירושלים - מערב": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ירושלים - מרכז": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ירושלים - צפון": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ירחיב": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ירכא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ירקונה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "ישובי אומן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ישובי יעל": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "ישעי": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "ישרש": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "יתד": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "כאבול": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כאוכב אבו אלהיג'א": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כברי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "כדורי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כוכב השחר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "כוכב יאיר - צור יגאל": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "כוכב יעקב": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "כוכב מיכאל": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "כורזים ורד הגליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כחל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כינרת מושבה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כינרת קבוצה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כיסופים": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "כישור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כלנית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כמהין": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "כמון - כמאנה מזרחית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כנות": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כנף": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "כסייפה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "כסלון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כסרא סמיע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כעביה טבאש": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר אביב": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר אדומים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "כפר אוריה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר אחים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר אלדד": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "כפר ביאליק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר ביל''ו": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "כפר בלום": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "כפר בן נון": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "כפר ברא": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "כפר ברוך": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר גדעון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר גלים": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "כפר גליקסון": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "כפר גלעדי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "כפר גמילה מלכישוע": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "כפר דניאל": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "כפר האורנים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "כפר החורש": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר המכבי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר הנגיד": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "כפר הנוער קריית יערים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "כפר הנוקדים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "כפר הנשיא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר הס": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר הרא''ה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "כפר הרי''ף וצומת ראם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר ויתקין": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "כפר ורבורג": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר ורדים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר זוהרים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר זיתים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר ח'וואלד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר חב''ד": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "כפר חיטים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר חיים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "כפר חנניה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר חסידים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר חרוב": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "כפר טרומן": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "כפר יאסיף": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר ידידיה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "כפר יהושע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר יובל": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "כפר יונה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "כפר יחזקאל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר כמא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר כנא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר מונש": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "כפר מימון ותושיה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "כפר מל''ל": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר מנדא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר מנחם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר מסריק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר מצר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר מרדכי": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כפר נהר הירדן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר נוער בן שמן": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "כפר נטר": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר סאלד": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "כפר סבא": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר סילבר": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "כפר סירקין": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר עבודה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר עזה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "כפר עציון": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "כפר פינס": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "כפר קאסם": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "כפר קיש": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר קרע": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "כפר רופין": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "כפר רות": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "כפר שמאי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר שמואל": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "כפר שמריהו": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "כפר תבור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כפר תפוח": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "כפר תקווה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כרכום": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כרם ביבנה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כרם בן זמרה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "כרם מהר''ל": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "כרם רעים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "כרם שלום": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "כרמי יוסף": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כרמי צור": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "כרמי קטיף ואמציה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "כרמיאל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "כרמיה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "כרמים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "כרמית": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "כרמל": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "לב החולה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "לבון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "לביא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "לבנים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "להב": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "להבות הבשן": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "להבות חביבה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "להבים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "לוד": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "לוזית": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "לוחמי הגטאות": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "לוטם וחמדון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "לוטן": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "לטרון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "לימן": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "לכיש": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "לפיד": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "לפידות": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "לקיה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "מאור": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מאיר שפיה": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "מבוא ביתר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "מבוא דותן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מבוא חורון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מבוא חמה": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "מבוא מודיעים": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "מבואות יריחו": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מבועים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "מבטחים, עמיעוז, ישע": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "מבקיעים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "מבשרת ציון": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "מג'דל כרום": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מג'דל שמס": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "מגדים": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "מגדל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מגדל העמק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מגדל עוז": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מגדל תפן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מגדלים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מגל": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מגן": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "מגן שאול": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מגרון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מגשימים": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "מדרך עוז": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מדרשת בן גוריון": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "מודיעין - ישפרו סנטר": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "מודיעין - ליגד סנטר": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "מודיעין מכבים רעות": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מודיעין עילית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מולדת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מועאוויה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מוצא עילית": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "מוקיבלה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מורן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מורשת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מזור": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "מזכרת בתיה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מזרע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מזרעה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מחולה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מחניים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מחסיה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מטווח ניר עם": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "מטולה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מטע": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "מי עמי": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מייסר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מיני ישראל - נחשון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מיצד": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מיצר": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "מירב": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מירון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מישר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מיתר": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "מכון וינגייט": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "מכורה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מכינת אלישע": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מכמורת": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "מכמנים - כמאנה מערבית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מלאכי השלום": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מלונות ים המלח מרכז": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "מלכיה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מנוחה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מנוף": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מנות": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מנחמיה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מנחת מחניים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מנרה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מנשית זבדה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מסד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מסדה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מסוף אורנית": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "מסילות": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מסילת ציון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מסלול": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "מסעדה": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "מע'אר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מעברות": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "מעגלים, גבעולים, מלילות": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "מעגן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מעגן מיכאל": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "מעוז חיים": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מעון": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מעון צופיה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "מעונה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מעיין ברוך": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מעיין צבי": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "מעיליא": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מעלה אדומים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "מעלה אפרים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מעלה גלבוע": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מעלה גמלא": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "מעלה החמישה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "מעלה חבר": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מעלה לבונה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מעלה מכמש": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מעלה עירון": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מעלה עמוס": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מעלה צביה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מעלה רחבעם": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מעלות תרשיחא": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מענית, גבעת חביבה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מעש": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "מפלסים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "מצדה": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "מצובה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מצוקי דרגות": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "מצליח": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "מצפה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מצפה אבי''ב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מצפה אילן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מצפה דני": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מצפה זי\"ו": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מצפה חגית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מצפה יאיר": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מצפה יריחו": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "מצפה מדרג": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "מצפה נטופה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מצפה רמון": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "מצפה שלם": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "מצפור פצאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "מצר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מקווה ישראל": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "מרגליות": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מרום גולן": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "מרחב עם": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "מרחביה מושב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מרחביה קיבוץ": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מרחצאות עין גדי": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "מרכז אזורי דרום השרון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "מרכז אזורי מבואות חרמון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מרכז אזורי מגילות": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "מרכז אזורי מרום גליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מרכז אזורי משגב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מרכז אזורי רמת כורזים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מרכז חבר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "מרכז מיר''ב": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "מרכז שפירא": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מרעית": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "משאבי שדה": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "משגב דב": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "משגב עם": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "משהד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "משואה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "משואות יצחק": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "משכיות": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "משמר איילון": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "משמר דוד": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "משמר הירדן": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "משמר הנגב": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "משמר העמק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "משמר השבעה": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "משמר השרון": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "משמרות": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "משמרת": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "משען": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "מתחם בני דרום": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "מתחם גלילות": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "מתחם סקי גלבוע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "מתחם פי גלילות": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "מתחם שביל התפוזים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "מתן": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "מתת": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "מתתיהו": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נאות גולן": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "נאות הכיכר": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "נאות מרדכי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "נאות סמדר": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "נאות קדומים": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "נאעורה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נבטים": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "נבי שועייב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נגבה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "נגוהות": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "נהורה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נהלל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נהריה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "נוב": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "נוגה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "נוה איתן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "נווה": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "נווה אור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נווה אטי''ב": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "נווה אילן": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "נווה ארז": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נווה דניאל": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "נווה זוהר": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "נווה זיו": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "נווה חריף": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "נווה ים": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "נווה ימין": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "נווה ירק": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "נווה מבטח": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נווה מיכאל - רוגלית": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נווה צוף": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נווה שלום": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נועם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נוף איילון, שעלבים": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "נוף הגליל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נופי נחמיה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נופי פרת": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "נופים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נופית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נופך": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "נוקדים": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "נורדיה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "נורית": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "נחושה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נחל עוז": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "נחלה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נחליאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נחלים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "נחם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נחף": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נחשון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נחשונים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "נטועה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "נטור": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "נטע": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "נטעים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "נטף": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "נילי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ניצן": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ניצנה": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "ניצני עוז": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "ניצנים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ניר אליהו": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "ניר בנים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "ניר גלים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ניר דוד": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "ניר ח''ן": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "ניר יצחק": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "ניר ישראל": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ניר משה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ניר עוז": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "ניר עם": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "ניר עציון, ימין אורד": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "ניר עקיבא": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "ניר צבי": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "נירים": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "נירית": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "נמל קיסריה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "נמרוד": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "נס הרים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "נס עמים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נס ציונה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "נעורים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "נעלה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נעמה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נען": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "נערן": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נצר חזני": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נצר סרני": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "נצרת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נריה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נשר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נתיב הגדוד": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "נתיב הל''ה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "נתיב העשרה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "נתיב השיירה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "נתיבות": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "נתניה - מזרח": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "נתניה - מערב": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "סאג'ור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "סאסא": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "סביון": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "סגולה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "סואעד חמירה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "סולם": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "סוסיא": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "סוסיא הקדומה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "סופה": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "סכנין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "סלמה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "סלעית": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "סמר": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "סנדלה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "סנסנה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "סעד": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "סעווה": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "סער": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ספיר": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "ספסופה - כפר חושן": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "סתריה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "ע'ג'ר": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "עבדון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "עברון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עגור": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "עדי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עדי עד": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עדנים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "עוז וגאון": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "עוזה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "עוזייר, רומאנה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עולש": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "עומר": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "עופר": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "עופרים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עוצם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "עזוז": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "עזר": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "עזריאל": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "עזריה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "עזריקם": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "עטרת": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עידן": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "עיינות": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "עילבון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עילוט": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין איילה": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "עין אל אסד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין אל סהלה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "עין בוקק": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "עין גב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין גדי": {
+    "region_he": "ים המלח",
+    "region_en": "Dead Sea"
+  },
+  "עין דור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין הבשור": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "עין הוד": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "עין החורש": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "עין המפרץ": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין הנצי''ב": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "עין העמק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין השופט": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין השלושה": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "עין ורד": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "עין זיוון": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "עין חוד": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "עין חצבה": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "עין חרוד, תל יוסף": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין יהב": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "עין יעקב": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "עין כרמל": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "עין מאהל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עין נקובא": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "עין עירון": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "עין צורים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "עין קנייא": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "עין ראפה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "עין שמר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "עין שריד": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "עין תמר": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "עינות קדם": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עינת": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "עכו": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עכו - אזור תעשייה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עכו - רמות ים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עלומים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "עלי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עלי זהב - לשם": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עלמה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "עלמון": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "עמוקה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עמיחי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עמינדב": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "עמיעד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עמיקם": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עמיר": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "עמנואל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עמקה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ענב": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עספיא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עפולה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עפרה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עץ אפרים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "עצמון - שגב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "עראבה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ערב אל נעים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ערב אל עראמשה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ערד": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "ערוגות": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "ערערה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "ערערה בנגב": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "עשהאל": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "עשרת": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "עתלית": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "עתניאל": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "פארן": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "פארק אריאל שרון": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "פארק תעשיות מגדל עוז": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "פארק תעשיות פלמחים": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "פארק תעשייה ראם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "פדואל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "פדויים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "פדיה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "פוריה כפר עבודה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פוריה נווה עובד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פוריה עילית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פוריידיס": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "פורת": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "פטיש": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "פלך": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פלמחים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "פני קדם": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "פנימיית עין כרם": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "פסגות": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "פסוטה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "פעמי תש''ז": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "פצאל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "פקיעין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פקיעין החדשה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פרדס חנה כרכור": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "פרדסיה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "פרוד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "פרי גן": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "פתח תקווה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "פתחיה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "צאלים": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "צבעון": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "צובה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "צוחר, אוהד": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "צומת אלמוג": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "צומת הגוש": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "צופים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "צופית": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "צופר": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "צוקים": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "צור הדסה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "צור יצחק": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "צור משה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "צור נתן": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "צוריאל": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "צורית גילון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ציפורי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "צלפון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "צמח": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "צפריה": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "צפרירים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "צפת - נוף כנרת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "צפת - עיר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "צפת - עכברה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "צרופה": {
+    "region_he": "חיפה וכרמל",
+    "region_en": "Haifa & Carmel"
+  },
+  "צרעה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קבוצת גבע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קבוצת יבנה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קדומים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "קדימה צורן": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "קדיתא": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "קדם ערבה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "קדמה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קדמת צבי": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "קדר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "קדר דרום": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "קדרון": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קדרים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קדש ברנע": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "קוממיות": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קורנית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קטורה": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "קיבוץ דן": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "קיבוץ מגידו": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קידה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "קיסריה": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "קלחים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "קליה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "קלנסווה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "קלע אלון": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "קסר א-סר": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "קציר": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "קצרין": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "קצרין - אזור תעשייה": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "קריית אונו": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "קריית אתא": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קריית ביאליק": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קריית גת, כרמי גת": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קריית חינוך מרחבים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "קריית טבעון - בית זייד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קריית ים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קריית יערים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "קריית מוצקין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "קריית מלאכי": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "קריית נטפים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "קריית ענבים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "קריית עקרון": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "קריית שמונה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "קרית ארבע": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "קרני שומרון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "קשת": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "ראמה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ראס אל-עין": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ראס עלי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ראש הנקרה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ראש העין": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "ראש פינה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "ראש צורים": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "ראשון לציון - מזרח": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "ראשון לציון - מערב": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "רבבה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "רבדים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "רביבים": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "רביד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רגבה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רגבים": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "רהט": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "רווחה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "רוויה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "רוחמה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "רומת אל הייב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רועי": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "רותם": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "רחוב": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "רחובות": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "רחלים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "רטורנו - גבעת שמש": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "ריחאנייה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "ריחן": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "ריינה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רימונים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "רינתיה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "רכסים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רם און": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "רמות": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "רמות השבים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "רמות מאיר": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "רמות מנשה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רמות נפתלי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "רמלה": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "רמת גן - מזרח": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "רמת גן - מערב": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "רמת דוד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רמת הכובש": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "רמת השופט": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רמת השרון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "רמת טראמפ": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "רמת יוחנן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רמת ישי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רמת מגרון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "רמת מגשימים": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "רמת צבי": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רמת רזיאל": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "רנן": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "רעים": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "רעננה": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "רקפת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "רשפון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "רשפים, שלוחות, שלפים": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "רתמים": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "שאנטי במדבר": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "שאר ישוב": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "שבות רחל": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שבי דרום": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "שבי ציון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שבי שומרון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שגב שלום": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "שדה אילן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שדה אליהו": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "שדה אליעזר": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "שדה אפרים": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שדה בועז": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "שדה בוקר": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "שדה בר": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "שדה דוד": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שדה ורבורג": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "שדה יואב": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שדה יעקב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שדה יצחק": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "שדה משה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שדה נחום": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "שדה נחמיה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "שדה ניצן": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "שדה עוזיהו": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "שדה צבי": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שדות ים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "שדות מיכה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שדי אברהם": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "שדי חמד": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "שדי תרומות": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "שדמה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שדמות דבורה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שדמות מחולה": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "שדרות, איבים": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "שואבה": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "שובל": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שוהם": {
+    "region_he": "פתח תקווה",
+    "region_en": "Petah Tikva"
+  },
+  "שומרה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "שומריה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שוקדה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שורש": {
+    "region_he": "ירושלים",
+    "region_en": "Jerusalem"
+  },
+  "שורשים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שושנת העמקים": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "שזור": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שחר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שחרות": {
+    "region_he": "נגב",
+    "region_en": "Negev"
+  },
+  "שיבולים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שיבלי אום אלג'נם": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שיטים": {
+    "region_he": "ערבה",
+    "region_en": "Arava"
+  },
+  "שייח' דנון": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שילה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שילת": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שכניה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שלווה": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שלומי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "שלומית": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "שלומציון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שמיר": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "שמעה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "שמרת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שמשית": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שני ליבנה": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "שניר": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "שעב": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שעל": {
+    "region_he": "גולן",
+    "region_en": "Golan"
+  },
+  "שער אפרים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "שער הגולן": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שער העמקים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שער מנשה": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "שערי תקווה": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "שפיים": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "שפיר": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שפר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שפרעם": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שקד": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "שקף": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שרונה": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שריגים - לי-און": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "שריד": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "שרשרת": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "שתולה": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "שתולים": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "תארבין": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תאשור": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תדהר": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תובל": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "תומר": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "תחנת רכבת כפר ברוך": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "תחנת רכבת כפר יהושוע": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "תחנת רכבת קריית מלאכי - יואב": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "תחנת רכבת ראש העין": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "תימורים": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "תירוש": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "תל אביב - דרום העיר ויפו": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "תל אביב - מזרח": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "תל אביב - מרכז העיר": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "תל אביב - עבר הירקון": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "תל חי": {
+    "region_he": "גליל עליון",
+    "region_en": "Upper Galilee"
+  },
+  "תל יצחק": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "תל מונד": {
+    "region_he": "שרון",
+    "region_en": "Sharon"
+  },
+  "תל עדשים": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "תל ערד": {
+    "region_he": "אחר",
+    "region_en": "Other"
+  },
+  "תל ציון": {
+    "region_he": "שומרון",
+    "region_en": "Samaria"
+  },
+  "תל קציר": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "תל שבע": {
+    "region_he": "באר שבע",
+    "region_en": "Beer Sheva"
+  },
+  "תל תאומים": {
+    "region_he": "עמקים",
+    "region_en": "Valleys"
+  },
+  "תלם": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "תלמי אליהו": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "תלמי אלעזר": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "תלמי ביל''ו": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תלמי יוסף": {
+    "region_he": "נגב מערבי",
+    "region_en": "Western Negev"
+  },
+  "תלמי יחיאל": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "תלמי יפה": {
+    "region_he": "אשקלון",
+    "region_en": "Ashkelon Coast"
+  },
+  "תלמים": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תמרת": {
+    "region_he": "גליל תחתון",
+    "region_en": "Lower Galilee"
+  },
+  "תנובות": {
+    "region_he": "מנשה",
+    "region_en": "Menashe"
+  },
+  "תעוז": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  },
+  "תעשיון צריפין": {
+    "region_he": "דן",
+    "region_en": "Dan (Tel Aviv Metro)"
+  },
+  "תפרח": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תקומה": {
+    "region_he": "לכיש",
+    "region_en": "Lakhish"
+  },
+  "תקוע": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "תקוע ד' וה'": {
+    "region_he": "יהודה",
+    "region_en": "Judea"
+  },
+  "תרום": {
+    "region_he": "שפלת יהודה",
+    "region_en": "Judean Lowlands"
+  }
+}

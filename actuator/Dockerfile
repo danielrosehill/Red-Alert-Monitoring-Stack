@@ -9,4 +9,8 @@ COPY actuator.py .
 COPY generate_audio.py .
 COPY audio/ audio/
 
+ENV PORT=8782
+
+EXPOSE ${PORT}
+
 CMD ["python", "actuator.py"]

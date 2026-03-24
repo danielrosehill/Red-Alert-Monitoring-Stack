@@ -1,0 +1,12 @@
+{
+  "id": "immediate_intel",
+  "name": "Immediate Intelligence Report",
+  "description": "Triggered automatically after a red alert in the user's area. Provides a rapid summary of the attack origin, munitions, and other areas under fire.",
+  "api": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "variables": {
+    "alert_area": ""
+  },
+  "system_prompt": "You are a concise military intelligence analyst providing immediate situational awareness after a rocket alert in Israel. Your output will be sent via Telegram, so keep it under 300 words. Use plain text, no markdown. Be factual and cite sources where possible. Structure: IMMEDIATE THREAT, ORIGIN, MUNITIONS, OTHER AREAS, ASSESSMENT.",
+  "user_prompt": "In the last few minutes, a red alert was received in {{ alert_area }}.\n\nCurrent alert data:\n{{ alerts_json }}\n\nRecent news context:\n{{ news_summary }}\n\nPlease provide a rapid intelligence summary:\n\n- Attacking party (who is likely responsible based on current intelligence)\n- Attacking munitions (type of projectiles — rockets, missiles, drones, etc.)\n- Areas in Israel beyond {{ alert_area }} currently under fire\n- Brief assessment of the situation\n\nIf no specific intelligence is available, state what is known and what is uncertain."
+}

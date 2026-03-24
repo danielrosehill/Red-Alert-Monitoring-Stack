@@ -1,0 +1,13 @@
+[project]
+name = "red-alert-telegram-bot"
+version = "1.0.0"
+description = "Telegram bot for Israel Homefront Command (Pikud HaOref) rocket alert notifications"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+tts = [
+    # ffmpeg must be installed on the system for voice note encoding
+]

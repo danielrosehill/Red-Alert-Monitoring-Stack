@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Red Alert Geodash — Tablet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100%;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Maps 2x2 Grid ──────────────────────────────────── */
+        .maps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .map-cell {
+            position: relative;
+            border: 1px solid #0f3460;
+            min-height: 0;
+        }
+
+        .map-label {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 1000;
+            background: rgba(22, 33, 62, 0.92);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #eef;
+            pointer-events: none;
+        }
+
+        .map-cell > div:last-child {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ── Alert Flash Bar ────────────────────────────────── */
+        .alert-flash-bar {
+            background: #16213e;
+            border-top: 2px solid #0f3460;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+            min-height: 44px;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .alert-flash-bar.alert-active {
+            background: #e94560;
+            border-top-color: #ff2244;
+            animation: flashbar-red 1s infinite;
+        }
+
+        .alert-flash-bar.warning-active {
+            background: #ff9800;
+            border-top-color: #ffb300;
+            animation: flashbar-orange 1.2s infinite;
+        }
+
+        .alert-flash-bar.allclear-active {
+            background: #1a3a2a;
+            border-top-color: #4ecca3;
+        }
+
+        .flashbar-label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #7eddb8;
+            flex-shrink: 0;
+        }
+
+        .alert-flash-bar.alert-active .flashbar-label,
+        .alert-flash-bar.warning-active .flashbar-label {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .alert-flash-bar.allclear-active .flashbar-label {
+            color: #4ecca3;
+        }
+
+        .flashbar-text {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #889;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .alert-flash-bar.alert-active .flashbar-text,
+        .alert-flash-bar.warning-active .flashbar-text {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .alert-flash-bar.allclear-active .flashbar-text {
+            color: #7eddb8;
+        }
+
+        .flashbar-count {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #fff;
+            background: rgba(0,0,0,0.3);
+            padding: 3px 10px;
+            border-radius: 12px;
+            flex-shrink: 0;
+            display: none;
+            white-space: nowrap;
+        }
+
+        .alert-flash-bar.alert-active .flashbar-count,
+        .alert-flash-bar.warning-active .flashbar-count {
+            display: inline-block;
+        }
+
+        @keyframes flashbar-red {
+            0%, 100% { background: #e94560; }
+            50% { background: #c0243a; }
+        }
+
+        @keyframes flashbar-orange {
+            0%, 100% { background: #ff9800; }
+            50% { background: #e07800; }
+        }
+
+        /* ── Monitoring Bar ─────────────────────────────────── */
+        .monitoring-bar {
+            background: #16213e;
+            border-top: 1px solid #0f3460;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .monitoring-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #7eddb8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .monitoring-area-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #eef;
+        }
+
+        .monitoring-status {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #7eddb8;
+        }
+
+        .leaflet-container { background: #e8e8e8; }
+
+        .legend {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(22, 33, 62, 0.92);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 3px 0;
+            color: #dde;
+        }
+        .legend-swatch {
+            width: 14px;
+            height: 10px;
+            border-radius: 2px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* ── Dashboard Status Bar ───────────────────────────── */
+        .dashboard-status-bar {
+            display: none;
+        }
+
+        /* ── Local alert overlay ─────────────────────────────── */
+        #local-alert-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+            justify-content: center;
+            align-items: center;
+        }
+        #local-alert-overlay.active-red,
+        #local-alert-overlay.active-warning,
+        #local-alert-overlay.active-allclear {
+            display: flex;
+            pointer-events: auto;
+        }
+        #local-alert-overlay.active-red {
+            animation: flash-red 0.5s infinite;
+        }
+        #local-alert-overlay.active-warning {
+            animation: flash-orange 0.8s infinite;
+        }
+        #local-alert-overlay.active-allclear {
+            background: rgba(78, 204, 163, 0.15);
+        }
+        #local-alert-text {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            padding: 24px 48px;
+            border-radius: 16px;
+            text-shadow: 0 0 20px rgba(0,0,0,0.8);
+            letter-spacing: 2px;
+        }
+        #local-alert-overlay.active-red #local-alert-text {
+            color: #fff;
+            background: rgba(233, 69, 96, 0.85);
+            box-shadow: 0 0 60px rgba(233, 69, 96, 0.6);
+        }
+        #local-alert-overlay.active-warning #local-alert-text {
+            color: #fff;
+            background: rgba(255, 152, 0, 0.85);
+            box-shadow: 0 0 60px rgba(255, 152, 0, 0.6);
+        }
+        #local-alert-overlay.active-allclear #local-alert-text {
+            color: #fff;
+            background: rgba(78, 204, 163, 0.85);
+            box-shadow: 0 0 60px rgba(78, 204, 163, 0.6);
+        }
+
+        #local-alert-dismiss {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        #local-alert-overlay.active-red #local-alert-dismiss,
+        #local-alert-overlay.active-warning #local-alert-dismiss,
+        #local-alert-overlay.active-allclear #local-alert-dismiss {
+            display: flex;
+        }
+
+        @keyframes flash-red {
+            0%, 100% { background: rgba(233, 69, 96, 0.15); }
+            50% { background: rgba(233, 69, 96, 0.35); }
+        }
+        @keyframes flash-orange {
+            0%, 100% { background: rgba(255, 152, 0, 0.1); }
+            50% { background: rgba(255, 152, 0, 0.25); }
+        }
+    </style>
+</head>
+<body>
+    <div id="geodash-header"></div>
+
+    <div class="maps-grid">
+        <div class="map-cell">
+            <div class="map-label">Israel — Country View</div>
+            <div id="map-country"></div>
+        </div>
+        <div class="map-cell">
+            <div class="map-label">Jerusalem & Surroundings</div>
+            <div id="map-jerusalem-wide"></div>
+        </div>
+        <div class="map-cell" style="grid-column: 1 / -1;">
+            <div class="map-label">Jerusalem — City Detail</div>
+            <div id="map-jerusalem"></div>
+        </div>
+    </div>
+
+    <!-- Alert flash bar -->
+    <div class="alert-flash-bar" id="alert-flash-bar">
+        <span class="flashbar-label" id="flashbar-label">LIVE</span>
+        <span class="flashbar-text" id="flashbar-text">No active alerts</span>
+        <span class="flashbar-count" id="flashbar-count"></span>
+    </div>
+
+    <!-- Monitoring bar -->
+    <div class="monitoring-bar">
+        <span class="monitoring-label">Monitoring:</span>
+        <span class="monitoring-area-name" id="monitoring-area-name">Jerusalem — South</span>
+        <span class="monitoring-status" id="monitoring-status">All clear</span>
+    </div>
+
+    <!-- Hidden elements required by dashboard.js -->
+    <span id="alert-count" style="display:none"></span>
+    <span id="payload-indicator" style="display:none"><span id="payload-dot"></span></span>
+    <div id="status-indicator" style="display:none"></div>
+    <button id="refresh-btn" style="display:none"></button>
+    <div id="area-selector" style="display:none"></div>
+    <div id="alert-feed" style="display:none"></div>
+    <div id="test-alert-group" style="display:none">
+        <button id="test-red-btn"></button>
+        <button id="test-warning-btn"></button>
+        <button id="test-allclear-btn"></button>
+        <button id="test-clear-btn"></button>
+    </div>
+
+    <!-- Full-screen alert overlay -->
+    <div id="local-alert-overlay">
+        <div id="local-alert-text"></div>
+        <button id="local-alert-dismiss" title="Dismiss alert" aria-label="Dismiss alert">✕</button>
+    </div>
+
+    <div id="geodash-footer"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/components.js?v=14"></script>
+    <script>renderHeader('tablet'); renderFooter();</script>
+    <script src="/static/dashboard.js?v=9"></script>
+</body>
+</html>

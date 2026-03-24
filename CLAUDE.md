@@ -2,22 +2,57 @@
 
 ## What This Is
 
-A microservices stack for monitoring Israel's Homefront Command (Pikud HaOref) rocket alerts with real-time visualization, push notifications, AI situation reports, and home automation integration (smart lights + whole-house TTS audio).
+A monorepo microservices stack for monitoring Israel's Homefront Command (Pikud HaOref) rocket alerts with real-time visualization, push notifications, AI situation reports, and home automation integration (smart lights + whole-house TTS audio).
 
 **Important**: The Oref Alert Proxy must run from an Israeli IP address (geo-restricted API).
 
 ## Architecture
 
-- **Oref Alert Proxy** (:8764) — Polls Pikud HaOref every 3s, single source of truth
-- **Geodash** (:8083) — Real-time map dashboard with 1,450 polygon overlays + InfluxDB
-- **Pushover** — Volumetric threshold notifications (50, 100, 200+ areas)
-- **Telegram Bot** — On-demand `/sitrep` AI briefings via OpenRouter
-- **Actuator** (`actuator/`) — TTS via Snapcast + smart light control via MQTT
-- **RSS Cache** (:8785) — News feed poller for AI context
-- **MCP Server** (:8786) — Streamable HTTP MCP exposing alert tools for AI agents
-- **Management UI** (:8888) — Stack health dashboard
-- **InfluxDB** (:8086) — Time-series storage
-- **Mosquitto** (:1883) — MQTT broker (optional bundled, or bring your own)
+All services build from source in this monorepo. No external Docker Hub images required.
+
+- **Oref Alert Proxy** (`oref-proxy/`) — Polls Pikud HaOref every 3s, single source of truth
+- **Geodash** (`geodash/`) — Real-time map dashboard with 1,450 polygon overlays + InfluxDB
+- **Pushover** (`pushover/`) — Volumetric threshold notifications (50, 100, 200+ areas)
+- **Telegram Bot** (`telegram-bot/`) — On-demand `/sitrep` AI briefings via OpenRouter
+- **Actuator** (`actuator/`) — TTS via Snapcast + smart light control via MQTT + HTTP API for test alerts
+- **Prompt Runner** (`prompt-runner/`) — Templated AI prompt execution (immediate intel + daily SITREP)
+- **RSS Cache** (`rss-cache/`) — News feed poller for AI context
+- **MCP Server** (`mcp-server/`) — Streamable HTTP MCP exposing alert tools for AI agents
+- **Management UI** (`management-ui/`) — Stack health dashboard + test alert controls
+- **InfluxDB** — Time-series storage (external image)
+- **Mosquitto** — MQTT broker (optional bundled, or bring your own)
+
+### Data Flow
+
+```
+Pikud HaOref API (Israeli IP only)
+       |
+Oref Alert Proxy (:8764)
+       |----> Geodash (:8083) ---> InfluxDB (:8086)
+       |----> Pushover (push notifications)
+       |----> Telegram Bot (:8781)
+       |----> Actuator (:8782) ---> MQTT Lights + Snapcast TTS
+       |         |----> Prompt Runner (:8787) ---> Telegram Bot
+       |----> MCP Server (:8786)
+       |----> Management UI (:8888)
+
+RSS Cache (:8785) ----> Geodash, MCP Server, Prompt Runner
+```
+
+## Service Ports (all env-configurable)
+
+| Service | Default Port | Env Variable |
+|---------|-------------|--------------|
+| Oref Alert Proxy | 8764 | `OREF_PROXY_PORT` |
+| Geodash | 8083 | `GEODASH_PORT` |
+| InfluxDB | 8086 | `INFLUXDB_PORT` |
+| Telegram Bot | 8781 | `TELEGRAM_BOT_PORT` |
+| Actuator | 8782 | `ACTUATOR_PORT` |
+| RSS Cache | 8785 | `RSS_CACHE_PORT` |
+| MCP Server | 8786 | `MCP_SERVER_PORT` |
+| Prompt Runner | 8787 | `PROMPT_RUNNER_PORT` |
+| Management UI | 8888 | `MANAGEMENT_UI_PORT` |
+| Mosquitto MQTT | 1883 | `MQTT_EXTERNAL_PORT` |
 
 ## Docker Compose Variants
 
@@ -28,6 +63,11 @@ All compose files live in `compose/`. Run from the repo root with `-f`:
 | `compose/default.yml` | External MQTT broker on your LAN |
 | `compose/with-broker.yml` | Self-contained with bundled Mosquitto |
 | `compose/ha.yml` | Home Assistant users — no actuator, HA handles automations directly |
+
+```bash
+cp .env.example .env   # fill in your values
+docker compose -f compose/default.yml up -d --build
+```
 
 ## Customization via Override
 
@@ -41,7 +81,6 @@ docker compose -f compose/default.yml -f compose/override.yml up -d
 Use it for:
 - Adding services (Cloudflare Tunnel, Grafana, etc.)
 - Overriding environment variables per-service
-- Pinning image versions
 - Setting resource limits
 - Adding extra volumes or ports
 
@@ -65,13 +104,14 @@ Use these slash commands to walk through interactive setup:
 - `.env` — Your actual config (gitignored)
 - `compose/` — All Docker Compose files (default, with-broker, ha, override)
 - `mosquitto/mosquitto.conf` — MQTT broker config (used by bundled broker variant)
-- `actuator/actuator.py` — Automation logic (lights + TTS), editable directly
+- `actuator/actuator.py` — Automation logic (lights + TTS + test alerts)
+- `prompt-runner/templates/` — AI prompt templates (immediate_intel, daily_sitrep)
 
 ## Environment Variables
 
 All config is in `.env`. The `ALERT_AREA` variable is passed to every service:
 
-- `ALERT_AREA` — Your area in Hebrew (e.g., `ירושלים - דרום`). Used by actuator for shelter mode, and available to all services for local context.
+- `ALERT_AREA` — Your area in Hebrew (e.g., `ירושלים - דרום`). Used by actuator for shelter mode, prompt runner for immediate intel, and all services for local context.
 - `MQTT_BROKER` — Broker IP or `mosquitto` (bundled)
 - `PUSHOVER_API_TOKEN` / `PUSHOVER_USER_KEY` — For push notifications
 - `TELEGRAM_BOT_TOKEN` — For Telegram bot
@@ -79,13 +119,25 @@ All config is in `.env`. The `ALERT_AREA` variable is passed to every service:
 Key optional variables:
 - `MQTT_LIGHT_TOPICS` — Comma-separated MQTT topics for light control
 - `SNAPCAST_FIFO` — Path to Snapcast FIFO pipe (default: `/tmp/snapfifo`)
-- `OPENROUTER_API_KEY` — For AI situation reports
+- `OPENROUTER_API_KEY` — For AI situation reports and prompt runner
+- `GROQ_API_KEY` — For fast immediate intelligence (prompt runner)
 - `OPENAI_API_KEY` — For TTS audio generation
+
+## Prompt Runner
+
+The prompt runner executes templated AI prompts and delivers output to the Telegram bot.
+
+**Templates** (in `prompt-runner/templates/`):
+- `immediate_intel` — Auto-triggered by actuator on local red alert. Uses Groq for speed. Provides rapid intel on attacking party, munitions, and other areas under fire.
+- `daily_sitrep` — Comprehensive daily SITREP modeled on ISW/Critical Threats style. Can be triggered manually or on a schedule.
+
+**API**:
+- `GET /api/templates` — List available templates
+- `POST /api/run` — Execute a template: `{"template": "daily_sitrep", "deliver_to": ["telegram"]}`
 
 ## Working on This Repo
 
-- All services with source code: `actuator/`, `rss-cache/`, `mcp-server/`, `management-ui/`
-- External services are pulled as Docker images from `danielrosehill/red-alert-*`
+- All services have source code in this monorepo — no external Docker Hub image dependencies
 - Network: all services share a `redalert` bridge network
 - Never commit `.env` or `compose/override.yml` — they contain local config
 

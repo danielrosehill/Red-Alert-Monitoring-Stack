@@ -1,0 +1,10 @@
+[project]
+name = "oref-alert-proxy"
+version = "1.0.0"
+description = "Local relay proxy for Israel Homefront Command (Pikud HaOref) alert data"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "httpx>=0.27",
+    "uvicorn[standard]>=0.34",
+]

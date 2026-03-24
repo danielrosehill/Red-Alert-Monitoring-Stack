@@ -7,10 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN mkdir -p /app/data
-
-ENV PORT=8786
+ENV PORT=8787
 
 EXPOSE ${PORT}
 
-CMD ["python", "server.py"]
+CMD uvicorn app:app --host 0.0.0.0 --port ${PORT}

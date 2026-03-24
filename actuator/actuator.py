@@ -15,9 +15,14 @@ import logging
 import os
 import time
 import wave
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import httpx
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 try:
     import paho.mqtt.client as mqtt
@@ -57,7 +62,20 @@ TTS_COOLDOWN = int(os.environ.get("TTS_COOLDOWN", "60"))
 
 LOCAL_AREA = os.environ.get("ALERT_AREA", "") or os.environ.get("LOCAL_AREA", "")
 
+HTTP_PORT = int(os.environ.get("PORT", "8782"))
+PROMPT_RUNNER_URL = os.environ.get("PROMPT_RUNNER_URL", "http://prompt-runner:8787")
+
 AUDIO_DIR = Path(__file__).parent / "audio"
+
+
+# ── Test Alert Model ────────────────────────────────────────────────────────
+
+
+class TestAlertRequest(BaseModel):
+    """Request body for triggering a test alert."""
+    alert_type: str = "red_alert"  # red_alert, early_warning, all_clear, threshold_100
+    area: str = ""  # optional area name override
+
 
 # Alert categories
 ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
@@ -256,6 +274,8 @@ class AlertMonitor:
                 self.tts.play("red_alert")
                 self.last_active_time = time.time()
                 self.all_clear_sent = False
+                # Trigger prompt runner for immediate intelligence
+                asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
             elif local_state == "warning":
                 self.lights.set_color("orange")
                 self.tts.play("early_warning")
@@ -314,12 +334,25 @@ class AlertMonitor:
             self.last_active_time = 0
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+# ── Shared state (set during lifespan) ───────────────────────────────────────
+
+_lights: LightController | None = None
+_tts: TTSPlayer | None = None
+_monitor: AlertMonitor | None = None
+_http_client: httpx.AsyncClient | None = None
 
 
-async def main():
-    lights = LightController()
-    tts = TTSPlayer()
+# ── FastAPI app ─────────────────────────────────────────────────────────────
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global _lights, _tts, _monitor, _http_client
+
+    _lights = LightController()
+    _tts = TTSPlayer()
+    _http_client = httpx.AsyncClient()
+    _monitor = AlertMonitor(_http_client, _lights, _tts)
 
     log.info("Red Alert Actuator starting...")
     log.info("Proxy: %s", OREF_PROXY_URL)
@@ -327,19 +360,112 @@ async def main():
     log.info("MQTT lights: %d topics", len(MQTT_LIGHT_TOPICS))
     log.info("TTS: %s (cooldown: %ds)", "enabled" if TTS_ENABLED else "disabled", TTS_COOLDOWN)
 
-    async with httpx.AsyncClient() as http_client:
-        monitor = AlertMonitor(http_client, lights, tts)
+    # Start polling loop as background task
+    poll_task = asyncio.create_task(_poll_loop())
 
-        try:
-            while True:
-                await monitor.poll()
-                await asyncio.sleep(POLL_INTERVAL)
-        except (asyncio.CancelledError, KeyboardInterrupt):
-            log.info("Shutting down...")
-        finally:
-            lights.close()
-            log.info("Actuator stopped")
+    yield
+
+    poll_task.cancel()
+    try:
+        await poll_task
+    except asyncio.CancelledError:
+        pass
+    _lights.close()
+    await _http_client.aclose()
+    log.info("Actuator stopped")
+
+
+async def _poll_loop():
+    """Background polling loop for alert data."""
+    while True:
+        await _monitor.poll()
+        await asyncio.sleep(POLL_INTERVAL)
+
+
+app = FastAPI(title="Red Alert Actuator", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "ok",
+        "service": "actuator",
+        "local_area": LOCAL_AREA,
+        "mqtt_lights": len(MQTT_LIGHT_TOPICS),
+        "tts_enabled": TTS_ENABLED,
+        "current_state": _monitor.prev_local_state if _monitor else "unknown",
+    }
+
+
+@app.post("/api/test-alert")
+async def test_alert(req: TestAlertRequest):
+    """Trigger a test alert — fires lights and TTS without affecting state tracking."""
+    if not _lights or not _tts:
+        return {"error": "Actuator not initialized"}
+
+    alert_type = req.alert_type.lower()
+
+    if alert_type in ("red_alert", "red"):
+        _lights.current_color = ""  # force change
+        _lights.set_color("red")
+        _tts.last_played.pop("red_alert", None)  # bypass cooldown for test
+        _tts.play("red_alert")
+        # Trigger prompt runner for immediate intel if configured
+        asyncio.create_task(_trigger_prompt_runner(req.area or LOCAL_AREA))
+        return {"status": "ok", "triggered": "red_alert", "lights": "red", "tts": "red_alert"}
+
+    elif alert_type in ("early_warning", "warning"):
+        _lights.current_color = ""
+        _lights.set_color("orange")
+        _tts.last_played.pop("early_warning", None)
+        _tts.play("early_warning")
+        return {"status": "ok", "triggered": "early_warning", "lights": "orange", "tts": "early_warning"}
+
+    elif alert_type in ("all_clear", "clear"):
+        _lights.current_color = ""
+        _lights.set_color("green")
+        _tts.last_played.pop("all_clear", None)
+        _tts.play("all_clear")
+        return {"status": "ok", "triggered": "all_clear", "lights": "green", "tts": "all_clear"}
+
+    elif alert_type.startswith("threshold"):
+        _lights.current_color = ""
+        _lights.set_color("red")
+        _tts.last_played.pop(alert_type, None)
+        _tts.play(alert_type)
+        return {"status": "ok", "triggered": alert_type, "lights": "red", "tts": alert_type}
+
+    elif alert_type == "lights_off":
+        _lights.current_color = ""
+        _lights.set_color("off")
+        return {"status": "ok", "triggered": "lights_off", "lights": "off"}
+
+    return {"error": f"Unknown alert type: {alert_type}"}
+
+
+async def _trigger_prompt_runner(area: str):
+    """Fire-and-forget: ask prompt runner for immediate intel on the alerted area."""
+    try:
+        async with httpx.AsyncClient() as client:
+            await client.post(
+                f"{PROMPT_RUNNER_URL}/api/run",
+                json={"template": "immediate_intel", "variables": {"alert_area": area}},
+                timeout=5,
+            )
+            log.info("Prompt runner triggered for area: %s", area)
+    except Exception as e:
+        log.debug("Prompt runner not available: %s", e)
+
+
+# ── Main ─────────────────────────────────────────────────────────────────────
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    uvicorn.run(app, host="0.0.0.0", port=HTTP_PORT)

@@ -1,0 +1,12 @@
+{
+  "id": "daily_sitrep",
+  "name": "Daily Situation Report",
+  "description": "Comprehensive daily SITREP modeled on ISW/Critical Threats reporting style. Covers coalition activities, Iranian operations, strikes, the home front, and conflict trajectory. Can be sent to Telegram or emailed.",
+  "api": "openrouter",
+  "model": "google/gemini-2.0-flash-001",
+  "variables": {
+    "alert_area": ""
+  },
+  "system_prompt": "You are an intelligence analyst writing a formal situation report (SITREP) for The Commonlight Initiative (TCI). Model your writing on ISW/Critical Threats Project reports. Your tone is analytical, authoritative, and precise — you assess, evaluate, and draw inferences from available evidence.\n\nSTYLE:\n- Lead each section with a bold declarative analytical sentence — an assessed judgment, not a headline\n- Follow with detailed context: significance, background, pattern comparison, implications\n- Use precise military and geopolitical terminology\n- Attribute all claims to sources\n- Use standardized probability language: Almost Certain (95-99%), Very Likely (80-95%), Likely (55-80%), Roughly Even Chance (45-55%), Unlikely (20-45%)\n- Separate reporting (what happened) from analysis (what it means)\n\nFORMAT for Telegram:\n- Use plain text (no markdown, no HTML)\n- Use CAPS for section headers\n- Use dashes for bullet points\n- Keep total length under 2000 words",
+  "user_prompt": "Generate a daily SITREP covering the last 24 hours for an audience based in {{ alert_area }}, Israel.\n\nCurrent alerts:\n{{ alerts_json }}\n\nRecent alert history:\n{{ history_json }}\n\nNews context:\n{{ news_summary }}\n\nSECTIONS TO COVER:\n\n1. KEY TAKEAWAYS (4-6 bullet points)\n2. COALITION ACTIVITIES — Combined force operations, airstrikes\n3. IRANIAN ACTIVITIES TARGETING ISRAEL — Launch origins, munitions, intent\n4. STRIKES — Munition types, platforms, targets, interception rates\n5. THE HOME FRONT — Pikud HaOref updates, shelter status, restrictions for {{ alert_area }}\n6. NORTHERN FRONT — Hizballah activity, Lebanon border\n7. MILITARY DETAILS — Weapons systems, force posture\n8. CONFLICT TRAJECTORY — Escalation indicators, strategic dynamics\n9. WORLD REACTION — Diplomatic statements, UNSC activity\n10. OUTLOOK: NEXT 24 HOURS — Forecast, indicators to watch\n\nIf no significant activity in a section, state: 'No significant activity to report.'\n\nEnd with timing for next SITREP."
+}

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News — Red Alert Geodash</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .main-content::-webkit-scrollbar { width: 6px; }
+        .main-content::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 3px; }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 12px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .news-card {
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 14px 16px;
+            transition: border-color 0.2s;
+        }
+
+        .news-card:hover { border-color: #7eddb8; }
+
+        .news-card a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .news-card a:hover { text-decoration: underline; }
+
+        .news-meta {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .news-time {
+            color: #aab;
+            font-size: 0.75rem;
+        }
+
+        .news-source {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .news-source.toi {
+            background: #1a3a6e;
+            color: #7eddb8;
+            border: 1px solid #7eddb8;
+        }
+
+        .news-source.jns {
+            background: #3a1a2e;
+            color: #ff9800;
+            border: 1px solid #ff9800;
+        }
+
+        .news-source.other {
+            background: #2a2a3e;
+            color: #ccd;
+            border: 1px solid #556;
+        }
+
+        .no-data {
+            color: #667;
+            font-style: italic;
+            text-align: center;
+            padding: 40px;
+            font-size: 1rem;
+        }
+
+        .live-stream {
+            max-width: 1400px;
+            margin: 0 auto 16px;
+        }
+
+        .stream-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .stream-toggle:hover { border-color: #7eddb8; }
+
+        .stream-toggle-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #dde;
+        }
+
+        .stream-toggle-badge {
+            background: #e94560;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .stream-embed {
+            display: none;
+            margin-top: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .stream-embed.active { display: block; }
+
+        .stream-embed iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="geodash-header"></div>
+
+    <div class="main-content">
+        <div class="live-stream">
+            <div class="stream-toggle" id="stream-toggle">
+                <span class="stream-toggle-badge">LIVE</span>
+                <span class="stream-toggle-label">i24NEWS Live Stream — click to play</span>
+            </div>
+            <div class="stream-embed" id="stream-embed"></div>
+        </div>
+        <div class="news-grid" id="news-grid">
+            <div class="no-data">Loading news...</div>
+        </div>
+    </div>
+
+    <div id="geodash-footer"></div>
+
+    <script src="/static/components.js?v=14"></script>
+    <script src="/static/news.js?v=2"></script>
+    <script>
+        renderHeader('news');
+        renderFooter();
+
+        // Lazy-load i24 stream only when user clicks
+        document.getElementById('stream-toggle').addEventListener('click', function() {
+            const embed = document.getElementById('stream-embed');
+            if (embed.classList.contains('active')) {
+                embed.classList.remove('active');
+                embed.innerHTML = ''; // Stop streaming
+                this.querySelector('.stream-toggle-label').textContent = 'i24NEWS Live Stream — click to play';
+            } else {
+                embed.classList.add('active');
+                embed.innerHTML = '<iframe src="https://video.i24news.tv/live/brightcove/en" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+                this.querySelector('.stream-toggle-label').textContent = 'i24NEWS Live Stream — click to stop';
+            }
+        });
+    </script>
+</body>
+</html>
