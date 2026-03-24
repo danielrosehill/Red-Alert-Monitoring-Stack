@@ -1,5 +1,7 @@
 # Red Alert Monitoring Stack
 
+![Red Alert Monitoring Stack](screenshots/banner.jpg)
+
 Microservices stack for monitoring Israel's Homefront Command (Pikud HaOref) alerts with real-time visualization, push notifications, AI situation reports, and home automation integration.
 
 ## Architecture
@@ -135,7 +137,7 @@ All configuration is via `.env` (copy from `.env.example`). The file is gitignor
 | `SNAPCAST_FIFO` | `/tmp/snapfifo` | Path to Snapcast FIFO pipe on host |
 | `STACK_NAME` | `Red Alert Monitoring Stack` | Display name in management UI |
 | `GEODASH_EXTERNAL_URL` | `http://localhost:8083` | Geodash URL for management UI links |
-| `PORTAINER_EXTERNAL_URL` | `http://localhost:9000` | Portainer URL for management UI links |
+
 
 ## Docker Images
 
