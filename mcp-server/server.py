@@ -37,10 +37,7 @@ SAMPLE_INTERVAL = int(os.getenv("SAMPLE_INTERVAL", "10800"))  # 3 hours
 SAMPLES_FILE = Path(os.getenv("SAMPLES_PATH", "/app/data/samples.json"))
 MAX_SAMPLES = int(os.getenv("MAX_SAMPLES", "100"))
 
-mcp = FastMCP(
-    "Red Alert MCP Server",
-    description="Access Israel Homefront Command (Pikud HaOref) alert data",
-)
+mcp = FastMCP("Red Alert MCP Server")
 
 http_client: httpx.AsyncClient | None = None
 _last_sample_time: float = 0

@@ -141,7 +141,9 @@ async def poll_loop() -> None:
             try:
                 resp = await client.get(OREF_PROXY_URL, timeout=10)
                 resp.raise_for_status()
-                alerts: list[dict] = resp.json()
+                data = resp.json()
+                # Support both {"alerts": [...]} and raw [...] response formats
+                alerts: list[dict] = data.get("alerts", data) if isinstance(data, dict) else data
             except Exception as exc:
                 log.warning("Proxy fetch failed: %s", exc)
                 await asyncio.sleep(POLL_INTERVAL)
