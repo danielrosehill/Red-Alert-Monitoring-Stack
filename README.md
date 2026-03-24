@@ -139,21 +139,21 @@ All configuration is via `.env` (copy from `.env.example`). The file is gitignor
 | `GEODASH_EXTERNAL_URL` | `http://localhost:8083` | Geodash URL for management UI links |
 
 
-## Docker Images
+## Building from Source
 
-Most images are published to Docker Hub under [`danielrosehill`](https://hub.docker.com/u/danielrosehill):
+All services build from source in this monorepo — no external Docker Hub images are required (previous `danielrosehill/red-alert-*` images have been removed). The only upstream images used are `influxdb:2` and `eclipse-mosquitto:2`.
 
-| Image | Source |
-|-------|--------|
-| `danielrosehill/red-alert-proxy` | [Oref-Alert-Proxy](https://github.com/danielrosehill/Oref-Alert-Proxy) |
-| `danielrosehill/red-alert-geodash` | [Red-Alert-Geodash](https://github.com/danielrosehill/Red-Alert-Geodash) |
-| `danielrosehill/red-alert-pushover` | [Red-Alert-Pushover](https://github.com/danielrosehill/Red-Alert-Pushover) |
-| `danielrosehill/red-alert-telegram` | [Red-Alert-Telegram-Bot](https://github.com/danielrosehill/Red-Alert-Telegram-Bot) |
-| `danielrosehill/red-alert-rss-cache` | *(this repo, `rss-cache/`)* |
-| `danielrosehill/red-alert-mcp` | *(this repo, `mcp-server/`)* |
-| `danielrosehill/red-alert-management` | *(this repo, `management-ui/`)* |
-
-The **Actuator** is built from source (`actuator/`) rather than pulled from Docker Hub, since it requires site-specific customization (MQTT topics, speaker config, local area).
+| Service | Source Directory |
+|---------|-----------------|
+| Oref Alert Proxy | `oref-proxy/` |
+| Geodash | `geodash/` |
+| Pushover | `pushover/` |
+| Telegram Bot | `telegram-bot/` |
+| Actuator | `actuator/` |
+| Prompt Runner | `prompt-runner/` |
+| RSS Cache | `rss-cache/` |
+| MCP Server | `mcp-server/` |
+| Management UI | `management-ui/` |
 
 ## MCP Server (AI Agent Integration)
 
@@ -194,17 +194,18 @@ Add to your `claude_desktop_config.json`:
 
 The MCP server automatically captures one real alert payload every 3 hours (when alerts are active) and stores it in a persistent volume. This builds a reference library of real payload structures for development. Access via the `get_sample_payloads` tool.
 
-## Building & Pushing Images
+## Building Images
+
+All services are built automatically by Docker Compose. To rebuild everything:
 
 ```bash
-# Login to Docker Hub
-docker login -u danielrosehill
+docker compose -f compose/default.yml build
+```
 
-# Build and push all stack-local images
-for svc in management-ui rss-cache mcp-server; do
-  docker build -t danielrosehill/red-alert-${svc%-*}:latest ./$svc
-  docker push danielrosehill/red-alert-${svc%-*}:latest
-done
+To rebuild a single service:
+
+```bash
+docker compose -f compose/default.yml build geodash
 ```
 
 ## Design Principles

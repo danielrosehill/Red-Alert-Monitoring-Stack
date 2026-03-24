@@ -38,12 +38,6 @@ services:
   #   environment:
   #     - MQTT_LIGHT_TOPICS=zigbee2mqtt/living_room/set,zigbee2mqtt/hallway/set,zigbee2mqtt/bedroom/set
 
-  # -- Pin specific image versions instead of :latest --------------------------
-  # oref-proxy:
-  #   image: danielrosehill/red-alert-proxy:1.2.0
-  # geodash:
-  #   image: danielrosehill/red-alert-geodash:1.2.0
-
   # -- Mount custom Mosquitto config (for with-broker variant) -----------------
   # mosquitto:
   #   volumes:
