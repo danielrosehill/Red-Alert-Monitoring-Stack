@@ -1,0 +1,23 @@
+# Red Alert State — input_select entity for the actuator bridge.
+# Add this to your HA configuration.yaml or include via:
+#   input_select: !include ha/input_select.yaml
+
+red_alert_state:
+  name: Red Alert State
+  options:
+    - idle
+    - warning
+    - active
+    - clear
+    - threshold_50
+    - threshold_100
+    - threshold_200
+    - threshold_300
+    - threshold_400
+    - threshold_500
+    - threshold_600
+    - threshold_700
+    - threshold_800
+    - threshold_900
+    - threshold_1000
+  initial: idle

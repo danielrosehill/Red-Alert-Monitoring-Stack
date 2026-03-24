@@ -118,7 +118,7 @@ services:
     networks:
       - redalert
 
-  # -- Automation --------------------------------------------------------------
+  # -- Automation (HA Bridge) --------------------------------------------------
   actuator:
     build:
       context: ../actuator
@@ -131,21 +131,12 @@ services:
       - PORT=${ACTUATOR_PORT:-8782}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
-      - MQTT_BROKER=mosquitto
-      - MQTT_PORT=1883
-      - MQTT_USERNAME=${MQTT_USERNAME:-}
-      - MQTT_PASSWORD=${MQTT_PASSWORD:-}
-      - MQTT_LIGHT_TOPICS=${MQTT_LIGHT_TOPICS:-}
-      - MQTT_ALARM_TOPICS=${MQTT_ALARM_TOPICS:-}
+      - HASS_HOST=${HASS_HOST:-}
+      - HASS_TOKEN=${HASS_TOKEN:-}
+      - HASS_ENTITY=${HASS_ENTITY:-input_select.red_alert_state}
       - ALERT_AREA=${ALERT_AREA:-}
-      - TTS_ENABLED=${TTS_ENABLED:-true}
-      - TTS_COOLDOWN=${TTS_COOLDOWN:-60}
-      - LIGHT_RESTORE_AFTER=${LIGHT_RESTORE_AFTER:-120}
-    volumes:
-      - ${SNAPCAST_FIFO:-/tmp/snapfifo}:/tmp/snapfifo
     depends_on:
       - oref-proxy
-      - mosquitto
     networks:
       - redalert
 
@@ -232,7 +223,6 @@ services:
       - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
       - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
-      - MQTT_BROKER=mosquitto
       - ALERT_AREA=${ALERT_AREA:-}
       - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
       - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}

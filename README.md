@@ -26,22 +26,22 @@ Each component is a standalone service with its own repo, Docker config, and doc
             ▼                 ▼                 ▼                  ▼
    ┌────────────────┐ ┌──────────────┐ ┌──────────────┐ ┌────────────────┐
    │    Geodash     │ │   Pushover   │ │  Telegram    │ │   Actuator     │
-   │  (Dashboard)   │ │  Notifier    │ │  Bot         │ │                │
-   │                │ │              │ │              │ │  ┌──────────┐  │
-   │  FastAPI +     │ │  Volumetric  │ │  On-demand   │ │  │Snapcast  │  │
-   │  Leaflet maps  │ │  threshold   │ │  /sitrep +   │ │  │TTS       │  │
-   │  + InfluxDB    │ │  alerts      │ │  AI chat     │ │  └──────────┘  │
-   │                │ │              │ │              │ │  ┌──────────┐  │
-   │  :8083         │ │  → Pushover  │ │  → Telegram  │ │  │MQTT      │──┼──▶ Smart Lights
-   │                │ │    → Phone   │ │              │ │  │Lights    │  │
-   └────────────────┘ └──────────────┘ └──────────────┘ │  └──────────┘  │
-                                                        └────────────────┘
-            ┌──────────────┐   ┌──────────────┐                │
-            │ Management   │   │  RSS Cache   │                ▼
-            │ UI (:8888)   │   │  (:8785)     │         ┌──────────────┐
-            └──────────────┘   └──────────────┘         │  Mosquitto   │
-            ┌──────────────┐                            │  MQTT Broker │
-            │  MCP Server  │                            └──────────────┘
+   │  (Dashboard)   │ │  Notifier    │ │  Bot         │ │  (HA Bridge)   │
+   │                │ │              │ │              │ │                │
+   │  FastAPI +     │ │  Volumetric  │ │  On-demand   │ │  Sets state    │
+   │  Leaflet maps  │ │  threshold   │ │  /sitrep +   │ │  via HA REST   │──▶ Home Assistant
+   │  + InfluxDB    │ │  alerts      │ │  AI chat     │ │  API           │   (lights, sirens,
+   │                │ │              │ │              │ │                │    TTS, automations)
+   │  :8083         │ │  → Pushover  │ │  → Telegram  │ │  :8782         │
+   │                │ │    → Phone   │ │              │ │                │
+   └────────────────┘ └──────────────┘ └──────────────┘ └────────────────┘
+
+            ┌──────────────┐   ┌──────────────┐
+            │ Management   │   │  RSS Cache   │
+            │ UI (:8888)   │   │  (:8785)     │
+            └──────────────┘   └──────────────┘
+            ┌──────────────┐
+            │  MCP Server  │
             │  (:8786)     │
             │  AI tools    │
             └──────────────┘
@@ -55,7 +55,7 @@ Each component is a standalone service with its own repo, Docker config, and doc
 | **Geodash** | [Red-Alert-Geodash](https://github.com/danielrosehill/Red-Alert-Geodash) | 8083 | Real-time multi-map dashboard with 1,450 polygon overlays, InfluxDB time-series storage, historical playback, and TV-optimized view. |
 | **Pushover Notifier** | [Red-Alert-Pushover](https://github.com/danielrosehill/Red-Alert-Pushover) | — | Sends Pushover push notifications when nationwide alert count crosses thresholds (50, 100, 200, ... 1000 simultaneous areas). |
 | **Telegram Bot** | [Red-Alert-Telegram-Bot](https://github.com/danielrosehill/Red-Alert-Telegram-Bot) | — | On-demand intelligence bot. `/sitrep` generates AI situation reports using dual-model synthesis via OpenRouter. |
-| **Actuator** | [Red-Alert-Actuator](https://github.com/danielrosehill/Red-Alert-Actuator) | — | Physical alert outputs: TTS voice announcements via Snapcast whole-house audio, and smart light color control via MQTT. |
+| **Actuator** | *(this repo, `actuator/`)* | 8782 | HA bridge: polls proxy and sets `input_select` state in Home Assistant. HA automations handle lights, sirens, TTS. See `ha/` for examples. |
 | **RSS Cache** | *(this repo, `rss-cache/`)* | 8785 | Polls news feeds on a schedule, serves cached articles. Used by Geodash dashboard and available to Telegram bot for AI sitreps. |
 | **MCP Server** | *(this repo, `mcp-server/`)* | 8786 | Streamable HTTP MCP server exposing alert tools (`get_current_alerts`, `get_area_alerts`, `get_news`, etc.) for AI agents. Stores sample payloads every 3h. |
 | **Management UI** | *(this repo, `management-ui/`)* | 8888 | Stack health dashboard showing status of all services with links to Geodash. |
@@ -115,7 +115,8 @@ All configuration is via `.env` (copy from `.env.example`). The file is gitignor
 
 | Variable | Service | Description |
 |----------|---------|-------------|
-| `MQTT_BROKER` | Actuator | IP of your MQTT broker (or `mosquitto` if using bundled broker) |
+| `HASS_HOST` | Actuator | Home Assistant URL (e.g. `http://10.0.0.3:8123`) |
+| `HASS_TOKEN` | Actuator | HA long-lived access token |
 | `PUSHOVER_API_TOKEN` | Pushover | Your Pushover application token ([pushover.net](https://pushover.net/)) |
 | `PUSHOVER_USER_KEY` | Pushover | Your Pushover user key |
 | `TELEGRAM_BOT_TOKEN` | Telegram Bot | Bot token from [@BotFather](https://t.me/BotFather) |
@@ -129,12 +130,7 @@ All configuration is via `.env` (copy from `.env.example`). The file is gitignor
 | `INFLUXDB_BUCKET` | `alerts` | InfluxDB bucket name |
 | `INFLUXDB_TOKEN` | `redalert-dev-token` | InfluxDB admin token |
 | `OPENROUTER_API_KEY` | *(empty)* | OpenRouter key for AI sitreps in Telegram bot |
-| `MQTT_PORT` | `1883` | MQTT broker port |
-| `MQTT_USER` | *(empty)* | MQTT username (if broker requires auth) |
-| `MQTT_PASSWORD` | *(empty)* | MQTT password |
-| `MQTT_LIGHT_TOPICS` | *(empty)* | Comma-separated MQTT topics for light control |
-| `LOCAL_AREA` | *(empty)* | Your area name in Hebrew (triggers direct-threat response) |
-| `SNAPCAST_FIFO` | `/tmp/snapfifo` | Path to Snapcast FIFO pipe on host |
+| `HASS_ENTITY` | `input_select.red_alert_state` | HA input_select entity ID |
 | `STACK_NAME` | `Red Alert Monitoring Stack` | Display name in management UI |
 | `GEODASH_EXTERNAL_URL` | `http://localhost:8083` | Geodash URL for management UI links |
 
@@ -224,15 +220,16 @@ When a rocket barrage triggers 150+ simultaneous alerts:
 1. **Proxy** picks it up within 3 seconds, serves via `/api/alerts`
 2. **Geodash** colors 150 polygons red on the map, writes to InfluxDB
 3. **Pushover** sends "150 areas under active alert" to your phone
-4. **Actuator** turns smart lights red, plays "Nationwide alert..." on Snapcast
+4. **Actuator** sets HA state to `threshold_150`, HA automations announce via TTS
 5. **Telegram Bot** waits for you to ask — `/sitrep` generates a dual-model AI briefing
 6. **Management UI** shows all services green (or flags any that went down)
 
 When your local area (e.g., Jerusalem South) gets a direct alert:
 
-1. **Actuator** turns lights red, plays "Red alert. Seek shelter immediately."
+1. **Actuator** sets HA state to `active`, HA automations flash lights red, sound sirens, TTS "Seek shelter"
 2. **Geodash** shows your area flashing red with siren audio
-3. When all-clear arrives: lights go green, TTS says "All clear", lights turn off after 2 minutes
+3. When all-clear arrives: actuator sets `clear`, HA automations turn lights green, silence sirens, TTS "All clear"
+4. After 2 minutes: actuator sets `idle`, HA automations restore normal lighting
 
 ## Related
 

@@ -1,0 +1,183 @@
+# =============================================================================
+# Red Alert — Example HA Automations
+# =============================================================================
+# These automations respond to the input_select.red_alert_state entity
+# set by the actuator bridge. Customize entity IDs, colors, TTS messages,
+# and timing to match your setup.
+#
+# IMPORTANT: Replace all placeholder entity IDs with your actual devices.
+# =============================================================================
+
+# ── Active Alert (Red) ──────────────────────────────────────────────────────
+# Immediate threat — take cover. Flash lights red, sound sirens, TTS.
+
+- alias: "Red Alert — Active"
+  id: red_alert_active
+  trigger:
+    - platform: state
+      entity_id: input_select.red_alert_state
+      to: "active"
+  action:
+    # Sound sirens
+    # Replace with your siren entity IDs
+    - action: siren.turn_on
+      target:
+        entity_id:
+          - siren.your_siren_1
+          - siren.your_siren_2
+      data:
+        duration: 120
+
+    # Flash RGB lights red for 10 seconds then stay solid
+    # Replace with your light entity IDs
+    - action: light.turn_on
+      target:
+        entity_id:
+          - light.your_rgb_light_1
+          - light.your_rgb_light_2
+      data:
+        rgb_color: [255, 0, 0]
+        brightness: 255
+        flash: long
+
+    # TTS announcement via your media player
+    # Replace with your TTS service and media player entity
+    - action: tts.speak
+      target:
+        entity_id: tts.your_tts_engine
+      data:
+        media_player_entity_id: media_player.your_speaker
+        message: "Red alert. Seek shelter immediately."
+
+    # After 10 seconds, set lights to solid red (stop flashing)
+    - delay: "00:00:10"
+    - action: light.turn_on
+      target:
+        entity_id:
+          - light.your_rgb_light_1
+          - light.your_rgb_light_2
+      data:
+        rgb_color: [255, 0, 0]
+        brightness: 255
+
+# ── Early Warning (Orange) ──────────────────────────────────────────────────
+# Potential threat — be prepared. Flash lights orange, sound sirens, TTS.
+
+- alias: "Red Alert — Warning"
+  id: red_alert_warning
+  trigger:
+    - platform: state
+      entity_id: input_select.red_alert_state
+      to: "warning"
+  action:
+    - action: siren.turn_on
+      target:
+        entity_id:
+          - siren.your_siren_1
+          - siren.your_siren_2
+      data:
+        duration: 120
+
+    - action: light.turn_on
+      target:
+        entity_id:
+          - light.your_rgb_light_1
+          - light.your_rgb_light_2
+      data:
+        rgb_color: [255, 140, 0]
+        brightness: 255
+        flash: long
+
+    - action: tts.speak
+      target:
+        entity_id: tts.your_tts_engine
+      data:
+        media_player_entity_id: media_player.your_speaker
+        message: "Early warning. Prepare to seek shelter."
+
+    - delay: "00:00:10"
+    - action: light.turn_on
+      target:
+        entity_id:
+          - light.your_rgb_light_1
+          - light.your_rgb_light_2
+      data:
+        rgb_color: [255, 140, 0]
+        brightness: 255
+
+# ── All Clear (Green) ───────────────────────────────────────────────────────
+# Threat has passed. Lights green, silence sirens, TTS.
+
+- alias: "Red Alert — Clear"
+  id: red_alert_clear
+  trigger:
+    - platform: state
+      entity_id: input_select.red_alert_state
+      to: "clear"
+  action:
+    - action: siren.turn_off
+      target:
+        entity_id:
+          - siren.your_siren_1
+          - siren.your_siren_2
+
+    - action: light.turn_on
+      target:
+        entity_id:
+          - light.your_rgb_light_1
+          - light.your_rgb_light_2
+      data:
+        rgb_color: [0, 255, 0]
+        brightness: 255
+
+    - action: tts.speak
+      target:
+        entity_id: tts.your_tts_engine
+      data:
+        media_player_entity_id: media_player.your_speaker
+        message: "All clear. The threat has passed."
+
+# ── Idle (Restore) ──────────────────────────────────────────────────────────
+# No alerts — restore lights to previous state (or turn off).
+# The actuator sets this automatically after 2 minutes of no activity.
+
+- alias: "Red Alert — Idle"
+  id: red_alert_idle
+  trigger:
+    - platform: state
+      entity_id: input_select.red_alert_state
+      to: "idle"
+  action:
+    # Option A: Turn lights off
+    - action: light.turn_off
+      target:
+        entity_id:
+          - light.your_rgb_light_1
+          - light.your_rgb_light_2
+
+    # Option B (alternative): Restore to a scene you've saved
+    # - action: scene.turn_on
+    #   target:
+    #     entity_id: scene.normal_lighting
+
+# ── Nationwide Threshold (Informational) ────────────────────────────────────
+# Many areas under alert simultaneously. TTS announcement only.
+# This fires for any threshold_* state change.
+
+- alias: "Red Alert — Threshold"
+  id: red_alert_threshold
+  trigger:
+    - platform: state
+      entity_id: input_select.red_alert_state
+  condition:
+    - condition: template
+      value_template: "{{ trigger.to_state.state.startswith('threshold_') }}"
+  action:
+    - action: tts.speak
+      target:
+        entity_id: tts.your_tts_engine
+      data:
+        media_player_entity_id: media_player.your_speaker
+        message: >-
+          Nationwide alert: {{ trigger.to_state.state | replace('threshold_', '') }}
+          or more areas are currently under active alert.

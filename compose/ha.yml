@@ -1,17 +1,13 @@
 # =============================================================================
 # Red Alert Monitoring Stack — Home Assistant Edition
 # =============================================================================
-# Use this if Home Assistant handles your smart light and TTS automations
-# directly. The actuator service is removed — HA subscribes to the proxy
-# or MQTT broker and triggers automations itself.
+# The actuator runs as a thin HA bridge: it polls the proxy and sets an
+# input_select entity in Home Assistant. HA automations handle all physical
+# actuation (lights, sirens, TTS). See ha/ directory for example automations.
 #
 # Usage:
-#   cp .env.example .env   # fill in your values
+#   cp .env.example .env   # fill in your values (HASS_HOST + HASS_TOKEN required)
 #   docker compose -f compose/ha.yml up -d --build
-#
-# Home Assistant integration:
-#   Point an HA REST sensor at http://<stack-ip>:8764/api/alerts to poll
-#   the proxy, or subscribe to MQTT topics if using the with-broker variant.
 # =============================================================================
 
 services:
@@ -103,6 +99,28 @@ services:
       - ALERT_AREA=${ALERT_AREA:-}
     volumes:
       - telegram-data:/app/data
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
+  # -- Automation (HA Bridge) --------------------------------------------------
+  actuator:
+    build:
+      context: ../actuator
+      dockerfile: Dockerfile
+    container_name: actuator
+    restart: unless-stopped
+    ports:
+      - "${ACTUATOR_PORT:-8782}:${ACTUATOR_PORT:-8782}"
+    environment:
+      - PORT=${ACTUATOR_PORT:-8782}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
+      - HASS_HOST=${HASS_HOST:?Set HASS_HOST to your HA URL e.g. http://10.0.0.3:8123}
+      - HASS_TOKEN=${HASS_TOKEN:?Set HASS_TOKEN to a long-lived HA access token}
+      - HASS_ENTITY=${HASS_ENTITY:-input_select.red_alert_state}
+      - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
     networks:

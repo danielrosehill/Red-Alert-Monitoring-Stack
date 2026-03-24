@@ -14,7 +14,7 @@ All services build from source in this monorepo. No external Docker Hub images r
 - **Geodash** (`geodash/`) — Real-time map dashboard with 1,450 polygon overlays + InfluxDB
 - **Pushover** (`pushover/`) — Volumetric threshold notifications (50, 100, 200+ areas)
 - **Telegram Bot** (`telegram-bot/`) — On-demand `/sitrep` AI briefings via OpenRouter
-- **Actuator** (`actuator/`) — TTS via Snapcast + smart light control via MQTT + HTTP API for test alerts
+- **Actuator** (`actuator/`) — HA bridge: sets `input_select.red_alert_state` in Home Assistant via REST API; HA automations handle lights, sirens, TTS
 - **Prompt Runner** (`prompt-runner/`) — Templated AI prompt execution (immediate intel + daily SITREP)
 - **RSS Cache** (`rss-cache/`) — News feed poller for AI context
 - **MCP Server** (`mcp-server/`) — Streamable HTTP MCP exposing alert tools for AI agents
@@ -31,7 +31,7 @@ Oref Alert Proxy (:8764)
        |----> Geodash (:8083) ---> InfluxDB (:8086)
        |----> Pushover (push notifications)
        |----> Telegram Bot (:8781)
-       |----> Actuator (:8782) ---> MQTT Lights + Snapcast TTS
+       |----> Actuator (:8782) ---> Home Assistant (input_select)
        |         |----> Prompt Runner (:8787) ---> Telegram Bot
        |----> MCP Server (:8786)
        |----> Management UI (:8888)
@@ -123,7 +123,9 @@ The code for these lives in `AlertMonitor._process_localized_alerts()` and `Aler
 - `.env` — Your actual config (gitignored)
 - `compose/` — All Docker Compose files (default, with-broker, ha, override)
 - `mosquitto/mosquitto.conf` — MQTT broker config (used by bundled broker variant)
-- `actuator/actuator.py` — Automation logic (lights + TTS + test alerts)
+- `actuator/actuator.py` — HA bridge (sets input_select state + test alerts)
+- `ha/` — HA input_select definition + example automations
+- `archive/` — Retired code (old MQTT-direct actuator)
 - `prompt-runner/templates/` — AI prompt templates (immediate_intel, daily_sitrep)
 
 ## Environment Variables
@@ -131,16 +133,15 @@ The code for these lives in `AlertMonitor._process_localized_alerts()` and `Aler
 All config is in `.env`. The `ALERT_AREA` variable is passed to every service:
 
 - `ALERT_AREA` — Your area in Hebrew (e.g., `ירושלים - דרום`). Used by actuator for shelter mode, prompt runner for immediate intel, and all services for local context.
-- `MQTT_BROKER` — Broker IP or `mosquitto` (bundled)
+- `HASS_HOST` — Home Assistant URL (e.g. `http://10.0.0.3:8123`)
+- `HASS_TOKEN` — HA long-lived access token
 - `PUSHOVER_API_TOKEN` / `PUSHOVER_USER_KEY` — For push notifications
 - `TELEGRAM_BOT_TOKEN` — For Telegram bot
 
 Key optional variables:
-- `MQTT_LIGHT_TOPICS` — Comma-separated MQTT topics for light control
-- `SNAPCAST_FIFO` — Path to Snapcast FIFO pipe (default: `/tmp/snapfifo`)
+- `HASS_ENTITY` — HA input_select entity (default: `input_select.red_alert_state`)
 - `OPENROUTER_API_KEY` — For AI situation reports and prompt runner
 - `GROQ_API_KEY` — For fast immediate intelligence (prompt runner)
-- `OPENAI_API_KEY` — For TTS audio generation
 
 ## Prompt Runner
 
