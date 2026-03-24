@@ -105,6 +105,43 @@ services:
     networks:
       - redalert
 
+  # -- Caching -----------------------------------------------------------------
+  rss-cache:
+    image: danielrosehill/red-alert-rss-cache:latest
+    build:
+      context: ./rss-cache
+      dockerfile: Dockerfile
+    container_name: rss-cache
+    restart: unless-stopped
+    ports:
+      - "8785:8785"
+    environment:
+      - RSS_FEEDS=${RSS_FEEDS:-https://www.timesofisrael.com/feed/|Times of Israel,https://www.jns.org/feed/|JNS}
+      - RSS_POLL_INTERVAL=${RSS_POLL_INTERVAL:-300}
+    networks:
+      - redalert
+
+  # -- MCP Server --------------------------------------------------------------
+  mcp-server:
+    image: danielrosehill/red-alert-mcp:latest
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: mcp-server
+    restart: unless-stopped
+    ports:
+      - "8786:8786"
+    environment:
+      - OREF_PROXY_URL=http://oref-proxy:8764
+      - RSS_CACHE_URL=http://rss-cache:8785
+    volumes:
+      - mcp-data:/app/data
+    depends_on:
+      - oref-proxy
+      - rss-cache
+    networks:
+      - redalert
+
   # -- Management --------------------------------------------------------------
   management-ui:
     image: danielrosehill/red-alert-management:latest
@@ -120,24 +157,10 @@ services:
       - OREF_PROXY_URL=http://oref-proxy:8764
       - GEODASH_URL=http://geodash:8083
       - INFLUXDB_URL=http://influxdb:8086
-      - PORTAINER_URL=http://portainer:9000
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:8083}
-      - PORTAINER_EXTERNAL_URL=${PORTAINER_EXTERNAL_URL:-http://localhost:9000}
       - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
     depends_on:
       - oref-proxy
-    networks:
-      - redalert
-
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: unless-stopped
-    ports:
-      - "9000:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer-data:/data
     networks:
       - redalert
 
@@ -148,4 +171,4 @@ networks:
 
 volumes:
   influxdb-data:
-  portainer-data:
+  mcp-data:

@@ -169,7 +169,7 @@
 
     <div class="section-title">Automation &amp; Infrastructure</div>
     <div class="grid">
-        {% for svc_id in ['actuator', 'mosquitto', 'portainer'] %}
+        {% for svc_id in ['actuator', 'mosquitto', 'rss-cache', 'mcp-server'] %}
         {% set svc = services[svc_id] %}
         {% set st = statuses.get(svc_id, {}) %}
         <div class="card">

@@ -34,12 +34,14 @@ Each component is a standalone service with its own repo, Docker config, and doc
    │                │ │    → Phone   │ │              │ │  │Lights    │  │
    └────────────────┘ └──────────────┘ └──────────────┘ │  └──────────┘  │
                                                         └────────────────┘
-            ┌──────────────┐                                   │
-            │ Management   │                                   ▼
-            │ UI (:8888)   │                            ┌──────────────┐
-            │              │                            │  Mosquitto   │
-            │ + Portainer  │                            │  MQTT Broker │
-            │   (:9000)    │                            └──────────────┘
+            ┌──────────────┐   ┌──────────────┐                │
+            │ Management   │   │  RSS Cache   │                ▼
+            │ UI (:8888)   │   │  (:8785)     │         ┌──────────────┐
+            └──────────────┘   └──────────────┘         │  Mosquitto   │
+            ┌──────────────┐                            │  MQTT Broker │
+            │  MCP Server  │                            └──────────────┘
+            │  (:8786)     │
+            │  AI tools    │
             └──────────────┘
 ```
 
@@ -52,8 +54,9 @@ Each component is a standalone service with its own repo, Docker config, and doc
 | **Pushover Notifier** | [Red-Alert-Pushover](https://github.com/danielrosehill/Red-Alert-Pushover) | — | Sends Pushover push notifications when nationwide alert count crosses thresholds (50, 100, 200, ... 1000 simultaneous areas). |
 | **Telegram Bot** | [Red-Alert-Telegram-Bot](https://github.com/danielrosehill/Red-Alert-Telegram-Bot) | — | On-demand intelligence bot. `/sitrep` generates AI situation reports using dual-model synthesis via OpenRouter. |
 | **Actuator** | [Red-Alert-Actuator](https://github.com/danielrosehill/Red-Alert-Actuator) | — | Physical alert outputs: TTS voice announcements via Snapcast whole-house audio, and smart light color control via MQTT. |
-| **Management UI** | *(this repo)* | 8888 | Stack health dashboard showing status of all services, with links to Geodash and Portainer. |
-| **Portainer** | [portainer-ce](https://hub.docker.com/r/portainer/portainer-ce) | 9000 | Docker container management UI. |
+| **RSS Cache** | *(this repo, `rss-cache/`)* | 8785 | Polls news feeds on a schedule, serves cached articles. Used by Geodash dashboard and available to Telegram bot for AI sitreps. |
+| **MCP Server** | *(this repo, `mcp-server/`)* | 8786 | Streamable HTTP MCP server exposing alert tools (`get_current_alerts`, `get_area_alerts`, `get_news`, etc.) for AI agents. Stores sample payloads every 3h. |
+| **Management UI** | *(this repo, `management-ui/`)* | 8888 | Stack health dashboard showing status of all services with links to Geodash. |
 | **InfluxDB** | [influxdb](https://hub.docker.com/_/influxdb) | 8086 | Time-series database for alert history. |
 | **Mosquitto** | [eclipse-mosquitto](https://hub.docker.com/_/eclipse-mosquitto) | 1883 | MQTT broker (bundled in `with-broker` compose, or bring your own). |
 
@@ -96,8 +99,9 @@ docker compose -f docker-compose.with-broker.yml up -d
 |----|-----|
 | **Management Dashboard** | http://localhost:8888 |
 | **Geodash Map** | http://localhost:8083 |
-| **Portainer** | http://localhost:9000 |
 | **InfluxDB** | http://localhost:8086 |
+| **MCP Server** | http://localhost:8786/mcp |
+| **RSS Cache** | http://localhost:8785/api/news |
 
 The management dashboard auto-refreshes every 30 seconds and shows the health status of all services.
 
@@ -144,17 +148,60 @@ All images are published to Docker Hub under [`danielrosehill`](https://hub.dock
 | `danielrosehill/red-alert-pushover` | [Red-Alert-Pushover](https://github.com/danielrosehill/Red-Alert-Pushover) |
 | `danielrosehill/red-alert-telegram` | [Red-Alert-Telegram-Bot](https://github.com/danielrosehill/Red-Alert-Telegram-Bot) |
 | `danielrosehill/red-alert-actuator` | [Red-Alert-Actuator](https://github.com/danielrosehill/Red-Alert-Actuator) |
+| `danielrosehill/red-alert-rss-cache` | *(this repo, `rss-cache/`)* |
+| `danielrosehill/red-alert-mcp` | *(this repo, `mcp-server/`)* |
 | `danielrosehill/red-alert-management` | *(this repo, `management-ui/`)* |
 
-## Building & Pushing the Management UI Image
+## MCP Server (AI Agent Integration)
+
+The stack includes an MCP server that exposes alert data as tools for AI agents (Claude Code, Claude Desktop, etc.).
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `get_current_alerts` | All currently active alerts nationwide |
+| `get_area_alerts` | Alerts within a radius of a lat/lon point |
+| `get_alert_history` | Recent alert history including resolved alerts |
+| `get_news` | Cached news articles from RSS feeds |
+| `get_sample_payloads` | Stored sample alert payloads for development |
+| `get_proxy_status` | Health check of the Oref Alert Proxy |
+
+### Connect from Claude Code
+
+```bash
+claude mcp add --transport http red-alert http://localhost:8786/mcp
+```
+
+### Connect from Claude Desktop
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "red-alert": {
+      "url": "http://localhost:8786/mcp"
+    }
+  }
+}
+```
+
+### Sample Payload Storage
+
+The MCP server automatically captures one real alert payload every 3 hours (when alerts are active) and stores it in a persistent volume. This builds a reference library of real payload structures for development. Access via the `get_sample_payloads` tool.
+
+## Building & Pushing Images
 
 ```bash
 # Login to Docker Hub
 docker login -u danielrosehill
 
-# Build and push
-docker build -t danielrosehill/red-alert-management:latest ./management-ui
-docker push danielrosehill/red-alert-management:latest
+# Build and push all stack-local images
+for svc in management-ui rss-cache mcp-server; do
+  docker build -t danielrosehill/red-alert-${svc%-*}:latest ./$svc
+  docker push danielrosehill/red-alert-${svc%-*}:latest
+done
 ```
 
 ## Design Principles

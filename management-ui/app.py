@@ -59,6 +59,20 @@ SERVICES = {
         "port": 8086,
         "description": "Time-series database for alert history",
     },
+    "rss-cache": {
+        "name": "RSS Cache",
+        "url": os.getenv("RSS_CACHE_URL", "http://rss-cache:8785"),
+        "health": "/api/health",
+        "port": 8785,
+        "description": "Cached news feeds for dashboard and Telegram bot",
+    },
+    "mcp-server": {
+        "name": "MCP Server",
+        "url": os.getenv("MCP_SERVER_URL", "http://mcp-server:8786"),
+        "health": "/mcp",
+        "port": 8786,
+        "description": "AI agent tools for alert data access",
+    },
     "mosquitto": {
         "name": "Mosquitto MQTT",
         "url": None,  # MQTT doesn't have HTTP health
@@ -66,14 +80,6 @@ SERVICES = {
         "port": 1883,
         "description": "MQTT broker for smart light control",
         "tcp_check": os.getenv("MQTT_BROKER", "mosquitto:1883"),
-    },
-    "portainer": {
-        "name": "Portainer",
-        "url": os.getenv("PORTAINER_URL", "http://portainer:9000"),
-        "health": "/api/status",
-        "port": 9000,
-        "description": "Docker container management UI",
-        "ui_url": os.getenv("PORTAINER_EXTERNAL_URL", "http://localhost:9000"),
     },
 }
 
