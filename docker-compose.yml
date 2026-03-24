@@ -1,0 +1,151 @@
+# =============================================================================
+# Red Alert Monitoring Stack — Core Docker Compose
+# =============================================================================
+# Assumes you have a Mosquitto MQTT broker running separately on your network.
+# If you need a bundled broker, use docker-compose.with-broker.yml instead.
+#
+# Usage:
+#   cp .env.example .env   # fill in your values
+#   docker compose up -d
+# =============================================================================
+
+services:
+  # -- Data Source -------------------------------------------------------------
+  oref-proxy:
+    image: danielrosehill/red-alert-proxy:latest
+    container_name: oref-proxy
+    restart: unless-stopped
+    ports:
+      - "8764:8764"
+    networks:
+      - redalert
+
+  # -- Storage -----------------------------------------------------------------
+  influxdb:
+    image: influxdb:2
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=redalert-admin
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-redalert}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-alerts}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+    networks:
+      - redalert
+
+  # -- Dashboard ---------------------------------------------------------------
+  geodash:
+    image: danielrosehill/red-alert-geodash:latest
+    container_name: geodash
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
+      - INFLUXDB_URL=${INFLUXDB_URL:-http://influxdb:8086}
+      - INFLUXDB_ORG=${INFLUXDB_ORG:-redalert}
+      - INFLUXDB_BUCKET=${INFLUXDB_BUCKET:-alerts}
+      - INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+    depends_on:
+      - oref-proxy
+      - influxdb
+    networks:
+      - redalert
+
+  # -- Notifications -----------------------------------------------------------
+  pushover:
+    image: danielrosehill/red-alert-pushover:latest
+    container_name: pushover
+    restart: unless-stopped
+    environment:
+      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
+      - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN}
+      - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY}
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
+  telegram-bot:
+    image: danielrosehill/red-alert-telegram:latest
+    container_name: telegram-bot
+    restart: unless-stopped
+    environment:
+      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
+  # -- Automation --------------------------------------------------------------
+  actuator:
+    image: danielrosehill/red-alert-actuator:latest
+    container_name: actuator
+    restart: unless-stopped
+    environment:
+      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
+      - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
+      - MQTT_PORT=${MQTT_PORT:-1883}
+      - MQTT_USER=${MQTT_USER:-}
+      - MQTT_PASSWORD=${MQTT_PASSWORD:-}
+      - MQTT_LIGHT_TOPICS=${MQTT_LIGHT_TOPICS:-}
+      - LOCAL_AREA=${LOCAL_AREA:-}
+    volumes:
+      - ${SNAPCAST_FIFO:-/tmp/snapfifo}:/tmp/snapfifo
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
+  # -- Management --------------------------------------------------------------
+  management-ui:
+    image: danielrosehill/red-alert-management:latest
+    build:
+      context: ./management-ui
+      dockerfile: Dockerfile
+    container_name: management-ui
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    environment:
+      - STACK_NAME=${STACK_NAME:-Red Alert Monitoring Stack}
+      - OREF_PROXY_URL=http://oref-proxy:8764
+      - GEODASH_URL=http://geodash:8083
+      - INFLUXDB_URL=http://influxdb:8086
+      - PORTAINER_URL=http://portainer:9000
+      - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:8083}
+      - PORTAINER_EXTERNAL_URL=${PORTAINER_EXTERNAL_URL:-http://localhost:9000}
+      - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - redalert
+
+networks:
+  redalert:
+    name: redalert
+    driver: bridge
+
+volumes:
+  influxdb-data:
+  portainer-data:
