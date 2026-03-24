@@ -52,6 +52,7 @@ services:
       - INFLUXDB_ORG=${INFLUXDB_ORG:-redalert}
       - INFLUXDB_BUCKET=${INFLUXDB_BUCKET:-alerts}
       - INFLUXDB_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+      - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
       - influxdb
@@ -67,6 +68,7 @@ services:
       - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
       - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN}
       - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY}
+      - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
     networks:
@@ -80,6 +82,7 @@ services:
       - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
     networks:
@@ -87,17 +90,22 @@ services:
 
   # -- Automation --------------------------------------------------------------
   actuator:
-    image: danielrosehill/red-alert-actuator:latest
+    build:
+      context: ./actuator
+      dockerfile: Dockerfile
     container_name: actuator
     restart: unless-stopped
     environment:
       - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
       - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
       - MQTT_PORT=${MQTT_PORT:-1883}
-      - MQTT_USER=${MQTT_USER:-}
+      - MQTT_USERNAME=${MQTT_USERNAME:-}
       - MQTT_PASSWORD=${MQTT_PASSWORD:-}
       - MQTT_LIGHT_TOPICS=${MQTT_LIGHT_TOPICS:-}
-      - LOCAL_AREA=${LOCAL_AREA:-}
+      - ALERT_AREA=${ALERT_AREA:-}
+      - TTS_ENABLED=${TTS_ENABLED:-true}
+      - TTS_COOLDOWN=${TTS_COOLDOWN:-60}
+      - LIGHT_RESTORE_AFTER=${LIGHT_RESTORE_AFTER:-120}
     volumes:
       - ${SNAPCAST_FIFO:-/tmp/snapfifo}:/tmp/snapfifo
     depends_on:
@@ -134,6 +142,7 @@ services:
     environment:
       - OREF_PROXY_URL=http://oref-proxy:8764
       - RSS_CACHE_URL=http://rss-cache:8785
+      - ALERT_AREA=${ALERT_AREA:-}
     volumes:
       - mcp-data:/app/data
     depends_on:
@@ -159,6 +168,7 @@ services:
       - INFLUXDB_URL=http://influxdb:8086
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:8083}
       - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
+      - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
     networks:

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Alert Monitoring Stack</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #f85149;
+            --accent-green: #3fb950;
+            --accent-blue: #58a6ff;
+            --accent-orange: #d29922;
+            --code-bg: #1c2128;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a0000 0%, var(--bg) 50%, #001a00 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .hero h1 .red { color: var(--accent); }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-muted);
+        }
+
+        .badge.red { border-color: var(--accent); color: var(--accent); }
+        .badge.green { border-color: var(--accent-green); color: var(--accent-green); }
+        .badge.blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section:last-child { border-bottom: none; }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+
+        a { color: var(--accent-blue); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card .port {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            background: var(--code-bg);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        .card p { font-size: 0.95rem; margin-bottom: 0; }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text);
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9em;
+            background: var(--code-bg);
+            padding: 0.15rem 0.35rem;
+            border-radius: 4px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .comment { color: var(--text-muted); }
+        .cmd { color: var(--accent-green); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        th {
+            color: var(--text);
+            font-weight: 600;
+            background: var(--surface);
+        }
+
+        td { color: var(--text-muted); }
+
+        td code { color: var(--accent-blue); }
+
+        .compose-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .compose-tab {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-family: var(--font-sans);
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .compose-tab:hover { color: var(--text); }
+        .compose-tab.active {
+            color: var(--accent-blue);
+            border-bottom-color: var(--accent-blue);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .callout {
+            background: var(--surface);
+            border-left: 3px solid var(--accent-orange);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .callout p { margin-bottom: 0; }
+
+        .flow-diagram {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+            margin-bottom: 1.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a { color: var(--accent-blue); }
+
+        @media (max-width: 768px) {
+            .hero { padding: 2.5rem 1rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 1rem; }
+            .container { padding: 0 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1><span class="red">Red Alert</span> Monitoring Stack</h1>
+    <p>Self-hosted microservices stack for monitoring Israel's Homefront Command alerts with real-time maps, push notifications, AI situation reports, and smart home automation.</p>
+    <div class="hero-badges">
+        <span class="badge red">Pikud HaOref</span>
+        <span class="badge green">Docker Compose</span>
+        <span class="badge blue">MQTT + Snapcast</span>
+        <span class="badge">MCP Server</span>
+        <span class="badge">Home Assistant Compatible</span>
+    </div>
+</div>
+
+<div class="container">
+
+<section id="quickstart">
+    <h2>Quick Start</h2>
+
+    <pre><code><span class="comment"># Clone and configure</span>
+<span class="cmd">git clone</span> https://github.com/danielrosehill/Red-Alert-Monitoring-Stack-Public.git
+<span class="cmd">cd</span> Red-Alert-Monitoring-Stack-Public
+<span class="cmd">cp</span> .env.example .env
+<span class="comment"># Edit .env with your values (ALERT_AREA, MQTT_BROKER, API keys, etc.)</span>
+
+<span class="comment"># Launch the stack</span>
+<span class="cmd">docker compose up -d</span>
+
+<span class="comment"># Or with bundled MQTT broker:</span>
+<span class="cmd">docker compose -f docker-compose.with-broker.yml up -d</span>
+
+<span class="comment"># Or for Home Assistant users (no actuator):</span>
+<span class="cmd">docker compose -f docker-compose.ha.yml up -d</span></code></pre>
+
+    <div class="callout">
+        <p><strong>Requirement:</strong> The Oref Alert Proxy must run from an Israeli IP address (geo-restricted API).</p>
+    </div>
+
+    <h3>Claude Code Users</h3>
+    <p>This repo includes slash commands for guided setup. Run <code>/setup</code> in Claude Code for a step-by-step walkthrough that configures MQTT, lights, Snapcast, and Cloudflare Tunnel.</p>
+</section>
+
+<section id="components">
+    <h2>Components</h2>
+    <div class="grid">
+        <div class="card">
+            <h3>Oref Alert Proxy <span class="port">:8764</span></h3>
+            <p>Polls Pikud HaOref every 3 seconds. Single source of truth for the entire stack. Dumb relay — passes raw alert data with no interpretation.</p>
+        </div>
+        <div class="card">
+            <h3>Geodash Dashboard <span class="port">:8083</span></h3>
+            <p>Real-time multi-map dashboard with 1,450 polygon overlays, InfluxDB time-series storage, historical playback, and TV-optimized view.</p>
+        </div>
+        <div class="card">
+            <h3>Pushover Notifier</h3>
+            <p>Push notifications when alert count crosses thresholds (50, 100, 200, 500, 1000 simultaneous areas).</p>
+        </div>
+        <div class="card">
+            <h3>Telegram Bot</h3>
+            <p>On-demand intelligence bot. <code>/sitrep</code> generates AI situation reports using dual-model synthesis via OpenRouter.</p>
+        </div>
+        <div class="card">
+            <h3>Actuator</h3>
+            <p>Physical alert outputs: TTS voice announcements via Snapcast whole-house audio, and smart light color control via MQTT. Fully customizable.</p>
+        </div>
+        <div class="card">
+            <h3>RSS Cache <span class="port">:8785</span></h3>
+            <p>Polls news feeds on a schedule, serves cached articles. Used by Geodash and available for AI sitreps.</p>
+        </div>
+        <div class="card">
+            <h3>MCP Server <span class="port">:8786</span></h3>
+            <p>Streamable HTTP MCP server exposing alert tools for AI agents (Claude Code, Claude Desktop, etc.).</p>
+        </div>
+        <div class="card">
+            <h3>Management UI <span class="port">:8888</span></h3>
+            <p>Stack health dashboard showing status of all services with auto-refresh every 30 seconds.</p>
+        </div>
+    </div>
+</section>
+
+<section id="compose-variants">
+    <h2>Docker Compose Variants</h2>
+
+    <div class="compose-tabs">
+        <button class="compose-tab active" onclick="switchTab('standard')">Standard</button>
+        <button class="compose-tab" onclick="switchTab('broker')">With Broker</button>
+        <button class="compose-tab" onclick="switchTab('ha')">Home Assistant</button>
+    </div>
+
+    <div id="tab-standard" class="tab-content active">
+        <h3>docker-compose.yml</h3>
+        <p>Use when you have an existing Mosquitto MQTT broker on your network. Set <code>MQTT_BROKER</code> in <code>.env</code> to your broker's IP.</p>
+        <pre><code><span class="cmd">docker compose up -d</span></code></pre>
+    </div>
+
+    <div id="tab-broker" class="tab-content">
+        <h3>docker-compose.with-broker.yml</h3>
+        <p>Self-contained deployment with a bundled Mosquitto broker. Set <code>MQTT_BROKER=mosquitto</code> in <code>.env</code>.</p>
+        <pre><code><span class="cmd">docker compose -f docker-compose.with-broker.yml up -d</span></code></pre>
+    </div>
+
+    <div id="tab-ha" class="tab-content">
+        <h3>docker-compose.ha.yml</h3>
+        <p>For Home Assistant users. Removes the actuator service — HA handles smart light and TTS automations directly by polling the proxy at <code>http://&lt;stack-ip&gt;:8764/api/alerts</code>.</p>
+        <pre><code><span class="cmd">docker compose -f docker-compose.ha.yml up -d</span></code></pre>
+    </div>
+</section>
+
+<section id="customization">
+    <h2>Customization</h2>
+
+    <h3>Docker Compose Override (Recommended)</h3>
+    <p>The recommended way to customize the stack without modifying tracked files:</p>
+    <pre><code><span class="cmd">cp</span> docker-compose.override.example.yml docker-compose.override.yml
+<span class="comment"># Edit docker-compose.override.yml with your customizations</span>
+<span class="cmd">docker compose up -d</span>  <span class="comment"># automatically merges override</span></code></pre>
+    <p>Use overrides for: adding services (Cloudflare Tunnel, Grafana), overriding env vars, pinning image versions, setting resource limits, or adding volumes. The override file is gitignored so your changes survive <code>git pull</code>.</p>
+
+    <h3>Actuator Customization</h3>
+    <p>The actuator source is included at <code>actuator/</code> — edit <code>actuator.py</code> directly to change:</p>
+    <ul style="color: var(--text-muted); margin-bottom: 1rem; padding-left: 1.5rem;">
+        <li>Light colors (the <code>COLORS</code> dictionary)</li>
+        <li>TTS messages (regenerate with <code>generate_audio.py</code>)</li>
+        <li>MQTT payload format (Zigbee2MQTT, Tasmota, custom)</li>
+        <li>Alert thresholds and timing</li>
+    </ul>
+</section>
+
+<section id="env-vars">
+    <h2>Environment Variables</h2>
+
+    <table>
+        <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+        <tr><td><code>ALERT_AREA</code></td><td>Yes</td><td>Your area in Hebrew (e.g., <code>ירושלים - דרום</code>). Passed to all services.</td></tr>
+        <tr><td><code>MQTT_BROKER</code></td><td>Yes</td><td>Broker IP or <code>mosquitto</code> for bundled</td></tr>
+        <tr><td><code>PUSHOVER_API_TOKEN</code></td><td>For push</td><td>Pushover application token</td></tr>
+        <tr><td><code>PUSHOVER_USER_KEY</code></td><td>For push</td><td>Pushover user key</td></tr>
+        <tr><td><code>TELEGRAM_BOT_TOKEN</code></td><td>For bot</td><td>Bot token from @BotFather</td></tr>
+        <tr><td><code>OPENROUTER_API_KEY</code></td><td>No</td><td>For AI situation reports in Telegram</td></tr>
+        <tr><td><code>MQTT_LIGHT_TOPICS</code></td><td>No</td><td>Comma-separated MQTT topics for lights</td></tr>
+        <tr><td><code>SNAPCAST_FIFO</code></td><td>No</td><td>Path to Snapcast FIFO pipe (default: <code>/tmp/snapfifo</code>)</td></tr>
+        <tr><td><code>TTS_ENABLED</code></td><td>No</td><td>Enable/disable TTS (default: <code>true</code>)</td></tr>
+        <tr><td><code>OPENAI_API_KEY</code></td><td>No</td><td>For one-time TTS audio generation</td></tr>
+    </table>
+</section>
+
+<section id="alert-flow">
+    <h2>Alert Flow</h2>
+
+    <h3>Nationwide Attack (150+ areas)</h3>
+    <div class="flow-diagram">Pikud HaOref API
+    │ polled every 3s
+    ▼
+Oref Alert Proxy (:8764)
+    │
+    ├─▶ Geodash        → 150 polygons turn red, stored in InfluxDB
+    ├─▶ Pushover       → "150 areas under active alert" → phone
+    ├─▶ Actuator       → Lights red + "Nationwide alert..." on Snapcast
+    ├─▶ Telegram Bot   → Awaits /sitrep → AI briefing
+    └─▶ Management UI  → All services green (or flags failures)</div>
+
+    <h3>Direct Threat (your area)</h3>
+    <div class="flow-diagram">Your area matches ALERT_AREA
+    │
+    ├─▶ Actuator       → Lights RED + "Seek shelter immediately"
+    ├─▶ Geodash        → Your area flashing red with siren audio
+    │
+    │   ... when all-clear arrives ...
+    │
+    ├─▶ Actuator       → Lights GREEN + "All clear" → OFF after 2 min
+    └─▶ Geodash        → Area returns to normal</div>
+</section>
+
+<section id="mcp">
+    <h2>MCP Server (AI Agents)</h2>
+
+    <p>The stack includes an MCP server for AI agent integration:</p>
+
+    <pre><code><span class="comment"># Claude Code</span>
+<span class="cmd">claude mcp add</span> --transport http red-alert http://localhost:8786/mcp
+
+<span class="comment"># Claude Desktop — add to claude_desktop_config.json:</span>
+{
+  "mcpServers": {
+    "red-alert": {
+      "url": "http://localhost:8786/mcp"
+    }
+  }
+}</code></pre>
+
+    <table>
+        <tr><th>Tool</th><th>Description</th></tr>
+        <tr><td><code>get_current_alerts</code></td><td>All currently active alerts nationwide</td></tr>
+        <tr><td><code>get_area_alerts</code></td><td>Alerts within a radius of a lat/lon point</td></tr>
+        <tr><td><code>get_alert_history</code></td><td>Recent alert history including resolved</td></tr>
+        <tr><td><code>get_news</code></td><td>Cached news articles from RSS feeds</td></tr>
+        <tr><td><code>get_sample_payloads</code></td><td>Stored sample alert payloads for dev</td></tr>
+        <tr><td><code>get_proxy_status</code></td><td>Health check of the Oref Alert Proxy</td></tr>
+    </table>
+</section>
+
+<section id="remote-access">
+    <h2>Remote Access</h2>
+
+    <p>We recommend <strong>Cloudflare Tunnel</strong> for secure remote access to the stack. It provides HTTPS, authentication, and DDoS protection without opening router ports — and the free tier covers personal use.</p>
+
+    <p>Suggested subdomain pattern:</p>
+    <table>
+        <tr><th>Subdomain</th><th>Service</th></tr>
+        <tr><td><code>redalert.yourdomain.com</code></td><td>Management UI (:8888)</td></tr>
+        <tr><td><code>redalertdash.yourdomain.com</code></td><td>Geodash Dashboard (:8083)</td></tr>
+        <tr><td><code>redalertmcp.yourdomain.com</code></td><td>MCP Server (:8786)</td></tr>
+    </table>
+
+    <p>Claude Code users: run <code>/setup-tunnel</code> for a guided Cloudflare Tunnel setup.</p>
+</section>
+
+</div>
+
+<footer>
+    <p>
+        <a href="https://github.com/danielrosehill/Red-Alert-Monitoring-Stack-Public">GitHub</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://danielrosehill.com">Daniel Rosehill</a>
+        &nbsp;&middot;&nbsp;
+        MIT License
+    </p>
+</footer>
+
+<script>
+function switchTab(name) {
+    document.querySelectorAll('.compose-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+}
+</script>
+
+</body>
+</html>

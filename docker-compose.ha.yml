@@ -1,12 +1,17 @@
 # =============================================================================
-# Red Alert Monitoring Stack — With Bundled Mosquitto Broker
+# Red Alert Monitoring Stack — Home Assistant Edition
 # =============================================================================
-# Use this if you don't have a standalone MQTT broker on your network.
-# Includes everything from docker-compose.yml plus a Mosquitto container.
+# Use this if Home Assistant handles your smart light and TTS automations
+# directly. The actuator service is removed — HA subscribes to the proxy
+# or MQTT broker and triggers automations itself.
 #
 # Usage:
 #   cp .env.example .env   # fill in your values
-#   docker compose -f docker-compose.with-broker.yml up -d
+#   docker compose -f docker-compose.ha.yml up -d
+#
+# Home Assistant integration:
+#   Point an HA REST sensor at http://<stack-ip>:8764/api/alerts to poll
+#   the proxy, or subscribe to MQTT topics if using the with-broker variant.
 # =============================================================================
 
 services:
@@ -36,21 +41,6 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-redalert}
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-alerts}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
-    networks:
-      - redalert
-
-  # -- MQTT Broker (bundled) ---------------------------------------------------
-  mosquitto:
-    image: eclipse-mosquitto:2
-    container_name: mosquitto
-    restart: unless-stopped
-    ports:
-      - "${MQTT_EXTERNAL_PORT:-1883}:1883"
-      - "9001:9001"
-    volumes:
-      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - mosquitto-data:/mosquitto/data
-      - mosquitto-log:/mosquitto/log
     networks:
       - redalert
 
@@ -103,32 +93,6 @@ services:
     networks:
       - redalert
 
-  # -- Automation --------------------------------------------------------------
-  actuator:
-    build:
-      context: ./actuator
-      dockerfile: Dockerfile
-    container_name: actuator
-    restart: unless-stopped
-    environment:
-      - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
-      - MQTT_BROKER=mosquitto
-      - MQTT_PORT=1883
-      - MQTT_USERNAME=${MQTT_USERNAME:-}
-      - MQTT_PASSWORD=${MQTT_PASSWORD:-}
-      - MQTT_LIGHT_TOPICS=${MQTT_LIGHT_TOPICS:-}
-      - ALERT_AREA=${ALERT_AREA:-}
-      - TTS_ENABLED=${TTS_ENABLED:-true}
-      - TTS_COOLDOWN=${TTS_COOLDOWN:-60}
-      - LIGHT_RESTORE_AFTER=${LIGHT_RESTORE_AFTER:-120}
-    volumes:
-      - ${SNAPCAST_FIFO:-/tmp/snapfifo}:/tmp/snapfifo
-    depends_on:
-      - oref-proxy
-      - mosquitto
-    networks:
-      - redalert
-
   # -- Caching -----------------------------------------------------------------
   rss-cache:
     image: danielrosehill/red-alert-rss-cache:latest
@@ -178,12 +142,11 @@ services:
     ports:
       - "8888:8888"
     environment:
-      - STACK_NAME=${STACK_NAME:-Red Alert Monitoring Stack}
+      - STACK_NAME=${STACK_NAME:-Red Alert Monitoring Stack (HA Edition)}
       - OREF_PROXY_URL=http://oref-proxy:8764
       - GEODASH_URL=http://geodash:8083
       - INFLUXDB_URL=http://influxdb:8086
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:8083}
-      - MQTT_BROKER=mosquitto
       - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
@@ -198,5 +161,3 @@ networks:
 volumes:
   influxdb-data:
   mcp-data:
-  mosquitto-data:
-  mosquitto-log:

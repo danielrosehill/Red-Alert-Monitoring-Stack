@@ -139,7 +139,7 @@ All configuration is via `.env` (copy from `.env.example`). The file is gitignor
 
 ## Docker Images
 
-All images are published to Docker Hub under [`danielrosehill`](https://hub.docker.com/u/danielrosehill):
+Most images are published to Docker Hub under [`danielrosehill`](https://hub.docker.com/u/danielrosehill):
 
 | Image | Source |
 |-------|--------|
@@ -147,10 +147,11 @@ All images are published to Docker Hub under [`danielrosehill`](https://hub.dock
 | `danielrosehill/red-alert-geodash` | [Red-Alert-Geodash](https://github.com/danielrosehill/Red-Alert-Geodash) |
 | `danielrosehill/red-alert-pushover` | [Red-Alert-Pushover](https://github.com/danielrosehill/Red-Alert-Pushover) |
 | `danielrosehill/red-alert-telegram` | [Red-Alert-Telegram-Bot](https://github.com/danielrosehill/Red-Alert-Telegram-Bot) |
-| `danielrosehill/red-alert-actuator` | [Red-Alert-Actuator](https://github.com/danielrosehill/Red-Alert-Actuator) |
 | `danielrosehill/red-alert-rss-cache` | *(this repo, `rss-cache/`)* |
 | `danielrosehill/red-alert-mcp` | *(this repo, `mcp-server/`)* |
 | `danielrosehill/red-alert-management` | *(this repo, `management-ui/`)* |
+
+The **Actuator** is built from source (`actuator/`) rather than pulled from Docker Hub, since it requires site-specific customization (MQTT topics, speaker config, local area).
 
 ## MCP Server (AI Agent Integration)
 

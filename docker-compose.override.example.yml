@@ -1,0 +1,84 @@
+# =============================================================================
+# Red Alert Monitoring Stack — Docker Compose Override (Example)
+# =============================================================================
+# Copy this file to docker-compose.override.yml to customize the stack
+# without modifying the base compose files. Docker Compose automatically
+# merges docker-compose.override.yml with docker-compose.yml.
+#
+#   cp docker-compose.override.example.yml docker-compose.override.yml
+#
+# Common customizations are shown below. Uncomment and modify as needed.
+# =============================================================================
+
+services:
+  # -- Expose additional ports -------------------------------------------------
+  # influxdb:
+  #   ports:
+  #     - "8086:8086"   # Already exposed by default
+
+  # -- Add Cloudflare Tunnel for remote access ---------------------------------
+  # cloudflared:
+  #   image: cloudflare/cloudflared:latest
+  #   container_name: cloudflared
+  #   restart: unless-stopped
+  #   command: tunnel run
+  #   volumes:
+  #     - ./cloudflared:/etc/cloudflared:ro
+  #   networks:
+  #     - redalert
+
+  # -- Override actuator settings (e.g., custom poll interval) -----------------
+  # actuator:
+  #   environment:
+  #     - POLL_INTERVAL=5
+  #     - LIGHT_RESTORE_AFTER=300
+  #     - TTS_COOLDOWN=120
+
+  # -- Add extra MQTT topics at deploy time ------------------------------------
+  # actuator:
+  #   environment:
+  #     - MQTT_LIGHT_TOPICS=zigbee2mqtt/living_room/set,zigbee2mqtt/hallway/set,zigbee2mqtt/bedroom/set
+
+  # -- Pin specific image versions instead of :latest --------------------------
+  # oref-proxy:
+  #   image: danielrosehill/red-alert-proxy:1.2.0
+  # geodash:
+  #   image: danielrosehill/red-alert-geodash:1.2.0
+
+  # -- Mount custom Mosquitto config (for with-broker variant) -----------------
+  # mosquitto:
+  #   volumes:
+  #     - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+  #     - ./mosquitto/passwd:/mosquitto/config/passwd:ro
+
+  # -- Add a Grafana dashboard for InfluxDB visualization ----------------------
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #   volumes:
+  #     - grafana-data:/var/lib/grafana
+  #   networks:
+  #     - redalert
+
+  # -- Override RSS feeds ------------------------------------------------------
+  # rss-cache:
+  #   environment:
+  #     - RSS_FEEDS=https://www.timesofisrael.com/feed/|Times of Israel,https://www.jns.org/feed/|JNS,https://www.ynetnews.com/rss/news|Ynet
+  #     - RSS_POLL_INTERVAL=120
+
+  # -- Resource limits ---------------------------------------------------------
+  # actuator:
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 256M
+  #         cpus: '0.5'
+
+# -- Extra volumes (uncomment if adding services above) ----------------------
+# volumes:
+#   grafana-data:
