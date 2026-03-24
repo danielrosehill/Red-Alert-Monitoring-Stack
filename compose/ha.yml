@@ -191,6 +191,8 @@ services:
       - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
       - ALERT_AREA=${ALERT_AREA:-}
+      - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
+      - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}
     depends_on:
       - oref-proxy
     networks:

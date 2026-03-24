@@ -117,7 +117,10 @@
             <h1><span>&#9632;</span> {{ stack_name }}</h1>
             <div class="timestamp">Last checked: {{ timestamp }}</div>
         </div>
-        <button class="refresh-btn" onclick="location.reload()">Refresh</button>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <a href="/snapcast" style="color: var(--muted); text-decoration: none; font-size: 0.82rem;">Snapcast Clients</a>
+            <button class="refresh-btn" onclick="location.reload()">Refresh</button>
+        </div>
     </header>
 
     <div class="section-title">Core Services</div>

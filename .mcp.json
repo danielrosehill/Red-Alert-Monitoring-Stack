@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "red-alert": {
+      "type": "http",
+      "url": "http://localhost:8786/mcp"
+    },
+    "home-assistant": {
+      "type": "http",
+      "url": "${HA_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer ${HA_ACCESS_TOKEN}"
+      }
+    }
+  }
+}

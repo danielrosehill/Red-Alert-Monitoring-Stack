@@ -54,6 +54,11 @@ MQTT_LIGHT_TOPICS = [
     for t in os.environ.get("MQTT_LIGHT_TOPICS", "").split(",")
     if t.strip()
 ]
+MQTT_ALARM_TOPICS = [
+    t.strip()
+    for t in os.environ.get("MQTT_ALARM_TOPICS", "").split(",")
+    if t.strip()
+]
 LIGHT_RESTORE_AFTER = int(os.environ.get("LIGHT_RESTORE_AFTER", "120"))
 
 SNAPCAST_FIFO = os.environ.get("SNAPCAST_FIFO", "/tmp/snapfifo")
@@ -153,6 +158,48 @@ class LightController:
             self.client.disconnect()
 
 
+# ── Alarm/Siren Controller ───────────────────────────────────────────────────
+
+
+ALARM_PAYLOADS = {
+    "on": {"warning": {"mode": "emergency", "level": "high", "strobe": True, "duration": 120}},
+    "off": {"warning": {"mode": "stop"}},
+}
+
+
+class AlarmController:
+    """Controls MQTT-based alarm/siren devices (e.g. Zigbee sirens)."""
+
+    def __init__(self, mqtt_client: "mqtt.Client | None"):
+        self.client = mqtt_client
+        self.active = False
+
+        if not MQTT_ALARM_TOPICS:
+            log.info("No MQTT_ALARM_TOPICS configured — alarm control disabled")
+            return
+        log.info("Alarm topics configured: %d sirens", len(MQTT_ALARM_TOPICS))
+
+    def activate(self):
+        """Sound the alarm on all configured sirens."""
+        if not self.client or not MQTT_ALARM_TOPICS or self.active:
+            return
+        payload = json.dumps(ALARM_PAYLOADS["on"])
+        for topic in MQTT_ALARM_TOPICS:
+            self.client.publish(topic, payload)
+        self.active = True
+        log.info("Alarms → ON (%d sirens)", len(MQTT_ALARM_TOPICS))
+
+    def deactivate(self):
+        """Silence all alarms."""
+        if not self.client or not MQTT_ALARM_TOPICS or not self.active:
+            return
+        payload = json.dumps(ALARM_PAYLOADS["off"])
+        for topic in MQTT_ALARM_TOPICS:
+            self.client.publish(topic, payload)
+        self.active = False
+        log.info("Alarms → OFF (%d sirens)", len(MQTT_ALARM_TOPICS))
+
+
 # ── Snapcast TTS ─────────────────────────────────────────────────────────────
 
 
@@ -206,11 +253,13 @@ class TTSPlayer:
 
 class AlertMonitor:
     def __init__(
-        self, http_client: httpx.AsyncClient, lights: LightController, tts: TTSPlayer
+        self, http_client: httpx.AsyncClient, lights: LightController, tts: TTSPlayer,
+        alarms: AlarmController | None = None,
     ):
         self.http_client = http_client
         self.lights = lights
         self.tts = tts
+        self.alarms = alarms
 
         # State tracking
         self.prev_local_state: str = ""  # "", "warning", "active", "clear"
@@ -272,6 +321,8 @@ class AlertMonitor:
             if local_state == "active":
                 self.lights.set_color("red")
                 self.tts.play("red_alert")
+                if self.alarms:
+                    self.alarms.activate()
                 self.last_active_time = time.time()
                 self.all_clear_sent = False
                 # Trigger prompt runner for immediate intelligence
@@ -287,6 +338,8 @@ class AlertMonitor:
             ):
                 self.lights.set_color("green")
                 self.tts.play("all_clear")
+                if self.alarms:
+                    self.alarms.deactivate()
                 self.all_clear_sent = True
             elif local_state == "" and self.prev_local_state:
                 # Area dropped from alerts entirely
@@ -296,6 +349,8 @@ class AlertMonitor:
                 ):
                     self.lights.set_color("green")
                     self.tts.play("all_clear")
+                    if self.alarms:
+                        self.alarms.deactivate()
                     self.all_clear_sent = True
 
             self.prev_local_state = local_state
@@ -337,6 +392,7 @@ class AlertMonitor:
 # ── Shared state (set during lifespan) ───────────────────────────────────────
 
 _lights: LightController | None = None
+_alarms: AlarmController | None = None
 _tts: TTSPlayer | None = None
 _monitor: AlertMonitor | None = None
 _http_client: httpx.AsyncClient | None = None
@@ -347,17 +403,19 @@ _http_client: httpx.AsyncClient | None = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _lights, _tts, _monitor, _http_client
+    global _lights, _alarms, _tts, _monitor, _http_client
 
     _lights = LightController()
+    _alarms = AlarmController(_lights.client)
     _tts = TTSPlayer()
     _http_client = httpx.AsyncClient()
-    _monitor = AlertMonitor(_http_client, _lights, _tts)
+    _monitor = AlertMonitor(_http_client, _lights, _tts, _alarms)
 
     log.info("Red Alert Actuator starting...")
     log.info("Proxy: %s", OREF_PROXY_URL)
     log.info("Local area: %s", LOCAL_AREA)
     log.info("MQTT lights: %d topics", len(MQTT_LIGHT_TOPICS))
+    log.info("MQTT alarms: %d topics", len(MQTT_ALARM_TOPICS))
     log.info("TTS: %s (cooldown: %ds)", "enabled" if TTS_ENABLED else "disabled", TTS_COOLDOWN)
 
     # Start polling loop as background task
@@ -399,6 +457,7 @@ async def health():
         "service": "actuator",
         "local_area": LOCAL_AREA,
         "mqtt_lights": len(MQTT_LIGHT_TOPICS),
+        "mqtt_alarms": len(MQTT_ALARM_TOPICS),
         "tts_enabled": TTS_ENABLED,
         "current_state": _monitor.prev_local_state if _monitor else "unknown",
     }
@@ -417,9 +476,11 @@ async def test_alert(req: TestAlertRequest):
         _lights.set_color("red")
         _tts.last_played.pop("red_alert", None)  # bypass cooldown for test
         _tts.play("red_alert")
+        if _alarms:
+            _alarms.activate()
         # Trigger prompt runner for immediate intel if configured
         asyncio.create_task(_trigger_prompt_runner(req.area or LOCAL_AREA))
-        return {"status": "ok", "triggered": "red_alert", "lights": "red", "tts": "red_alert"}
+        return {"status": "ok", "triggered": "red_alert", "lights": "red", "tts": "red_alert", "alarms": "on"}
 
     elif alert_type in ("early_warning", "warning"):
         _lights.current_color = ""
@@ -433,7 +494,9 @@ async def test_alert(req: TestAlertRequest):
         _lights.set_color("green")
         _tts.last_played.pop("all_clear", None)
         _tts.play("all_clear")
-        return {"status": "ok", "triggered": "all_clear", "lights": "green", "tts": "all_clear"}
+        if _alarms:
+            _alarms.deactivate()
+        return {"status": "ok", "triggered": "all_clear", "lights": "green", "tts": "all_clear", "alarms": "off"}
 
     elif alert_type.startswith("threshold"):
         _lights.current_color = ""

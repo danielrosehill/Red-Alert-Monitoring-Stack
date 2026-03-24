@@ -100,6 +100,8 @@ SERVICES = {
 }
 
 ACTUATOR_URL = os.getenv("ACTUATOR_URL", "http://actuator:8782")
+SNAPCAST_SERVER = os.getenv("SNAPCAST_SERVER", "")
+SNAPCAST_PORT = int(os.getenv("SNAPCAST_PORT", "1780"))
 
 
 class TestAlertRequest(BaseModel):
@@ -180,6 +182,62 @@ async def health():
 async def api_statuses():
     statuses = await get_all_statuses()
     return {"statuses": statuses, "checked_at": datetime.now(timezone.utc).isoformat()}
+
+
+async def get_snapcast_status() -> dict:
+    """Query Snapcast server for connected clients via JSON-RPC."""
+    if not SNAPCAST_SERVER:
+        return {"available": False, "reason": "SNAPCAST_SERVER not configured"}
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"http://{SNAPCAST_SERVER}:{SNAPCAST_PORT}/jsonrpc",
+                json={"id": 1, "jsonrpc": "2.0", "method": "Server.GetStatus"},
+                timeout=5.0,
+            )
+            data = resp.json()
+            server = data.get("result", {}).get("server", {})
+            groups = server.get("groups", [])
+            clients = []
+            for group in groups:
+                stream_id = group.get("stream_id", "")
+                for c in group.get("clients", []):
+                    cfg = c.get("config", {})
+                    host = c.get("host", {})
+                    clients.append({
+                        "id": c.get("id", ""),
+                        "name": cfg.get("name", "") or host.get("name", host.get("ip", "unknown")),
+                        "ip": host.get("ip", ""),
+                        "mac": host.get("mac", ""),
+                        "connected": c.get("connected", False),
+                        "volume": cfg.get("volume", {}).get("percent", 0),
+                        "muted": cfg.get("volume", {}).get("muted", False),
+                        "stream": stream_id,
+                    })
+            return {"available": True, "clients": clients, "groups": len(groups)}
+    except Exception as e:
+        log.error("Snapcast query failed: %s", e)
+        return {"available": False, "reason": str(e)}
+
+
+@app.get("/snapcast", response_class=HTMLResponse)
+async def snapcast_page(request: Request):
+    snap = await get_snapcast_status()
+    return templates.TemplateResponse(
+        "snapcast.html",
+        {
+            "request": request,
+            "snapcast": snap,
+            "snapcast_server": SNAPCAST_SERVER,
+            "snapcast_port": SNAPCAST_PORT,
+            "stack_name": os.getenv("STACK_NAME", "Red Alert Monitoring Stack"),
+        },
+    )
+
+
+@app.get("/api/snapcast")
+async def api_snapcast():
+    return await get_snapcast_status()
 
 
 @app.post("/api/test-alert")

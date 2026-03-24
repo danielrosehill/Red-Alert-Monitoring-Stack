@@ -136,6 +136,7 @@ services:
       - MQTT_USERNAME=${MQTT_USERNAME:-}
       - MQTT_PASSWORD=${MQTT_PASSWORD:-}
       - MQTT_LIGHT_TOPICS=${MQTT_LIGHT_TOPICS:-}
+      - MQTT_ALARM_TOPICS=${MQTT_ALARM_TOPICS:-}
       - ALERT_AREA=${ALERT_AREA:-}
       - TTS_ENABLED=${TTS_ENABLED:-true}
       - TTS_COOLDOWN=${TTS_COOLDOWN:-60}
@@ -233,6 +234,8 @@ services:
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
       - MQTT_BROKER=mosquitto
       - ALERT_AREA=${ALERT_AREA:-}
+      - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
+      - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}
     depends_on:
       - oref-proxy
     networks:
