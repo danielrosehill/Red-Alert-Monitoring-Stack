@@ -58,7 +58,7 @@ THRESHOLD_LEVELS = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50]
 
 # Valid states for the input_select entity
 VALID_STATES = (
-    ["idle", "warning", "active", "clear"]
+    ["idle", "warning", "active", "clear", "test_active", "test_warning", "test_clear"]
     + [f"threshold_{t}" for t in THRESHOLD_LEVELS]
 )
 
@@ -351,26 +351,24 @@ async def test_alert(req: TestAlertRequest):
 
     alert_type = req.alert_type.lower()
 
+    # Test alerts use test_* states so HA automations can handle them
+    # differently (countdown, shorter duration, auto-restore).
     state_map = {
-        "red_alert": "active",
-        "red": "active",
-        "early_warning": "warning",
-        "warning": "warning",
-        "all_clear": "clear",
-        "clear": "clear",
+        "red_alert": "test_active",
+        "red": "test_active",
+        "early_warning": "test_warning",
+        "warning": "test_warning",
+        "all_clear": "test_clear",
+        "clear": "test_clear",
     }
 
     if alert_type in state_map:
         state = state_map[alert_type]
-        old = _ha.current_state
         _ha.current_state = ""  # force change
         await _ha.set_state(state, _http_client)
-        if alert_type in ("red_alert", "red"):
-            asyncio.create_task(_trigger_prompt_runner(req.area or LOCAL_AREA))
         return {"status": "ok", "triggered": alert_type, "ha_state": state}
 
     elif alert_type.startswith("threshold_"):
-        old = _ha.current_state
         _ha.current_state = ""
         await _ha.set_state(alert_type, _http_client)
         return {"status": "ok", "triggered": alert_type, "ha_state": alert_type}
