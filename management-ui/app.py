@@ -2,6 +2,7 @@
 
 import os
 import asyncio
+import logging
 from datetime import datetime, timezone
 
 import httpx
@@ -9,6 +10,13 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+log = logging.getLogger("redalert.management-ui")
 
 app = FastAPI(title="Red Alert Stack Manager")
 templates = Jinja2Templates(directory="/app/templates")
@@ -125,6 +133,7 @@ async def get_all_statuses() -> dict:
         )
         for svc_id, result in zip(tasks.keys(), checks):
             if isinstance(result, Exception):
+                log.error("Health check failed for %s: %s", svc_id, result)
                 results[svc_id] = {"status": "down", "error": str(result)}
             else:
                 results[svc_id] = result

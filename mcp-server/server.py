@@ -11,8 +11,10 @@ Also stores one sample alert payload every 3 hours (max) to build a reference
 library of real payload structures in data/samples.json.
 """
 
+import atexit
 import os
 import json
+import logging
 import time
 import asyncio
 import math
@@ -21,6 +23,13 @@ from pathlib import Path
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+log = logging.getLogger("redalert.mcp")
 
 PROXY_URL = os.getenv("OREF_PROXY_URL", "http://oref-proxy:8764")
 RSS_CACHE_URL = os.getenv("RSS_CACHE_URL", "http://rss-cache:8785")
@@ -188,8 +197,9 @@ async def get_news(limit: int = 10) -> str:
     """Get cached news articles related to Israeli security from the RSS cache.
 
     Args:
-        limit: Maximum number of articles to return (default: 10)
+        limit: Maximum number of articles to return (default: 10, max: 50)
     """
+    limit = max(1, min(limit, 50))
     client = await _get_client()
     try:
         resp = await client.get(f"{RSS_CACHE_URL}/api/news", params={"limit": limit}, timeout=5)
@@ -206,8 +216,9 @@ async def get_sample_payloads(last_n: int = 5) -> str:
     to build a library of payload structures.
 
     Args:
-        last_n: Number of most recent samples to return (default: 5)
+        last_n: Number of most recent samples to return (default: 5, max: 20)
     """
+    last_n = max(1, min(last_n, 20))
     samples = _load_samples()
     recent = samples[-last_n:] if samples else []
     return json.dumps({
@@ -228,5 +239,16 @@ async def get_proxy_status() -> str:
         return json.dumps({"error": str(e), "proxy_url": PROXY_URL})
 
 
+def _cleanup():
+    """Close HTTP client on shutdown."""
+    global http_client
+    if http_client:
+        asyncio.get_event_loop().run_until_complete(http_client.aclose())
+        log.info("MCP server HTTP client closed")
+
+
+atexit.register(_cleanup)
+
 if __name__ == "__main__":
+    log.info("Starting MCP server on port 8786")
     mcp.run(transport="streamable-http", host="0.0.0.0", port=8786)

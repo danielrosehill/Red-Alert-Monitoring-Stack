@@ -14,6 +14,7 @@ import json
 import logging
 import os
 import time
+import wave
 from pathlib import Path
 
 import httpx
@@ -86,21 +87,35 @@ class LightController:
             log.info("No MQTT_LIGHT_TOPICS configured — light control disabled")
             return
 
-        self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-        if MQTT_USERNAME:
-            self.client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-        try:
-            self.client.connect(MQTT_BROKER, MQTT_PORT, 60)
-            self.client.loop_start()
-            log.info(
-                "MQTT connected to %s:%d (%d lights)",
-                MQTT_BROKER,
-                MQTT_PORT,
-                len(MQTT_LIGHT_TOPICS),
-            )
-        except Exception as e:
-            log.error("MQTT connection failed: %s", e)
-            self.client = None
+        self._connect_mqtt()
+
+    def _connect_mqtt(self, retries: int = 3, delay: float = 2.0):
+        """Connect to MQTT broker with retry."""
+        if not HAS_MQTT or not MQTT_LIGHT_TOPICS:
+            return
+        for attempt in range(1, retries + 1):
+            try:
+                client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+                if MQTT_USERNAME:
+                    client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+                client.connect(MQTT_BROKER, MQTT_PORT, 60)
+                client.loop_start()
+                self.client = client
+                log.info(
+                    "MQTT connected to %s:%d (%d lights)",
+                    MQTT_BROKER,
+                    MQTT_PORT,
+                    len(MQTT_LIGHT_TOPICS),
+                )
+                return
+            except Exception as e:
+                log.warning(
+                    "MQTT connection attempt %d/%d failed: %s", attempt, retries, e
+                )
+                if attempt < retries:
+                    time.sleep(delay * attempt)
+        log.error("MQTT connection failed after %d attempts — light control disabled", retries)
+        self.client = None
 
     def set_color(self, color: str):
         """Set all lights to a color. color is one of: red, orange, green, off."""
@@ -155,9 +170,9 @@ class TTSPlayer:
             return
 
         try:
-            audio_data = audio_file.read_bytes()
-            # Skip WAV header (44 bytes) — Snapcast expects raw PCM
-            pcm_data = audio_data[44:]
+            # Parse WAV properly — Snapcast expects raw PCM
+            with wave.open(str(audio_file), "rb") as wav:
+                pcm_data = wav.readframes(wav.getnframes())
 
             with open(self.fifo_path, "wb") as fifo:
                 fifo.write(pcm_data)
@@ -203,11 +218,12 @@ class AlertMonitor:
             if "cat" in a and "category" not in a:
                 a["category"] = a["cat"]
 
+        # Always check light restore timer regardless of alert changes
+        self._check_light_restore()
+
         # Detect changes
         current_ids = {f"{a.get('data', '')}:{a.get('category', 0)}" for a in alerts}
         if current_ids == self.prev_alert_ids:
-            # No change — but check if we need to restore lights after all-clear
-            self._check_light_restore()
             return
         self.prev_alert_ids = current_ids
 
@@ -318,10 +334,11 @@ async def main():
             while True:
                 await monitor.poll()
                 await asyncio.sleep(POLL_INTERVAL)
-        except asyncio.CancelledError:
-            pass
+        except (asyncio.CancelledError, KeyboardInterrupt):
+            log.info("Shutting down...")
         finally:
             lights.close()
+            log.info("Actuator stopped")
 
 
 if __name__ == "__main__":

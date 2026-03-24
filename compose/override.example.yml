@@ -1,11 +1,10 @@
 # =============================================================================
 # Red Alert Monitoring Stack — Docker Compose Override (Example)
 # =============================================================================
-# Copy this file to docker-compose.override.yml to customize the stack
-# without modifying the base compose files. Docker Compose automatically
-# merges docker-compose.override.yml with docker-compose.yml.
+# Copy this file to override.yml to customize the stack without modifying
+# the base compose files. Use with: docker compose -f compose/default.yml -f compose/override.yml
 #
-#   cp docker-compose.override.example.yml docker-compose.override.yml
+#   cp compose/override.example.yml compose/override.yml
 #
 # Common customizations are shown below. Uncomment and modify as needed.
 # =============================================================================
@@ -23,7 +22,7 @@ services:
   #   restart: unless-stopped
   #   command: tunnel run
   #   volumes:
-  #     - ./cloudflared:/etc/cloudflared:ro
+  #     - ../cloudflared:/etc/cloudflared:ro
   #   networks:
   #     - redalert
 
@@ -48,8 +47,8 @@ services:
   # -- Mount custom Mosquitto config (for with-broker variant) -----------------
   # mosquitto:
   #   volumes:
-  #     - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-  #     - ./mosquitto/passwd:/mosquitto/config/passwd:ro
+  #     - ../mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+  #     - ../mosquitto/passwd:/mosquitto/config/passwd:ro
 
   # -- Add a Grafana dashboard for InfluxDB visualization ----------------------
   # grafana:
@@ -65,10 +64,15 @@ services:
   #   networks:
   #     - redalert
 
-  # -- Override RSS feeds ------------------------------------------------------
+  # -- Override RSS feeds (use numbered env vars) ---------------------------------
   # rss-cache:
   #   environment:
-  #     - RSS_FEEDS=https://www.timesofisrael.com/feed/|Times of Israel,https://www.jns.org/feed/|JNS,https://www.ynetnews.com/rss/news|Ynet
+  #     - RSS_FEED_1_URL=https://www.timesofisrael.com/feed/
+  #     - RSS_FEED_1_NAME=Times of Israel
+  #     - RSS_FEED_2_URL=https://www.jns.org/feed/
+  #     - RSS_FEED_2_NAME=JNS
+  #     - RSS_FEED_3_URL=https://www.ynetnews.com/rss/news
+  #     - RSS_FEED_3_NAME=Ynet
   #     - RSS_POLL_INTERVAL=120
 
   # -- Resource limits ---------------------------------------------------------

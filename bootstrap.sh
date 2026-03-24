@@ -79,9 +79,9 @@ fi
 
 # ── Create override if it doesn't exist ──────────────────────────────────────
 
-if [ ! -f "docker-compose.override.yml" ] && [ -f "docker-compose.override.example.yml" ]; then
-    cp docker-compose.override.example.yml docker-compose.override.yml
-    ok "Created docker-compose.override.yml from example"
+if [ ! -f "compose/override.yml" ] && [ -f "compose/override.example.yml" ]; then
+    cp compose/override.example.yml compose/override.yml
+    ok "Created compose/override.yml from example"
 fi
 
 # ── Interactive configuration ─────────────────────────────────────────────────
@@ -105,7 +105,7 @@ echo "  2) Use the bundled Mosquitto broker"
 echo "  3) Skip (Home Assistant handles automations)"
 read -rp "Choose [1/2/3]: " mqtt_choice
 
-COMPOSE_FILE="docker-compose.yml"
+COMPOSE_FILE="compose/default.yml"
 
 case "$mqtt_choice" in
     1)
@@ -124,17 +124,17 @@ case "$mqtt_choice" in
         ;;
     2)
         sed -i "s|^MQTT_BROKER=.*|MQTT_BROKER=mosquitto|" .env
-        COMPOSE_FILE="docker-compose.with-broker.yml"
+        COMPOSE_FILE="compose/with-broker.yml"
         ok "Using bundled Mosquitto broker"
         ;;
     3)
-        COMPOSE_FILE="docker-compose.ha.yml"
+        COMPOSE_FILE="compose/ha.yml"
         ok "Using Home Assistant compose (no actuator)"
         ;;
     *)
         warn "Invalid choice — defaulting to bundled broker"
         sed -i "s|^MQTT_BROKER=.*|MQTT_BROKER=mosquitto|" .env
-        COMPOSE_FILE="docker-compose.with-broker.yml"
+        COMPOSE_FILE="compose/with-broker.yml"
         ;;
 esac
 

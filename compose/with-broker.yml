@@ -1,12 +1,12 @@
 # =============================================================================
-# Red Alert Monitoring Stack — Core Docker Compose
+# Red Alert Monitoring Stack — With Bundled Mosquitto Broker
 # =============================================================================
-# Assumes you have a Mosquitto MQTT broker running separately on your network.
-# If you need a bundled broker, use docker-compose.with-broker.yml instead.
+# Use this if you don't have a standalone MQTT broker on your network.
+# Includes everything from default.yml plus a Mosquitto container.
 #
 # Usage:
 #   cp .env.example .env   # fill in your values
-#   docker compose up -d
+#   docker compose -f compose/with-broker.yml up -d
 # =============================================================================
 
 services:
@@ -31,11 +31,26 @@ services:
       - influxdb-data:/var/lib/influxdb2
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=redalert-admin
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_ADMIN_USER:-admin}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:-redalert-admin}
       - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-redalert}
       - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-alerts}
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+    networks:
+      - redalert
+
+  # -- MQTT Broker (bundled) ---------------------------------------------------
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "${MQTT_EXTERNAL_PORT:-1883}:1883"
+      - "9001:9001"
+    volumes:
+      - ../mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
     networks:
       - redalert
 
@@ -91,14 +106,14 @@ services:
   # -- Automation --------------------------------------------------------------
   actuator:
     build:
-      context: ./actuator
+      context: ../actuator
       dockerfile: Dockerfile
     container_name: actuator
     restart: unless-stopped
     environment:
       - OREF_PROXY_URL=${OREF_PROXY_URL:-http://oref-proxy:8764}
-      - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
-      - MQTT_PORT=${MQTT_PORT:-1883}
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
       - MQTT_USERNAME=${MQTT_USERNAME:-}
       - MQTT_PASSWORD=${MQTT_PASSWORD:-}
       - MQTT_LIGHT_TOPICS=${MQTT_LIGHT_TOPICS:-}
@@ -110,6 +125,7 @@ services:
       - ${SNAPCAST_FIFO:-/tmp/snapfifo}:/tmp/snapfifo
     depends_on:
       - oref-proxy
+      - mosquitto
     networks:
       - redalert
 
@@ -117,14 +133,19 @@ services:
   rss-cache:
     image: danielrosehill/red-alert-rss-cache:latest
     build:
-      context: ./rss-cache
+      context: ../rss-cache
       dockerfile: Dockerfile
     container_name: rss-cache
     restart: unless-stopped
     ports:
       - "8785:8785"
     environment:
-      - RSS_FEEDS=${RSS_FEEDS:-https://www.timesofisrael.com/feed/|Times of Israel,https://www.jns.org/feed/|JNS}
+      - RSS_FEED_1_URL=${RSS_FEED_1_URL:-}
+      - RSS_FEED_1_NAME=${RSS_FEED_1_NAME:-}
+      - RSS_FEED_2_URL=${RSS_FEED_2_URL:-}
+      - RSS_FEED_2_NAME=${RSS_FEED_2_NAME:-}
+      - RSS_FEED_3_URL=${RSS_FEED_3_URL:-}
+      - RSS_FEED_3_NAME=${RSS_FEED_3_NAME:-}
       - RSS_POLL_INTERVAL=${RSS_POLL_INTERVAL:-300}
     networks:
       - redalert
@@ -133,7 +154,7 @@ services:
   mcp-server:
     image: danielrosehill/red-alert-mcp:latest
     build:
-      context: ./mcp-server
+      context: ../mcp-server
       dockerfile: Dockerfile
     container_name: mcp-server
     restart: unless-stopped
@@ -155,7 +176,7 @@ services:
   management-ui:
     image: danielrosehill/red-alert-management:latest
     build:
-      context: ./management-ui
+      context: ../management-ui
       dockerfile: Dockerfile
     container_name: management-ui
     restart: unless-stopped
@@ -167,7 +188,7 @@ services:
       - GEODASH_URL=http://geodash:8083
       - INFLUXDB_URL=http://influxdb:8086
       - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:8083}
-      - MQTT_BROKER=${MQTT_BROKER:?Set MQTT_BROKER to your broker IP e.g. 10.0.0.4}
+      - MQTT_BROKER=mosquitto
       - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
       - oref-proxy
@@ -182,3 +203,5 @@ networks:
 volumes:
   influxdb-data:
   mcp-data:
+  mosquitto-data:
+  mosquitto-log:

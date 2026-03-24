@@ -3,24 +3,46 @@
 import os
 import time
 import asyncio
-import xml.etree.ElementTree as ET
+import logging
+from contextlib import asynccontextmanager
+from defusedxml import ElementTree as ET
 from datetime import datetime, timezone
 
 import httpx
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 
-app = FastAPI(title="Red Alert RSS Cache")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(name)s] %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+log = logging.getLogger("redalert.rss-cache")
 
-# Configurable feeds via env (comma-separated "url|label" pairs)
+# Configurable feeds via numbered env vars: RSS_FEED_1_URL / RSS_FEED_1_NAME (up to 10)
 # Falls back to defaults used by Geodash
-DEFAULT_FEEDS = "https://www.timesofisrael.com/feed/|Times of Israel,https://www.jns.org/feed/|JNS"
-FEEDS_RAW = os.getenv("RSS_FEEDS", DEFAULT_FEEDS)
-FEEDS = []
-for entry in FEEDS_RAW.split(","):
-    entry = entry.strip()
-    if "|" in entry:
-        url, label = entry.rsplit("|", 1)
-        FEEDS.append((url.strip(), label.strip()))
+FEEDS: list[tuple[str, str]] = []
+for i in range(1, 11):
+    url = os.getenv(f"RSS_FEED_{i}_URL", "")
+    name = os.getenv(f"RSS_FEED_{i}_NAME", f"Feed {i}")
+    if url:
+        FEEDS.append((url.strip(), name.strip()))
+
+# Legacy format: comma-separated "url|label" pairs (deprecated, still supported)
+if not FEEDS:
+    legacy = os.getenv("RSS_FEEDS", "")
+    if legacy:
+        for entry in legacy.split(","):
+            entry = entry.strip()
+            if "|" in entry:
+                url, label = entry.rsplit("|", 1)
+                FEEDS.append((url.strip(), label.strip()))
+
+# Defaults if nothing configured
+if not FEEDS:
+    FEEDS = [
+        ("https://www.timesofisrael.com/feed/", "Times of Israel"),
+        ("https://www.jns.org/feed/", "JNS"),
+    ]
 
 POLL_INTERVAL = int(os.getenv("RSS_POLL_INTERVAL", "300"))  # 5 minutes
 MAX_ARTICLES = int(os.getenv("RSS_MAX_ARTICLES", "30"))
@@ -36,7 +58,7 @@ http_client: httpx.AsyncClient | None = None
 
 
 def _parse_rss(xml_text: str, source: str, limit: int = 15) -> list[dict]:
-    """Parse RSS XML into article dicts."""
+    """Parse RSS XML into article dicts. Uses defusedxml to prevent XXE attacks."""
     root = ET.fromstring(xml_text)
     articles = []
     for item in root.iter("item"):
@@ -85,22 +107,24 @@ async def poll_feeds():
         await asyncio.sleep(POLL_INTERVAL)
 
 
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global http_client
     http_client = httpx.AsyncClient()
-    asyncio.create_task(poll_feeds())
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    global http_client
+    task = asyncio.create_task(poll_feeds())
+    log.info("RSS cache started (%d feeds, %ds interval)", len(FEEDS), POLL_INTERVAL)
+    yield
+    task.cancel()
     if http_client:
         await http_client.aclose()
+    log.info("RSS cache shut down")
+
+
+app = FastAPI(title="Red Alert RSS Cache", lifespan=lifespan)
 
 
 @app.get("/api/news")
-async def get_news(limit: int = 20):
+async def get_news(limit: int = Query(20, ge=1, le=100)):
     """Return cached news articles. Drop-in replacement for Geodash /api/news."""
     return cache["articles"][:limit]
 

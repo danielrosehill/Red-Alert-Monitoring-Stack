@@ -21,21 +21,24 @@ A microservices stack for monitoring Israel's Homefront Command (Pikud HaOref) r
 
 ## Docker Compose Variants
 
+All compose files live in `compose/`. Run from the repo root with `-f`:
+
 | File | Use Case |
 |------|----------|
-| `docker-compose.yml` | External MQTT broker on your LAN |
-| `docker-compose.with-broker.yml` | Self-contained with bundled Mosquitto |
-| `docker-compose.ha.yml` | Home Assistant users — no actuator, HA handles automations directly |
+| `compose/default.yml` | External MQTT broker on your LAN |
+| `compose/with-broker.yml` | Self-contained with bundled Mosquitto |
+| `compose/ha.yml` | Home Assistant users — no actuator, HA handles automations directly |
 
 ## Customization via Override
 
-The recommended way to customize the stack is with `docker-compose.override.yml`:
+The recommended way to customize the stack is with an override file:
 
 ```bash
-cp docker-compose.override.example.yml docker-compose.override.yml
+cp compose/override.example.yml compose/override.yml
+docker compose -f compose/default.yml -f compose/override.yml up -d
 ```
 
-Docker Compose automatically merges the override file with the base compose. Use it for:
+Use it for:
 - Adding services (Cloudflare Tunnel, Grafana, etc.)
 - Overriding environment variables per-service
 - Pinning image versions
@@ -60,8 +63,7 @@ Use these slash commands to walk through interactive setup:
 
 - `.env.example` — All configuration variables with documentation
 - `.env` — Your actual config (gitignored)
-- `docker-compose.override.example.yml` — Example override for customizations
-- `docker-compose.override.yml` — Your local customizations (gitignored)
+- `compose/` — All Docker Compose files (default, with-broker, ha, override)
 - `mosquitto/mosquitto.conf` — MQTT broker config (used by bundled broker variant)
 - `actuator/actuator.py` — Automation logic (lights + TTS), editable directly
 
@@ -85,7 +87,15 @@ Key optional variables:
 - All services with source code: `actuator/`, `rss-cache/`, `mcp-server/`, `management-ui/`
 - External services are pulled as Docker images from `danielrosehill/red-alert-*`
 - Network: all services share a `redalert` bridge network
-- Never commit `.env` or `docker-compose.override.yml` — they contain local config
+- Never commit `.env` or `compose/override.yml` — they contain local config
+
+## Alternative Components
+
+| Component | Replaces | Repository |
+|-----------|----------|------------|
+| **Oref Map** | Geodash | https://github.com/maorcc/oref-map |
+
+To swap Geodash for Oref Map, replace the `geodash` service in your compose override with the oref-map image and configure accordingly.
 
 ## MCP Server
 
