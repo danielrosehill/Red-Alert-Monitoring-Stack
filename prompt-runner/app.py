@@ -1,13 +1,13 @@
 """Red Alert Prompt Runner — Templated AI prompt execution service.
 
 Runs templated prompts via OpenRouter (supporting Groq, Gemini, etc.)
-and pipes output to the Telegram bot or TTS.
+and pipes output to the Telegram bot, email (via Resend), or both.
 
 Templates are stored as JSON in templates/ and use Jinja2 for variable
 substitution. The service can be triggered:
   - On-demand via POST /api/run
   - Automatically by the actuator on local area alerts
-  - On a schedule (daily SITREP) via cron or external trigger
+  - On a schedule via SITREP_SCHEDULE (built-in scheduler)
 
 Environment variables:
   OPENROUTER_API_KEY  — Required. API key for OpenRouter
@@ -16,13 +16,18 @@ Environment variables:
   RSS_CACHE_URL       — RSS cache for news context
   OREF_PROXY_URL      — Alert proxy for current situation data
   PORT                — Listen port (default: 8787)
+  RESEND_API_KEY      — Optional. Resend API key for email delivery
+  SITREP_EMAIL_FROM   — Sender address for email SITREPs
+  SITREP_EMAIL_TO     — Comma-separated recipient addresses
+  SITREP_SCHEDULE     — UTC hours to auto-send SITREPs, e.g. "0,6,18" or "every:6"
+  SITREP_DELIVER_TO   — Delivery targets for scheduled SITREPs: "telegram,email"
 """
 
 import asyncio
 import json
 import logging
 import os
-import time
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -31,6 +36,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from jinja2 import Template
 from pydantic import BaseModel
+
+from email_sender import RESEND_API_KEY, send_email
+from scheduler import scheduler_loop, parse_schedule, SITREP_SCHEDULE, SITREP_DELIVER_TO
 
 logging.basicConfig(
     level=logging.INFO,
@@ -192,6 +200,73 @@ async def send_to_telegram(client: httpx.AsyncClient, text: str) -> bool:
         return False
 
 
+async def send_to_email(client: httpx.AsyncClient, text: str) -> bool:
+    """Send SITREP output via Resend email."""
+    subject = f"Red Alert SITREP — {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"
+    return await send_email(client, subject, text)
+
+
+# ── Scheduled SITREP Runner ────────────────────────────────────────────────
+
+
+async def run_scheduled_sitrep(deliver_to: list[str]):
+    """Execute the daily_sitrep template and deliver to specified targets."""
+    templates = load_templates()
+    template_data = templates.get("daily_sitrep")
+    if not template_data:
+        log.error("Scheduler: daily_sitrep template not found")
+        return
+
+    async with httpx.AsyncClient() as client:
+        context = await gather_context(client)
+
+        variables = {**template_data.get("variables", {})}
+        variables["alert_area"] = variables.get("alert_area") or ALERT_AREA
+        variables["context"] = context
+        variables["alerts_json"] = json.dumps(context["alerts"], ensure_ascii=False, indent=2)
+        variables["history_json"] = json.dumps(context["history"][:50], ensure_ascii=False, indent=2)
+        variables["news_summary"] = "\n".join(
+            f"- {a.get('title', '')} ({a.get('feed_name', '')})"
+            for a in context.get("news", [])[:15]
+        )
+
+        system_tmpl = Template(template_data.get("system_prompt", ""))
+        user_tmpl = Template(template_data.get("user_prompt", ""))
+        system_prompt = system_tmpl.render(**variables)
+        user_prompt = user_tmpl.render(**variables)
+
+        model = template_data.get("model", SITREP_MODEL)
+        output = await call_openrouter(client, model, system_prompt, user_prompt)
+
+        if not output:
+            log.error("Scheduler: LLM returned empty response for daily_sitrep")
+            return
+
+        delivered = []
+        if "telegram" in deliver_to:
+            if await send_to_telegram(client, output):
+                delivered.append("telegram")
+        if "email" in deliver_to:
+            if await send_to_email(client, output):
+                delivered.append("email")
+
+        log.info("Scheduled SITREP delivered to: %s (%d chars)", delivered, len(output))
+
+
+# ── App Lifespan ────────────────────────────────────────────────────────────
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(scheduler_loop(run_scheduled_sitrep))
+    yield
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+
+
 # ── Request Models ──────────────────────────────────────────────────────────
 
 
@@ -211,7 +286,7 @@ class RunResponse(BaseModel):
 
 # ── FastAPI App ─────────────────────────────────────────────────────────────
 
-app = FastAPI(title="Red Alert Prompt Runner")
+app = FastAPI(title="Red Alert Prompt Runner", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -224,12 +299,19 @@ app.add_middleware(
 @app.get("/health")
 async def health():
     templates = load_templates()
+    schedule = parse_schedule(SITREP_SCHEDULE)
     return {
         "status": "ok",
         "service": "prompt-runner",
         "templates": list(templates.keys()),
         "openrouter": bool(OPENROUTER_API_KEY),
         "groq": bool(GROQ_API_KEY),
+        "resend": bool(RESEND_API_KEY),
+        "scheduler": {
+            "enabled": schedule is not None,
+            "schedule": SITREP_SCHEDULE or "disabled",
+            "deliver_to": SITREP_DELIVER_TO,
+        },
     }
 
 
@@ -304,9 +386,11 @@ async def run_template(req: RunRequest):
         # Deliver output
         delivered = []
         if "telegram" in req.deliver_to:
-            sent = await send_to_telegram(client, output)
-            if sent:
+            if await send_to_telegram(client, output):
                 delivered.append("telegram")
+        if "email" in req.deliver_to:
+            if await send_to_email(client, output):
+                delivered.append("email")
 
         log.info(
             "Template '%s' executed (%d chars), delivered to: %s",

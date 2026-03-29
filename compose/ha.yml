@@ -143,6 +143,11 @@ services:
       - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - ALERT_AREA=${ALERT_AREA:-}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - SITREP_EMAIL_FROM=${SITREP_EMAIL_FROM:-}
+      - SITREP_EMAIL_TO=${SITREP_EMAIL_TO:-}
+      - SITREP_SCHEDULE=${SITREP_SCHEDULE:-}
+      - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
     depends_on:
       - oref-proxy
       - rss-cache

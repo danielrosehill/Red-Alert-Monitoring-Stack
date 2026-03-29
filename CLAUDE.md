@@ -145,15 +145,22 @@ Key optional variables:
 
 ## Prompt Runner
 
-The prompt runner executes templated AI prompts and delivers output to the Telegram bot.
+The prompt runner executes templated AI prompts and delivers output to Telegram and/or email (via Resend).
 
 **Templates** (in `prompt-runner/templates/`):
 - `immediate_intel` — Auto-triggered by actuator on local red alert. Uses Groq for speed. Provides rapid intel on attacking party, munitions, and other areas under fire.
-- `daily_sitrep` — Comprehensive daily SITREP modeled on ISW/Critical Threats style. Can be triggered manually or on a schedule.
+- `daily_sitrep` — Comprehensive daily SITREP modeled on ISW/Critical Threats style. Can be triggered manually, on a schedule, or on-demand via API.
+
+**Scheduled SITREPs**:
+Set `SITREP_SCHEDULE` to enable automatic SITREP generation:
+- Fixed hours: `SITREP_SCHEDULE=0,6,18` (midnight, 06:00, 18:00 UTC)
+- Interval: `SITREP_SCHEDULE=every:6` (every 6 hours)
+- Delivery: `SITREP_DELIVER_TO=telegram,email` (or just one)
+- Email requires: `RESEND_API_KEY`, `SITREP_EMAIL_FROM`, `SITREP_EMAIL_TO`
 
 **API**:
 - `GET /api/templates` — List available templates
-- `POST /api/run` — Execute a template: `{"template": "daily_sitrep", "deliver_to": ["telegram"]}`
+- `POST /api/run` — Execute a template: `{"template": "daily_sitrep", "deliver_to": ["telegram", "email"]}`
 
 ## Working on This Repo
 
