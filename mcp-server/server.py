@@ -33,6 +33,10 @@ log = logging.getLogger("redalert.mcp")
 
 PROXY_URL = os.getenv("OREF_PROXY_URL", "http://oref-proxy:8764")
 RSS_CACHE_URL = os.getenv("RSS_CACHE_URL", "http://rss-cache:8785")
+GEODASH_URL = os.getenv("GEODASH_URL", "http://geodash:8083")
+ACTUATOR_URL = os.getenv("ACTUATOR_URL", "http://actuator:8782")
+PROMPT_RUNNER_URL = os.getenv("PROMPT_RUNNER_URL", "http://prompt-runner:8787")
+INFLUXDB_URL = os.getenv("INFLUXDB_URL", "http://influxdb:8086")
 SAMPLE_INTERVAL = int(os.getenv("SAMPLE_INTERVAL", "10800"))  # 3 hours
 SAMPLES_FILE = Path(os.getenv("SAMPLES_PATH", "/app/data/samples.json"))
 MAX_SAMPLES = int(os.getenv("MAX_SAMPLES", "100"))
@@ -234,6 +238,56 @@ async def get_proxy_status() -> str:
         return json.dumps(resp.json(), ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": str(e), "proxy_url": PROXY_URL})
+
+
+@mcp.tool()
+async def check_stack_health() -> str:
+    """Check the health of all services in the Red Alert Monitoring Stack.
+
+    Pings each service's health endpoint and returns a summary of which
+    services are up, down, or degraded. Use this instead of the management UI
+    for stack health monitoring.
+    """
+    client = await _get_client()
+
+    services = {
+        "oref-proxy": f"{PROXY_URL}/api/status",
+        "geodash": f"{GEODASH_URL}/health",
+        "influxdb": f"{INFLUXDB_URL}/health",
+        "actuator": f"{ACTUATOR_URL}/health",
+        "prompt-runner": f"{PROMPT_RUNNER_URL}/health",
+        "rss-cache": f"{RSS_CACHE_URL}/health",
+        "mcp-server": "self",
+    }
+
+    results = {}
+    for name, url in services.items():
+        if url == "self":
+            results[name] = {"status": "healthy", "url": "localhost"}
+            continue
+        try:
+            resp = await client.get(url, timeout=5)
+            if resp.status_code < 400:
+                results[name] = {"status": "healthy", "http_status": resp.status_code}
+            else:
+                results[name] = {"status": "degraded", "http_status": resp.status_code}
+        except httpx.ConnectError:
+            results[name] = {"status": "down", "error": "connection refused"}
+        except httpx.TimeoutException:
+            results[name] = {"status": "down", "error": "timeout"}
+        except Exception as e:
+            results[name] = {"status": "down", "error": str(e)}
+
+    healthy = sum(1 for r in results.values() if r["status"] == "healthy")
+    total = len(results)
+
+    return json.dumps({
+        "stack_status": "healthy" if healthy == total else "degraded" if healthy > 0 else "down",
+        "healthy": healthy,
+        "total": total,
+        "services": results,
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }, ensure_ascii=False)
 
 
 def _cleanup():

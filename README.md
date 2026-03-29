@@ -37,14 +37,11 @@ Each component is a standalone service with its own repo, Docker config, and doc
    └────────────────┘ └──────────────────┘ └────────────────┘
 
             ┌──────────────┐   ┌──────────────┐
-            │ Management   │   │  RSS Cache   │
-            │ UI (:8888)   │   │  (:8785)     │
+            │  RSS Cache   │   │  MCP Server  │
+            │  (:8785)     │   │  (:8786)     │
+            │              │   │  AI tools +  │
+            │              │   │  stack health │
             └──────────────┘   └──────────────┘
-            ┌──────────────┐
-            │  MCP Server  │
-            │  (:8786)     │
-            │  AI tools    │
-            └──────────────┘
 ```
 
 ## Components
@@ -57,7 +54,6 @@ Each component is a standalone service with its own repo, Docker config, and doc
 | **Actuator** | *(this repo, `actuator/`)* | 8782 | HA bridge: polls proxy and sets `input_select` state in Home Assistant. HA automations handle lights, sirens, TTS. See `ha/` for examples. |
 | **RSS Cache** | *(this repo, `rss-cache/`)* | 8785 | Polls news feeds on a schedule, serves cached articles. Used by Geodash dashboard. |
 | **MCP Server** | *(this repo, `mcp-server/`)* | 8786 | Streamable HTTP MCP server exposing alert tools (`get_current_alerts`, `get_area_alerts`, `get_news`, etc.) for AI agents. Stores sample payloads every 3h. |
-| **Management UI** | *(this repo, `management-ui/`)* | 8888 | Stack health dashboard showing status of all services with links to Geodash. |
 | **InfluxDB** | [influxdb](https://hub.docker.com/_/influxdb) | 8086 | Time-series database for alert history. |
 | **Mosquitto** | [eclipse-mosquitto](https://hub.docker.com/_/eclipse-mosquitto) | 1883 | MQTT broker (bundled in `with-broker` compose, or bring your own). |
 
@@ -98,13 +94,12 @@ docker compose -f docker-compose.with-broker.yml up -d
 
 | UI | URL |
 |----|-----|
-| **Management Dashboard** | http://localhost:8888 |
 | **Geodash Map** | http://localhost:8083 |
 | **InfluxDB** | http://localhost:8086 |
 | **MCP Server** | http://localhost:8786/mcp |
 | **RSS Cache** | http://localhost:8785/api/news |
 
-The management dashboard auto-refreshes every 30 seconds and shows the health status of all services.
+Stack health monitoring is available via the MCP server's `check_stack_health` tool — see [MCP Server](#mcp-server-ai-agent-integration) below.
 
 ## Environment Variables
 
@@ -133,8 +128,6 @@ All configuration is via `.env` (copy from `.env.example`). The file is gitignor
 | `OPENROUTER_API_KEY` | *(empty)* | OpenRouter key for dual-model sitrep generation |
 | `GROQ_API_KEY` | *(empty)* | Groq key for fast immediate intelligence reports |
 | `HASS_ENTITY` | `input_select.red_alert_state` | HA input_select entity ID |
-| `STACK_NAME` | `Red Alert Monitoring Stack` | Display name in management UI |
-| `GEODASH_EXTERNAL_URL` | `http://localhost:8083` | Geodash URL for management UI links |
 
 
 ## Building from Source
@@ -150,7 +143,6 @@ All services build from source in this monorepo — no external Docker Hub image
 | Prompt Runner | `prompt-runner/` |
 | RSS Cache | `rss-cache/` |
 | MCP Server | `mcp-server/` |
-| Management UI | `management-ui/` |
 
 ## MCP Server (AI Agent Integration)
 
@@ -166,6 +158,7 @@ The stack includes an MCP server that exposes alert data as tools for AI agents 
 | `get_news` | Cached news articles from RSS feeds |
 | `get_sample_payloads` | Stored sample alert payloads for development |
 | `get_proxy_status` | Health check of the Oref Alert Proxy |
+| `check_stack_health` | Ping all services and return stack-wide health summary |
 
 ### Connect from Claude Code
 
@@ -222,7 +215,6 @@ When a rocket barrage triggers 150+ simultaneous alerts:
 2. **Geodash** colors 150 polygons red on the map, writes to InfluxDB
 3. **OSINT Notifier** sends "150 areas under active alert" via Pushover (lowest priority, informational)
 4. **Actuator** sets HA state to `threshold_150`, HA automations announce via TTS
-5. **Management UI** shows all services green (or flags any that went down)
 
 When your local area (e.g., Jerusalem) is targeted by a ballistic missile:
 

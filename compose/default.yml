@@ -172,38 +172,16 @@ services:
     environment:
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
+      - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
+      - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
+      - INFLUXDB_URL=${INFLUXDB_URL:-http://influxdb:8086}
       - ALERT_AREA=${ALERT_AREA:-}
     volumes:
       - mcp-data:/app/data
     depends_on:
       - oref-proxy
       - rss-cache
-    networks:
-      - redalert
-
-  # -- Management --------------------------------------------------------------
-  management-ui:
-    build:
-      context: ../management-ui
-      dockerfile: Dockerfile
-    container_name: management-ui
-    restart: unless-stopped
-    ports:
-      - "${MANAGEMENT_UI_PORT:-8888}:${MANAGEMENT_UI_PORT:-8888}"
-    environment:
-      - PORT=${MANAGEMENT_UI_PORT:-8888}
-      - STACK_NAME=${STACK_NAME:-Red Alert Monitoring Stack}
-      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
-      - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
-      - INFLUXDB_URL=http://influxdb:${INFLUXDB_PORT:-8086}
-      - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
-      - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
-      - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
-      - ALERT_AREA=${ALERT_AREA:-}
-      - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
-      - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}
-    depends_on:
-      - oref-proxy
     networks:
       - redalert
 
