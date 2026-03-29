@@ -2,9 +2,10 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY pyproject.toml .
+COPY pushover/pyproject.toml .
 RUN pip install --no-cache-dir .
 
-COPY notifier.py .
+COPY shared/alert_constants.py .
+COPY pushover/notifier.py .
 
 CMD ["python", "notifier.py"]

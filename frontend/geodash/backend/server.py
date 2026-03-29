@@ -93,8 +93,8 @@ last_alert_areas: list[str] = []      # areas from the last active alert
 
 # Alert persistence — presume active for 30 min without all-clear
 alert_tracking: dict[str, dict] = {}  # area -> {"start": epoch, "alert": dict}
-PRESUMED_ACTIVE_DURATION = 1800  # 30 minutes
-PREWARNING_ACTIVE_DURATION = 300  # 5 minutes — cat-14 pre-warnings resolve faster
+PRESUMED_ACTIVE_DURATION = int(os.environ.get("PRESUMED_ACTIVE_DURATION", "1800"))  # seconds
+PREWARNING_ACTIVE_DURATION = int(os.environ.get("PREWARNING_ACTIVE_DURATION", "300"))  # seconds
 
 # Shelter instruction titles — these are post-event messages, NOT active threats.
 # Oref sends them in single-object format with various "cat" values (e.g. 10)

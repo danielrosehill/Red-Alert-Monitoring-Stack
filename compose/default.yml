@@ -155,8 +155,8 @@ services:
   # ── Backend: Telegram Bot ────────────────────────────────────────────────────
   telegram-bot:
     build:
-      context: ../backend/telegram-bot
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: telegram-bot/Dockerfile
     container_name: telegram-bot
     restart: unless-stopped
     ports:
@@ -170,6 +170,9 @@ services:
       - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
       - ALERT_AREA=${ALERT_AREA:-}
       - ALLOWED_TELEGRAM_USERS=${ALLOWED_TELEGRAM_USERS:-}
+      - SITREP_MODEL=${SITREP_MODEL:-}
+      - CHAT_MODEL=${CHAT_MODEL:-}
+      - TTS_MODEL=${TTS_MODEL:-}
     depends_on:
       - oref-proxy
       - rss-cache
@@ -179,8 +182,8 @@ services:
   # ── Backend: Automation (HA Bridge) ─────────────────────────────────────────
   actuator:
     build:
-      context: ../backend/actuator
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: actuator/Dockerfile
     container_name: actuator
     restart: unless-stopped
     ports:
@@ -251,8 +254,8 @@ services:
   # ── Backend: Snapcast TTS ────────────────────────────────────────────────────
   snapcast-tts:
     build:
-      context: ../backend/snapcast-tts
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: snapcast-tts/Dockerfile
     container_name: snapcast-tts
     restart: unless-stopped
     ports:

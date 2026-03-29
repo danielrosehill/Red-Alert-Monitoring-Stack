@@ -84,8 +84,8 @@ services:
   # -- Notifications -----------------------------------------------------------
   pushover:
     build:
-      context: ../backend/pushover
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: pushover/Dockerfile
     container_name: pushover
     restart: unless-stopped
     environment:
@@ -100,8 +100,8 @@ services:
 
   telegram-bot:
     build:
-      context: ../backend/telegram-bot
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: telegram-bot/Dockerfile
     container_name: telegram-bot
     restart: unless-stopped
     ports:
@@ -121,8 +121,8 @@ services:
   # -- Automation (HA Bridge) --------------------------------------------------
   actuator:
     build:
-      context: ../backend/actuator
-      dockerfile: Dockerfile
+      context: ../backend
+      dockerfile: actuator/Dockerfile
     container_name: actuator
     restart: unless-stopped
     ports:

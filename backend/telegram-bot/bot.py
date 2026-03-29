@@ -57,10 +57,10 @@ DATA_DIR = Path(os.environ.get("DATA_DIR", "./data"))
 ALLOWED_USERS_RAW = os.environ.get("ALLOWED_TELEGRAM_USERS", "")
 ALLOWED_USERS: set[int] = {int(u.strip()) for u in ALLOWED_USERS_RAW.split(",") if u.strip()}
 
-# OpenRouter models (hardcoded)
-SITREP_MODEL = "google/gemini-3-flash-preview"
-CHAT_MODEL = "google/gemini-3.1-flash-lite-preview"
-TTS_MODEL = "openai/gpt-audio-mini"
+# OpenRouter models
+SITREP_MODEL = os.environ.get("SITREP_MODEL", "google/gemini-3-flash-preview")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "google/gemini-3.1-flash-lite-preview")
+TTS_MODEL = os.environ.get("TTS_MODEL", "openai/gpt-audio-mini")
 
 TAVILY_API_URL = "https://api.tavily.com/search"
 
@@ -69,25 +69,9 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 SUBSCRIBERS_FILE = DATA_DIR / "telegram_subscribers.json"
 
-# ── Alert Categories ─────────────────────────────────────────────────────────
+# ── Alert Categories (from shared module) ────────────────────────────────────
 
-CATEGORY_NAMES = {
-    1: "Rockets & Missiles",
-    2: "Rockets & Missiles",
-    3: "Rockets & Missiles",
-    4: "Rockets & Missiles",
-    6: "Unauthorized Aircraft",
-    7: "Hostile Aircraft Intrusion",
-    8: "Infiltration",
-    9: "Tsunami",
-    10: "Earthquake",
-    11: "Radiological",
-    12: "Hazardous Materials",
-    13: "All Clear",
-    14: "Pre-Warning",
-}
-
-ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
+from alert_constants import ACTIVE_CATEGORIES, CATEGORY_NAMES
 
 # ── Area Configuration ───────────────────────────────────────────────────────
 

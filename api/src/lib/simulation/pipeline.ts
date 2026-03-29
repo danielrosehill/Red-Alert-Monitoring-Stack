@@ -159,7 +159,7 @@ async function getSessionDriveUrl(sessionId: string): Promise<string | undefined
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatSummaryText(summary: any): string {
+export function formatSummaryText(summary: any): string {
   if (!summary) return "Simulation completed but no summary was generated.";
   const lines = ["GEOPOLITICAL FORECAST — EXECUTIVE SUMMARY", ""];
   if (summary.overallAssessment) {
@@ -185,7 +185,7 @@ function formatSummaryText(summary: any): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function formatTelegramSummary(summary: any, sessionId: string): string {
+export function formatTelegramSummary(summary: any, sessionId: string): string {
   const lines = [
     `🌍 *Geopolitical Forecast Report*`,
     `Session: \`${sessionId.slice(0, 8)}\``,

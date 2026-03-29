@@ -56,6 +56,8 @@ RSS_CACHE_URL = os.environ.get("RSS_CACHE_URL", "http://rss-cache:8785")
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://oref-proxy:8764")
 ALERT_AREA = os.environ.get("ALERT_AREA", "")
 
+CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
+
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -290,7 +292,7 @@ app = FastAPI(title="Red Alert Prompt Runner", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )

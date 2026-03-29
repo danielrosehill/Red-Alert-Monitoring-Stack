@@ -36,6 +36,12 @@ logging.basicConfig(
 )
 log = logging.getLogger("redalert.actuator")
 
+
+def _log_task_exception(task: asyncio.Task):
+    """Log exceptions from fire-and-forget tasks."""
+    if not task.cancelled() and task.exception():
+        log.error("Background task failed: %s", task.exception())
+
 # ── Configuration ────────────────────────────────────────────────────────────
 
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://localhost:8764")
@@ -54,11 +60,10 @@ PROMPT_RUNNER_URL = os.environ.get("PROMPT_RUNNER_URL", "http://prompt-runner:87
 # When to trigger the prompt runner for immediate intel.
 # Values: "active" (default), "warning", "both"
 PROMPT_RUNNER_TRIGGER = os.environ.get("PROMPT_RUNNER_TRIGGER", "active").lower()
+CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
-# Alert categories
-ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
-RED_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12}
-THRESHOLD_LEVELS = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50]
+# Alert categories (from shared module)
+from alert_constants import ACTIVE_CATEGORIES, RED_CATEGORIES, THRESHOLD_LEVELS
 
 # Valid states for the input_select entity
 VALID_STATES = (
@@ -225,14 +230,16 @@ class AlertMonitor:
             self.last_active_time = time.time()
             self.all_clear_sent = False
             if PROMPT_RUNNER_TRIGGER in ("active", "both"):
-                asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
+                task = asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
+                task.add_done_callback(_log_task_exception)
 
         elif local_state == "warning":
             await self.ha.set_state("warning", self.http_client)
             self.last_active_time = time.time()
             self.all_clear_sent = False
             if PROMPT_RUNNER_TRIGGER in ("warning", "both"):
-                asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
+                task = asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
+                task.add_done_callback(_log_task_exception)
 
         elif local_state == "clear" and self.prev_local_state in ("active", "warning"):
             await self.ha.set_state("clear", self.http_client)
@@ -330,7 +337,7 @@ app = FastAPI(title="Red Alert Actuator", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )

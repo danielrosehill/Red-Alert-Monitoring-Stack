@@ -50,6 +50,7 @@ POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "3"))
 HISTORY_INTERVAL = int(os.environ.get("HISTORY_INTERVAL", "60"))
 HOST = os.environ.get("HOST", "0.0.0.0")
 PORT = int(os.environ.get("PORT", "8764"))
+CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
 OREF_ALERTS_URL = "https://www.oref.org.il/WarningMessages/alert/alerts.json"
 OREF_HISTORY_URL = "https://www.oref.org.il/WarningMessages/alert/History/AlertsHistory.json"
@@ -188,7 +189,7 @@ app = FastAPI(title="Oref Alert Proxy", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["GET"],
     allow_headers=["*"],
 )

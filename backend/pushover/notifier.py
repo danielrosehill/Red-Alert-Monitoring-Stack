@@ -38,25 +38,12 @@ AREA_THRESHOLDS = sorted(
 
 PUSHOVER_API_URL = "https://api.pushover.net/1/messages.json"
 
-# Active threat categories — NOT 13 (all-clear), NOT 15-28 (drills)
-ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
+# Alert categories and helpers (from shared module)
+from alert_constants import ACTIVE_CATEGORIES, normalize_category
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-
-def normalize_category(alert: dict) -> int:
-    """Return the integer category from an alert dict.
-
-    The raw Oref data uses the field name ``cat``; the geodash backend
-    normalises it to ``category``.  Accept either.
-    """
-    raw = alert.get("category") or alert.get("cat") or 0
-    try:
-        return int(raw)
-    except (TypeError, ValueError):
-        return 0
 
 
 def count_active_areas(alerts: list[dict]) -> int:

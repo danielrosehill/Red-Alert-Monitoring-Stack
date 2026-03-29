@@ -198,14 +198,27 @@ To rebuild a single service:
 docker compose -f compose/default.yml build geodash
 ```
 
+## Actuation Pathways
+
+The stack provides multiple independent pathways for physical alerting — mix and match based on your hardware:
+
+- **Home Assistant (via Actuator)** — The actuator sets an `input_select` entity in HA via REST API. Your HA automations handle lights, sirens, TTS. See `config/ha/` for setup.
+- **Home Assistant (via oref_alert)** — If you run [oref_alert](https://github.com/amitfin/oref_alert), use it for HA alerting and this stack as an orchestrator for everything else (map, AI reports, notifications, MCP).
+- **Snapcast TTS (direct audio)** — Bypasses HA entirely. Streams PCM audio directly to Snapcast speaker groups for whole-house multi-room announcements.
+- **Direct MQTT** — Publish to Mosquitto topics for MQTT-native devices (Zigbee2MQTT lights, ESP32 controllers, Node-RED flows).
+- **Custom consumers** — Poll the proxy's HTTP API (`GET /api/alerts`) from anything.
+
+For full details on architecture and choosing an actuation path, see **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
 ## Design Principles
 
 - **Microservices** — Each service does one thing. The proxy polls, the dashboard visualizes, the OSINT notifier handles all intelligence and push notifications, the actuator controls physical devices.
 - **Single data source** — One proxy, one connection to Pikud HaOref. No redundant polling.
 - **Dumb relay** — The proxy passes through raw data with no interpretation. Each consumer applies its own logic.
+- **Adapt, don't prescribe** — Multiple actuation pathways because everyone's home setup is different.
 - **No secrets in code** — Everything configured via `.env` files, which are gitignored.
 - **Graceful degradation** — Each service runs independently. If one goes down, the rest keep working.
-- **Two compose options** — Core compose for users with existing MQTT infrastructure; `with-broker` variant bundles Mosquitto for self-contained deployment.
+- **No external image dependencies** — All services build from source in this monorepo.
 
 ## Alert Flow Example
 

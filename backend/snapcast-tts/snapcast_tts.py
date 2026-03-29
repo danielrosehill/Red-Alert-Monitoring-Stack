@@ -46,6 +46,12 @@ logging.basicConfig(
 )
 log = logging.getLogger("redalert.snapcast-tts")
 
+
+def _log_task_exception(task: asyncio.Task):
+    """Log exceptions from fire-and-forget tasks."""
+    if not task.cancelled() and task.exception():
+        log.error("Background task failed: %s", task.exception())
+
 # ── Configuration ────────────────────────────────────────────────────────────
 
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://localhost:8764")
@@ -75,11 +81,10 @@ TTS_ON_WARNING = _env_bool("TTS_ON_WARNING", True)
 TTS_ON_ACTIVE = _env_bool("TTS_ON_ACTIVE", True)
 TTS_ON_CLEAR = _env_bool("TTS_ON_CLEAR", True)
 TTS_ON_THRESHOLD = _env_bool("TTS_ON_THRESHOLD", True)
+CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
-# Alert categories (same as actuator)
-ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
-RED_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12}
-THRESHOLD_LEVELS = [1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50]
+# Alert categories (from shared module)
+from alert_constants import ACTIVE_CATEGORIES, RED_CATEGORIES, THRESHOLD_LEVELS
 
 # ── TTS Messages ─────────────────────────────────────────────────────────────
 # All messages are pre-generated at startup and cached as raw PCM bytes.
@@ -521,23 +526,27 @@ class AlertMonitor:
         if local_state == "active" and TTS_ON_ACTIVE:
             self.last_active_time = time.time()
             self.all_clear_sent = False
-            asyncio.create_task(announce("active"))
+            task = asyncio.create_task(announce("active"))
+            task.add_done_callback(_log_task_exception)
 
         elif local_state == "warning" and TTS_ON_WARNING:
             self.last_active_time = time.time()
             self.all_clear_sent = False
-            asyncio.create_task(announce("warning"))
+            task = asyncio.create_task(announce("warning"))
+            task.add_done_callback(_log_task_exception)
 
         elif local_state == "clear" and TTS_ON_CLEAR:
             if self.prev_local_state in ("active", "warning"):
                 self.all_clear_sent = True
-                asyncio.create_task(announce("clear"))
+                task = asyncio.create_task(announce("clear"))
+                task.add_done_callback(_log_task_exception)
 
         elif local_state == "" and self.prev_local_state:
             if not self.all_clear_sent and self.prev_local_state in ("active", "warning"):
                 if TTS_ON_CLEAR:
                     self.all_clear_sent = True
-                    asyncio.create_task(announce("clear"))
+                    task = asyncio.create_task(announce("clear"))
+                    task.add_done_callback(_log_task_exception)
 
         self.prev_local_state = local_state
 
@@ -555,7 +564,8 @@ class AlertMonitor:
             key = f"threshold_{current_threshold}"
             self.last_active_time = time.time()
             self.all_clear_sent = False
-            asyncio.create_task(announce(key))
+            task = asyncio.create_task(announce(key))
+            task.add_done_callback(_log_task_exception)
 
         self.prev_threshold = current_threshold
 
@@ -625,7 +635,7 @@ app = FastAPI(title="Red Alert Snapcast TTS", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
