@@ -10,6 +10,7 @@ import { settingsRouter } from "./routes/settings.js";
 import { notificationsRouter } from "./routes/notifications.js";
 import { driveRouter } from "./routes/drive.js";
 import { areasRouter } from "./routes/areas.js";
+import { startRssPoller } from "./lib/rss.js";
 
 const app = express();
 const PORT = parseInt(process.env.PORT || "8890", 10);
@@ -32,6 +33,8 @@ app.use("/api/areas", areasRouter);
 app.get("/", (_req, res) => {
   res.json({ service: "red-alert-api", status: "ok" });
 });
+
+startRssPoller();
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Red Alert API listening on :${PORT}`);

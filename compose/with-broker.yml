@@ -82,22 +82,6 @@ services:
       - redalert
 
   # -- Notifications -----------------------------------------------------------
-  pushover:
-    build:
-      context: ../backend
-      dockerfile: pushover/Dockerfile
-    container_name: pushover
-    restart: unless-stopped
-    environment:
-      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}/api/alerts
-      - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN}
-      - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY}
-      - ALERT_AREA=${ALERT_AREA:-}
-    depends_on:
-      - oref-proxy
-    networks:
-      - redalert
-
   telegram-bot:
     build:
       context: ../backend
@@ -135,6 +119,8 @@ services:
       - HASS_TOKEN=${HASS_TOKEN:-}
       - HASS_ENTITY=${HASS_ENTITY:-input_select.red_alert_state}
       - ALERT_AREA=${ALERT_AREA:-}
+      - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN:-}
+      - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY:-}
     depends_on:
       - oref-proxy
     networks:
@@ -154,7 +140,7 @@ services:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - GROQ_API_KEY=${GROQ_API_KEY:-}
       - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
-      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - RSS_CACHE_URL=http://red-alert-api:${API_PORT:-8890}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - ALERT_AREA=${ALERT_AREA:-}
       - RESEND_API_KEY=${RESEND_API_KEY:-}
@@ -164,28 +150,7 @@ services:
       - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
     depends_on:
       - oref-proxy
-      - rss-cache
-    networks:
-      - redalert
-
-  # -- Caching -----------------------------------------------------------------
-  rss-cache:
-    build:
-      context: ../backend/rss-cache
-      dockerfile: Dockerfile
-    container_name: rss-cache
-    restart: unless-stopped
-    ports:
-      - "${RSS_CACHE_PORT:-8785}:${RSS_CACHE_PORT:-8785}"
-    environment:
-      - PORT=${RSS_CACHE_PORT:-8785}
-      - RSS_FEED_1_URL=${RSS_FEED_1_URL:-}
-      - RSS_FEED_1_NAME=${RSS_FEED_1_NAME:-}
-      - RSS_FEED_2_URL=${RSS_FEED_2_URL:-}
-      - RSS_FEED_2_NAME=${RSS_FEED_2_NAME:-}
-      - RSS_FEED_3_URL=${RSS_FEED_3_URL:-}
-      - RSS_FEED_3_NAME=${RSS_FEED_3_NAME:-}
-      - RSS_POLL_INTERVAL=${RSS_POLL_INTERVAL:-300}
+      - api
     networks:
       - redalert
 
@@ -200,13 +165,13 @@ services:
       - "${MCP_SERVER_PORT:-8786}:${MCP_SERVER_PORT:-8786}"
     environment:
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
-      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - RSS_CACHE_URL=http://red-alert-api:${API_PORT:-8890}
       - ALERT_AREA=${ALERT_AREA:-}
     volumes:
       - mcp-data:/app/data
     depends_on:
       - oref-proxy
-      - rss-cache
+      - api
     networks:
       - redalert
 
@@ -243,7 +208,7 @@ services:
       - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
       - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
       - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
-      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - RSS_CACHE_URL=http://red-alert-api:${API_PORT:-8890}
       - MCP_SERVER_URL=http://mcp-server:${MCP_SERVER_PORT:-8786}
       - ALERT_AREA=${ALERT_AREA:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
@@ -259,13 +224,18 @@ services:
       - GOOGLE_SERVICE_ACCOUNT_KEY=/app/secrets/service-account.json
       - SITREP_SAVE_DIR=/app/data/sitreps
       - SIMULATION_SAVE_DIR=/app/data/simulations
+      - RSS_FEED_1_URL=${RSS_FEED_1_URL:-}
+      - RSS_FEED_1_NAME=${RSS_FEED_1_NAME:-}
+      - RSS_FEED_2_URL=${RSS_FEED_2_URL:-}
+      - RSS_FEED_2_NAME=${RSS_FEED_2_NAME:-}
+      - RSS_POLL_INTERVAL=${RSS_POLL_INTERVAL:-300}
     volumes:
       - api-data:/app/data
       - ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH:-/dev/null}:/app/secrets/service-account.json:ro
     depends_on:
       - oref-proxy
       - prompt-runner
-      - rss-cache
+      - api
     networks:
       - redalert
 

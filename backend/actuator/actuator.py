@@ -62,6 +62,12 @@ PROMPT_RUNNER_URL = os.environ.get("PROMPT_RUNNER_URL", "http://prompt-runner:87
 PROMPT_RUNNER_TRIGGER = os.environ.get("PROMPT_RUNNER_TRIGGER", "active").lower()
 CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
+# Pushover notifications (optional — sends on threshold crossings)
+PUSHOVER_API_TOKEN = os.environ.get("PUSHOVER_API_TOKEN", "")
+PUSHOVER_USER_KEYS_RAW = os.environ.get("PUSHOVER_USER_KEY", "")
+PUSHOVER_USER_KEYS = [k.strip() for k in PUSHOVER_USER_KEYS_RAW.split(",") if k.strip()]
+PUSHOVER_API_URL = "https://api.pushover.net/1/messages.json"
+
 # Alert categories (from shared module)
 from alert_constants import ACTIVE_CATEGORIES, RED_CATEGORIES, THRESHOLD_LEVELS
 
@@ -155,6 +161,31 @@ class HAClient:
         except Exception as e:
             log.error("HA connection check failed: %s", e)
             return False
+
+
+# ── Pushover Sender ─────────────────────────────────────────────────────────
+
+
+async def _send_pushover(http_client: httpx.AsyncClient, title: str, message: str):
+    """Send Pushover notification to all configured user keys."""
+    if not PUSHOVER_API_TOKEN or not PUSHOVER_USER_KEYS:
+        return
+    for user_key in PUSHOVER_USER_KEYS:
+        try:
+            await http_client.post(
+                PUSHOVER_API_URL,
+                data={
+                    "token": PUSHOVER_API_TOKEN,
+                    "user": user_key,
+                    "title": title,
+                    "message": message,
+                    "html": 1,
+                },
+                timeout=10,
+            )
+            log.info("Pushover sent to %s...: %s", user_key[:8], title)
+        except Exception as e:
+            log.error("Pushover failed for %s...: %s", user_key[:8], e)
 
 
 # ── Alert Monitor ────────────────────────────────────────────────────────────
@@ -262,7 +293,15 @@ class AlertMonitor:
                 break
 
         if current_threshold > self.prev_threshold:
-            # Only set threshold state if no localized alert is active
+            # Pushover notification on threshold crossing
+            task = asyncio.create_task(_send_pushover(
+                self.http_client,
+                title=f"Red Alert: {active_count} Areas Active",
+                message=f"Nationwide alert count has crossed {current_threshold} areas across Israel.",
+            ))
+            task.add_done_callback(_log_task_exception)
+
+            # Only set HA threshold state if no localized alert is active
             if not self.prev_local_state or self.prev_local_state == "clear":
                 await self.ha.set_state(f"threshold_{current_threshold}", self.http_client)
                 self.last_active_time = time.time()
@@ -355,6 +394,7 @@ async def health():
         "ha_enabled": _ha.enabled if _ha else False,
         "ha_current_state": _ha.current_state if _ha else "unknown",
         "current_local_state": _monitor.prev_local_state if _monitor else "unknown",
+        "pushover": bool(PUSHOVER_API_TOKEN and PUSHOVER_USER_KEYS),
         "valid_states": VALID_STATES,
     }
 
