@@ -16,3 +16,6 @@ build/
 
 # Telegram bot data
 telegram-bot/data/
+
+# Private Claude instructions
+CLAUDE_PRIVATE.md

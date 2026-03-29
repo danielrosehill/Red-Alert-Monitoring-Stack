@@ -196,3 +196,7 @@ claude mcp add --transport http red-alert http://localhost:8786/mcp
 ```
 
 Tools: `get_current_alerts`, `get_area_alerts`, `get_alert_history`, `get_news`, `get_sample_payloads`, `get_proxy_status`
+
+## Local Deployment
+
+See `CLAUDE_PRIVATE.md` for local deployment protocol and target host details.
