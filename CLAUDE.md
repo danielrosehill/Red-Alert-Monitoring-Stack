@@ -18,7 +18,7 @@ All services build from source in this monorepo. No external Docker Hub images r
 - **Prompt Runner** (`prompt-runner/`) — Templated AI prompt execution (immediate intel + daily SITREP)
 - **RSS Cache** (`rss-cache/`) — News feed poller for AI context
 - **MCP Server** (`mcp-server/`) — Streamable HTTP MCP exposing alert tools for AI agents
-- **Management UI** (`management-ui/`) — Stack health dashboard + test alert controls
+- **Management UI** (`management-ui/`) — Next.js dashboard: service health, SITREP management, geopolitical simulation (6-lens forecasting pipeline with PDF generation), settings management, Google Drive upload
 - **InfluxDB** — Time-series storage (external image)
 - **Mosquitto** — MQTT broker (optional bundled, or bring your own)
 
@@ -37,6 +37,13 @@ Oref Alert Proxy (:8764)
        |----> Management UI (:8888)
 
 RSS Cache (:8785) ----> Geodash, MCP Server, Prompt Runner
+
+Management UI (:8888) ---> Prompt Runner (SITREP triggers)
+       |----> Actuator (test alerts)
+       |----> All services (health checks)
+       |----> OpenRouter + Gemini (simulation pipeline)
+       |----> Google Drive (PDF upload)
+       |----> Resend (email delivery)
 ```
 
 ## Service Ports (all env-configurable)
@@ -127,6 +134,10 @@ The code for these lives in `AlertMonitor._process_localized_alerts()` and `Aler
 - `ha/` — HA input_select definition + example automations
 - `archive/` — Retired code (old MQTT-direct actuator)
 - `prompt-runner/templates/` — AI prompt templates (immediate_intel, daily_sitrep)
+- `management-ui/src/lib/simulation/` — Geopolitical forecasting pipeline (gather, sitrep, forecast, summarize, PDF)
+- `management-ui/src/lib/db.ts` — SQLite for settings + simulation sessions
+- `management-ui/src/lib/drive.ts` — Google Drive upload via service account
+- `management-ui/src/lib/email.ts` — Resend email delivery (shared by SITREP + simulation)
 
 ## Environment Variables
 

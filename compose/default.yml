@@ -189,6 +189,46 @@ services:
     networks:
       - redalert
 
+  # -- Management UI + Simulation -----------------------------------------------
+  management-ui:
+    build:
+      context: ../management-ui
+      dockerfile: Dockerfile
+    container_name: management-ui
+    restart: unless-stopped
+    ports:
+      - "${MANAGEMENT_UI_PORT:-8888}:3000"
+    environment:
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
+      - INFLUXDB_URL=http://influxdb:${INFLUXDB_PORT:-8086}
+      - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
+      - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
+      - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
+      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - MCP_SERVER_URL=http://mcp-server:${MCP_SERVER_PORT:-8786}
+      - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
+      - ALERT_AREA=${ALERT_AREA:-}
+      - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
+      - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - RESEND_API_KEY=${RESEND_API_KEY:-}
+      - SITREP_EMAIL_FROM=${SITREP_EMAIL_FROM:-}
+      - SITREP_EMAIL_TO=${SITREP_EMAIL_TO:-}
+      - SITREP_SCHEDULE=${SITREP_SCHEDULE:-}
+      - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
+      - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID:-}
+      - GOOGLE_SERVICE_ACCOUNT_KEY=/app/secrets/service-account.json
+    volumes:
+      - management-data:/app/data
+      - ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH:-/dev/null}:/app/secrets/service-account.json:ro
+    depends_on:
+      - oref-proxy
+      - prompt-runner
+    networks:
+      - redalert
+
 networks:
   redalert:
     name: redalert
@@ -197,3 +237,4 @@ networks:
 volumes:
   influxdb-data:
   mcp-data:
+  management-data:
