@@ -1,21 +1,25 @@
 # =============================================================================
 # Red Alert Monitoring Stack — Core Docker Compose
 # =============================================================================
-# All services build from local source (monorepo).
+# Uses pre-built images from Docker Hub by default.
+# To build from source instead, uncomment the `build:` blocks and remove `image:`.
+#
 # Assumes you have a Mosquitto MQTT broker running separately on your network.
 # If you need a bundled broker, use with-broker.yml instead.
 #
 # Usage:
-#   ./deploy.sh                    # recommended
-#   docker compose -f compose/default.yml up -d --build
+#   ./setup.sh                       # first-time setup
+#   ./deploy.sh                      # redeploy
+#   docker compose -f compose/default.yml up -d
 # =============================================================================
 
 services:
   # ── Data Source ─────────────────────────────────────────────────────────────
   oref-proxy:
-    build:
-      context: ../backend/oref-proxy
-      dockerfile: Dockerfile
+    image: danielrosehill/redalert-oref-proxy:latest
+    # build:
+    #   context: ../backend/oref-proxy
+    #   dockerfile: Dockerfile
     container_name: oref-proxy
     restart: unless-stopped
     ports:
@@ -46,9 +50,10 @@ services:
 
   # ── Frontend: Geodash Map Dashboard ─────────────────────────────────────────
   geodash:
-    build:
-      context: ../frontend/geodash
-      dockerfile: Dockerfile
+    image: danielrosehill/redalert-geodash:latest
+    # build:
+    #   context: ../frontend/geodash
+    #   dockerfile: Dockerfile
     container_name: geodash
     restart: unless-stopped
     ports:
@@ -69,11 +74,10 @@ services:
 
   # ── Frontend: Management UI ─────────────────────────────────────────────────
   management-ui:
-    build:
-      context: ../frontend/management-ui
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+    image: danielrosehill/redalert-management-ui:latest
+    # build:
+    #   context: ../frontend/management-ui
+    #   dockerfile: Dockerfile
     container_name: management-ui
     restart: unless-stopped
     ports:
@@ -85,9 +89,10 @@ services:
 
   # ── Unified API ─────────────────────────────────────────────────────────────
   api:
-    build:
-      context: ../api
-      dockerfile: Dockerfile
+    image: danielrosehill/redalert-api:latest
+    # build:
+    #   context: ../api
+    #   dockerfile: Dockerfile
     container_name: red-alert-api
     restart: unless-stopped
     ports:
@@ -133,9 +138,10 @@ services:
 
   # ── Backend: Notifications & OSINT ──────────────────────────────────────────
   osint-notifier:
-    build:
-      context: ../backend/osint-notifier
-      dockerfile: Dockerfile
+    image: danielrosehill/redalert-osint-notifier:latest
+    # build:
+    #   context: ../backend/osint-notifier
+    #   dockerfile: Dockerfile
     container_name: osint-notifier
     restart: unless-stopped
     environment:
@@ -162,9 +168,10 @@ services:
 
   # ── Backend: Telegram Bot ────────────────────────────────────────────────────
   telegram-bot:
-    build:
-      context: ../backend
-      dockerfile: telegram-bot/Dockerfile
+    image: danielrosehill/redalert-telegram-bot:latest
+    # build:
+    #   context: ../backend
+    #   dockerfile: telegram-bot/Dockerfile
     container_name: telegram-bot
     restart: unless-stopped
     ports:
@@ -187,11 +194,12 @@ services:
     networks:
       - redalert
 
-  # ── Backend: Automation (HA Bridge) ─────────────────────────────────────────
+  # ── Backend: Automation (HA Bridge + Pushover) ─────────────────────────────
   actuator:
-    build:
-      context: ../backend
-      dockerfile: actuator/Dockerfile
+    image: danielrosehill/redalert-actuator:latest
+    # build:
+    #   context: ../backend
+    #   dockerfile: actuator/Dockerfile
     container_name: actuator
     restart: unless-stopped
     ports:
@@ -214,9 +222,10 @@ services:
 
   # ── Backend: AI Prompt Runner ───────────────────────────────────────────────
   prompt-runner:
-    build:
-      context: ../backend/prompt-runner
-      dockerfile: Dockerfile
+    image: danielrosehill/redalert-prompt-runner:latest
+    # build:
+    #   context: ../backend/prompt-runner
+    #   dockerfile: Dockerfile
     container_name: prompt-runner
     restart: unless-stopped
     ports:
@@ -242,9 +251,10 @@ services:
 
   # ── Backend: Snapcast TTS ────────────────────────────────────────────────────
   snapcast-tts:
-    build:
-      context: ../backend
-      dockerfile: snapcast-tts/Dockerfile
+    image: danielrosehill/redalert-snapcast-tts:latest
+    # build:
+    #   context: ../backend
+    #   dockerfile: snapcast-tts/Dockerfile
     container_name: snapcast-tts
     restart: unless-stopped
     ports:
@@ -270,9 +280,10 @@ services:
 
   # ── Backend: MCP Server ─────────────────────────────────────────────────────
   mcp-server:
-    build:
-      context: ../backend/mcp-server
-      dockerfile: Dockerfile
+    image: danielrosehill/redalert-mcp-server:latest
+    # build:
+    #   context: ../backend/mcp-server
+    #   dockerfile: Dockerfile
     container_name: mcp-server
     restart: unless-stopped
     ports:
