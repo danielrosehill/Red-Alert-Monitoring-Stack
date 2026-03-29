@@ -17,6 +17,7 @@ All services build from source in this monorepo. No external Docker Hub images r
 - **Actuator** (`actuator/`) — HA bridge: sets `input_select.red_alert_state` in Home Assistant via REST API; HA automations handle lights, sirens, TTS
 - **Prompt Runner** (`prompt-runner/`) — Templated AI prompt execution (immediate intel + daily SITREP)
 - **RSS Cache** (`rss-cache/`) — News feed poller for AI context
+- **Snapcast TTS** (`snapcast-tts/`) — TTS announcements via Snapcast speaker groups on alert events
 - **MCP Server** (`mcp-server/`) — Streamable HTTP MCP exposing alert tools for AI agents
 - **Management UI** (`management-ui/`) — Next.js dashboard: service health, SITREP management, geopolitical simulation (6-lens forecasting pipeline with PDF generation), settings management, Google Drive upload
 - **InfluxDB** — Time-series storage (external image)
@@ -33,6 +34,7 @@ Oref Alert Proxy (:8764)
        |----> Telegram Bot (:8781)
        |----> Actuator (:8782) ---> Home Assistant (input_select)
        |         |----> Prompt Runner (:8787) ---> Telegram Bot
+       |----> Snapcast TTS (:8783) ---> Snapcast Server (TCP audio)
        |----> MCP Server (:8786)
        |----> Management UI (:8888)
 
@@ -59,6 +61,7 @@ Management UI (:8888) ---> Prompt Runner (SITREP triggers)
 | MCP Server | 8786 | `MCP_SERVER_PORT` |
 | Prompt Runner | 8787 | `PROMPT_RUNNER_PORT` |
 | Management UI | 8888 | `MANAGEMENT_UI_PORT` |
+| Snapcast TTS | 8783 | `SNAPCAST_TTS_PORT` |
 | Mosquitto MQTT | 1883 | `MQTT_EXTERNAL_PORT` |
 
 ## Docker Compose Variants

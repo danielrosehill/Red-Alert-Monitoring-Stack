@@ -247,6 +247,34 @@ services:
     networks:
       - redalert
 
+  # ── Backend: Snapcast TTS ────────────────────────────────────────────────────
+  snapcast-tts:
+    build:
+      context: ../backend/snapcast-tts
+      dockerfile: Dockerfile
+    container_name: snapcast-tts
+    restart: unless-stopped
+    ports:
+      - "${SNAPCAST_TTS_PORT:-8783}:${SNAPCAST_TTS_PORT:-8783}"
+    environment:
+      - PORT=${SNAPCAST_TTS_PORT:-8783}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - ALERT_AREA=${ALERT_AREA:-}
+      - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
+      - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}
+      - SNAPCAST_STREAM_PORT=${SNAPCAST_STREAM_PORT:-4953}
+      - SNAPCAST_GROUP=${SNAPCAST_GROUP:-}
+      - SNAPCAST_VOLUME=${SNAPCAST_VOLUME:-50}
+      - TTS_VOICE=${TTS_VOICE:-en-US-GuyNeural}
+      - TTS_ON_WARNING=${TTS_ON_WARNING:-true}
+      - TTS_ON_ACTIVE=${TTS_ON_ACTIVE:-true}
+      - TTS_ON_CLEAR=${TTS_ON_CLEAR:-true}
+      - TTS_ON_THRESHOLD=${TTS_ON_THRESHOLD:-true}
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
   # ── Backend: MCP Server ─────────────────────────────────────────────────────
   mcp-server:
     build:
