@@ -152,6 +152,28 @@ services:
     networks:
       - redalert
 
+  # ── Backend: Telegram Bot ────────────────────────────────────────────────────
+  telegram-bot:
+    build:
+      context: ../backend/telegram-bot
+      dockerfile: Dockerfile
+    container_name: telegram-bot
+    restart: unless-stopped
+    ports:
+      - "${TELEGRAM_BOT_PORT:-8781}:${TELEGRAM_BOT_PORT:-8781}"
+    environment:
+      - PORT=${TELEGRAM_BOT_PORT:-8781}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
+      - ALERT_AREA=${ALERT_AREA:-}
+    depends_on:
+      - oref-proxy
+      - rss-cache
+    networks:
+      - redalert
+
   # ── Backend: Automation (HA Bridge) ─────────────────────────────────────────
   actuator:
     build:
