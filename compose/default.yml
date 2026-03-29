@@ -86,7 +86,6 @@ services:
       - LOCATION_NAME=${LOCATION_NAME:-Jerusalem}
       - LOCAL_KEYWORDS_EN=${LOCAL_KEYWORDS_EN:-jerusalem,central israel}
       - LOCAL_KEYWORDS_HE=${LOCAL_KEYWORDS_HE:-ירושלים,מרכז הארץ}
-      - GROQ_API_KEY=${GROQ_API_KEY:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - RSS_FEEDS=${RSS_FEEDS:-https://www.timesofisrael.com/feed/,https://www.jns.org/feed/}
     depends_on:
