@@ -67,38 +67,28 @@ services:
     networks:
       - redalert
 
-  # -- Notifications -----------------------------------------------------------
-  pushover:
+  # -- Notifications & OSINT ---------------------------------------------------
+  osint-notifier:
     build:
-      context: ../pushover
+      context: ../osint-notifier
       dockerfile: Dockerfile
-    container_name: pushover
+    container_name: osint-notifier
     restart: unless-stopped
     environment:
+      - PUSHOVER_APP_TOKEN=${PUSHOVER_API_TOKEN}
+      - PUSHOVER_GROUP_KEY=${PUSHOVER_USER_KEY}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}/api/alerts
-      - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN}
-      - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY}
-      - ALERT_AREA=${ALERT_AREA:-}
-    depends_on:
-      - oref-proxy
-    networks:
-      - redalert
-
-  telegram-bot:
-    build:
-      context: ../telegram-bot
-      dockerfile: Dockerfile
-    container_name: telegram-bot
-    restart: unless-stopped
-    ports:
-      - "${TELEGRAM_BOT_PORT:-8781}:${TELEGRAM_BOT_PORT:-8781}"
-    environment:
-      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - OREF_ENABLED=${OREF_ENABLED:-true}
+      - OREF_AREA_THRESHOLDS=${OREF_AREA_THRESHOLDS:-50,100,200,300,400,500,600,700,800,900,1000}
+      - TELEGRAM_CHANNEL_EN=${TELEGRAM_CHANNEL_EN:-manniefabian}
+      - TELEGRAM_CHANNEL_HE=${TELEGRAM_CHANNEL_HE:-news0404il}
+      - TELEGRAM_POLL_INTERVAL=${TELEGRAM_POLL_INTERVAL:-15}
+      - LOCATION_NAME=${LOCATION_NAME:-Jerusalem}
+      - LOCAL_KEYWORDS_EN=${LOCAL_KEYWORDS_EN:-jerusalem,central israel}
+      - LOCAL_KEYWORDS_HE=${LOCAL_KEYWORDS_HE:-ירושלים,מרכז הארץ}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - ALERT_AREA=${ALERT_AREA:-}
-    volumes:
-      - telegram-data:/app/data
+      - RSS_FEEDS=${RSS_FEEDS:-https://www.timesofisrael.com/feed/,https://www.jns.org/feed/}
     depends_on:
       - oref-proxy
     networks:
@@ -225,4 +215,3 @@ networks:
 volumes:
   influxdb-data:
   mcp-data:
-  telegram-data:
