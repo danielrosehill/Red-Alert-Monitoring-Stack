@@ -1,14 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
 interface SettingField {
   key: string;
   label: string;
   placeholder?: string;
-  type?: "text" | "password";
+  type?: "text" | "password" | "area-select";
   help?: string;
+}
+
+interface AreaOption {
+  hebrew: string;
+  english: string;
 }
 
 const SETTING_GROUPS: { title: string; fields: SettingField[] }[] = [
@@ -18,8 +23,8 @@ const SETTING_GROUPS: { title: string; fields: SettingField[] }[] = [
       {
         key: "alert_area",
         label: "Alert Area",
-        placeholder: "\u05D9\u05E8\u05D5\u05E9\u05DC\u05D9\u05DD - \u05D3\u05E8\u05D5\u05DD",
-        help: "Your local area name in Hebrew as it appears in Pikud HaOref alerts.",
+        type: "area-select",
+        help: "Your local area as it appears in Pikud HaOref alerts. Search by English or Hebrew name.",
       },
     ],
   },
@@ -93,11 +98,25 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [dirty, setDirty] = useState<Set<string>>(new Set());
+  const [areas, setAreas] = useState<AreaOption[]>([]);
+  const [areaSearch, setAreaSearch] = useState("");
+  const [areaDropdownOpen, setAreaDropdownOpen] = useState(false);
+  const areaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/settings")
-      .then((r) => r.json())
-      .then(setSettings);
+    fetch("/api/settings").then((r) => r.json()).then(setSettings);
+    fetch("/api/areas").then((r) => r.json()).then(setAreas).catch(() => {});
+  }, []);
+
+  // Close area dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (areaRef.current && !areaRef.current.contains(e.target as Node)) {
+        setAreaDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
   function updateField(key: string, value: string) {
@@ -196,13 +215,81 @@ export default function SettingsPage() {
                         </span>
                       )}
                     </label>
-                    <input
-                      type={field.type ?? "text"}
-                      value={settings[field.key] ?? ""}
-                      onChange={(e) => updateField(field.key, e.target.value)}
-                      placeholder={field.placeholder}
-                      className="w-full max-w-lg bg-white border border-zinc-300 rounded px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:border-zinc-400"
-                    />
+                    {field.type === "area-select" ? (
+                      <div ref={areaRef} className="relative max-w-lg">
+                        <input
+                          type="text"
+                          value={areaDropdownOpen ? areaSearch : (() => {
+                            const val = settings[field.key] ?? "";
+                            const match = areas.find((a) => a.hebrew === val);
+                            return match ? `${match.english} (${match.hebrew})` : val;
+                          })()}
+                          onChange={(e) => {
+                            setAreaSearch(e.target.value);
+                            setAreaDropdownOpen(true);
+                          }}
+                          onFocus={() => {
+                            setAreaSearch("");
+                            setAreaDropdownOpen(true);
+                          }}
+                          placeholder="Search areas..."
+                          className="w-full bg-white border border-zinc-300 rounded px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:border-zinc-400"
+                        />
+                        {settings[field.key] && !areaDropdownOpen && (
+                          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-zinc-400">
+                            {settings[field.key]}
+                          </span>
+                        )}
+                        {areaDropdownOpen && (
+                          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-zinc-300 rounded shadow-lg max-h-64 overflow-y-auto">
+                            {areas
+                              .filter((a) => {
+                                if (!areaSearch) return true;
+                                const q = areaSearch.toLowerCase();
+                                return (
+                                  a.english.toLowerCase().includes(q) ||
+                                  a.hebrew.includes(areaSearch)
+                                );
+                              })
+                              .slice(0, 50)
+                              .map((a) => (
+                                <button
+                                  key={a.hebrew}
+                                  type="button"
+                                  className={`w-full text-left px-3 py-2 text-sm hover:bg-zinc-100 flex items-center justify-between ${
+                                    settings[field.key] === a.hebrew
+                                      ? "bg-red-50 text-red-700"
+                                      : "text-zinc-900"
+                                  }`}
+                                  onClick={() => {
+                                    updateField(field.key, a.hebrew);
+                                    setAreaDropdownOpen(false);
+                                    setAreaSearch("");
+                                  }}
+                                >
+                                  <span>{a.english}</span>
+                                  <span className="text-xs text-zinc-400">{a.hebrew}</span>
+                                </button>
+                              ))}
+                            {areas.filter((a) => {
+                              if (!areaSearch) return true;
+                              const q = areaSearch.toLowerCase();
+                              return a.english.toLowerCase().includes(q) || a.hebrew.includes(areaSearch);
+                            }).length === 0 && (
+                              <div className="px-3 py-2 text-sm text-zinc-500">No matching areas</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <input
+                        type={field.type ?? "text"}
+                        value={settings[field.key] ?? ""}
+                        onChange={(e) => updateField(field.key, e.target.value)}
+                        placeholder={field.placeholder}
+                        className="w-full max-w-lg bg-white border border-zinc-300 rounded px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:border-zinc-400"
+                      />
+                    )}
                     {field.help && (
                       <p className="text-xs text-zinc-400 mt-1">{field.help}</p>
                     )}

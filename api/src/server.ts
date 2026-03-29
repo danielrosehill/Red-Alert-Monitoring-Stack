@@ -9,6 +9,7 @@ import { simulationRouter } from "./routes/simulation.js";
 import { settingsRouter } from "./routes/settings.js";
 import { notificationsRouter } from "./routes/notifications.js";
 import { driveRouter } from "./routes/drive.js";
+import { areasRouter } from "./routes/areas.js";
 
 const app = express();
 const PORT = parseInt(process.env.PORT || "8890", 10);
@@ -25,6 +26,7 @@ app.use("/api/simulation", simulationRouter);
 app.use("/api/settings", settingsRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/drive", driveRouter);
+app.use("/api/areas", areasRouter);
 
 // Root health check
 app.get("/", (_req, res) => {
