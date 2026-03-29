@@ -193,6 +193,7 @@ services:
       - HASS_TOKEN=${HASS_TOKEN:-}
       - HASS_ENTITY=${HASS_ENTITY:-input_select.red_alert_state}
       - ALERT_AREA=${ALERT_AREA:-}
+      - PROMPT_RUNNER_TRIGGER=${PROMPT_RUNNER_TRIGGER:-active}
     depends_on:
       - oref-proxy
     networks:

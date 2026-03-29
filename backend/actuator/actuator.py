@@ -51,6 +51,10 @@ LOCAL_AREA = os.environ.get("ALERT_AREA", "") or os.environ.get("LOCAL_AREA", ""
 HTTP_PORT = int(os.environ.get("PORT", "8782"))
 PROMPT_RUNNER_URL = os.environ.get("PROMPT_RUNNER_URL", "http://prompt-runner:8787")
 
+# When to trigger the prompt runner for immediate intel.
+# Values: "active" (default), "warning", "both"
+PROMPT_RUNNER_TRIGGER = os.environ.get("PROMPT_RUNNER_TRIGGER", "active").lower()
+
 # Alert categories
 ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
 RED_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12}
@@ -220,12 +224,15 @@ class AlertMonitor:
             await self.ha.set_state("active", self.http_client)
             self.last_active_time = time.time()
             self.all_clear_sent = False
-            asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
+            if PROMPT_RUNNER_TRIGGER in ("active", "both"):
+                asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
 
         elif local_state == "warning":
             await self.ha.set_state("warning", self.http_client)
             self.last_active_time = time.time()
             self.all_clear_sent = False
+            if PROMPT_RUNNER_TRIGGER in ("warning", "both"):
+                asyncio.create_task(_trigger_prompt_runner(LOCAL_AREA))
 
         elif local_state == "clear" and self.prev_local_state in ("active", "warning"):
             await self.ha.set_state("clear", self.http_client)
