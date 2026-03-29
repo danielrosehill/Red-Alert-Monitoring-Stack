@@ -13,7 +13,7 @@ services:
   # -- Data Source -------------------------------------------------------------
   oref-proxy:
     build:
-      context: ../oref-proxy
+      context: ../backend/oref-proxy
       dockerfile: Dockerfile
     container_name: oref-proxy
     restart: unless-stopped
@@ -52,7 +52,7 @@ services:
       - "${MQTT_EXTERNAL_PORT:-1883}:1883"
       - "9001:9001"
     volumes:
-      - ../mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ../config/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - mosquitto-data:/mosquitto/data
       - mosquitto-log:/mosquitto/log
     networks:
@@ -61,7 +61,7 @@ services:
   # -- Dashboard ---------------------------------------------------------------
   geodash:
     build:
-      context: ../geodash
+      context: ../frontend/geodash
       dockerfile: Dockerfile
     container_name: geodash
     restart: unless-stopped
@@ -84,7 +84,7 @@ services:
   # -- Notifications -----------------------------------------------------------
   pushover:
     build:
-      context: ../pushover
+      context: ../backend/pushover
       dockerfile: Dockerfile
     container_name: pushover
     restart: unless-stopped
@@ -100,7 +100,7 @@ services:
 
   telegram-bot:
     build:
-      context: ../telegram-bot
+      context: ../backend/telegram-bot
       dockerfile: Dockerfile
     container_name: telegram-bot
     restart: unless-stopped
@@ -121,7 +121,7 @@ services:
   # -- Automation (HA Bridge) --------------------------------------------------
   actuator:
     build:
-      context: ../actuator
+      context: ../backend/actuator
       dockerfile: Dockerfile
     container_name: actuator
     restart: unless-stopped
@@ -143,7 +143,7 @@ services:
   # -- AI Prompt Runner --------------------------------------------------------
   prompt-runner:
     build:
-      context: ../prompt-runner
+      context: ../backend/prompt-runner
       dockerfile: Dockerfile
     container_name: prompt-runner
     restart: unless-stopped
@@ -171,7 +171,7 @@ services:
   # -- Caching -----------------------------------------------------------------
   rss-cache:
     build:
-      context: ../rss-cache
+      context: ../backend/rss-cache
       dockerfile: Dockerfile
     container_name: rss-cache
     restart: unless-stopped
@@ -192,7 +192,7 @@ services:
   # -- MCP Server --------------------------------------------------------------
   mcp-server:
     build:
-      context: ../mcp-server
+      context: ../backend/mcp-server
       dockerfile: Dockerfile
     container_name: mcp-server
     restart: unless-stopped
@@ -210,16 +210,33 @@ services:
     networks:
       - redalert
 
-  # -- Management UI + Simulation -----------------------------------------------
+  # -- Frontend: Management UI -------------------------------------------------
   management-ui:
     build:
-      context: ../management-ui
+      context: ../frontend/management-ui
       dockerfile: Dockerfile
     container_name: management-ui
     restart: unless-stopped
     ports:
       - "${MANAGEMENT_UI_PORT:-8888}:3000"
     environment:
+      - API_URL=http://api:${API_PORT:-8890}
+    depends_on:
+      - api
+    networks:
+      - redalert
+
+  # -- Unified API -------------------------------------------------------------
+  api:
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: red-alert-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8890}:${API_PORT:-8890}"
+    environment:
+      - PORT=${API_PORT:-8890}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
       - INFLUXDB_URL=http://influxdb:${INFLUXDB_PORT:-8086}
@@ -228,10 +245,7 @@ services:
       - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
       - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
       - MCP_SERVER_URL=http://mcp-server:${MCP_SERVER_PORT:-8786}
-      - GEODASH_EXTERNAL_URL=${GEODASH_EXTERNAL_URL:-http://localhost:${GEODASH_PORT:-8083}}
       - ALERT_AREA=${ALERT_AREA:-}
-      - SNAPCAST_SERVER=${SNAPCAST_SERVER:-}
-      - SNAPCAST_PORT=${SNAPCAST_PORT:-1780}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
       - RESEND_API_KEY=${RESEND_API_KEY:-}
@@ -239,16 +253,19 @@ services:
       - SITREP_EMAIL_TO=${SITREP_EMAIL_TO:-}
       - SITREP_SCHEDULE=${SITREP_SCHEDULE:-}
       - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
+      - PUSHOVER_API_TOKEN=${PUSHOVER_API_TOKEN:-}
+      - PUSHOVER_USER_KEY=${PUSHOVER_USER_KEY:-}
       - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID:-}
       - GOOGLE_SERVICE_ACCOUNT_KEY=/app/secrets/service-account.json
       - SITREP_SAVE_DIR=/app/data/sitreps
       - SIMULATION_SAVE_DIR=/app/data/simulations
     volumes:
-      - management-data:/app/data
+      - api-data:/app/data
       - ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH:-/dev/null}:/app/secrets/service-account.json:ro
     depends_on:
       - oref-proxy
       - prompt-runner
+      - rss-cache
     networks:
       - redalert
 
@@ -261,6 +278,6 @@ volumes:
   influxdb-data:
   mcp-data:
   telegram-data:
-  management-data:
   mosquitto-data:
   mosquitto-log:
+  api-data:

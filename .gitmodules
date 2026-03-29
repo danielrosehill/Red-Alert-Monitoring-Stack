@@ -1,3 +1,0 @@
-[submodule "osint-notifier"]
-	path = osint-notifier
-	url = https://github.com/danielrosehill/Red-Alert-OSINT-Notifier.git

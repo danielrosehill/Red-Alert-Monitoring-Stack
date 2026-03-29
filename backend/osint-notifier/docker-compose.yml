@@ -1,0 +1,9 @@
+services:
+  osint-notifier:
+    build: .
+    container_name: red-alert-osint-notifier
+    restart: unless-stopped
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
