@@ -41,7 +41,7 @@ SAMPLE_INTERVAL = int(os.getenv("SAMPLE_INTERVAL", "10800"))  # 3 hours
 SAMPLES_FILE = Path(os.getenv("SAMPLES_PATH", "/app/data/samples.json"))
 MAX_SAMPLES = int(os.getenv("MAX_SAMPLES", "100"))
 
-mcp = FastMCP("Red Alert MCP Server")
+mcp = FastMCP("Red Alert MCP Server", host="0.0.0.0", port=int(os.getenv("PORT", "8786")))
 
 http_client: httpx.AsyncClient | None = None
 _last_sample_time: float = 0
@@ -301,5 +301,5 @@ def _cleanup():
 atexit.register(_cleanup)
 
 if __name__ == "__main__":
-    log.info("Starting MCP server on port 8786")
-    mcp.run(transport="streamable-http", host="0.0.0.0", port=8786)
+    log.info("Starting MCP server on port %s", os.getenv("PORT", "8786"))
+    mcp.run(transport="streamable-http")
