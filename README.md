@@ -229,6 +229,12 @@ When your local area (e.g., Jerusalem) is targeted by a ballistic missile:
 ## Related
 
 - [Awesome-Red-Alerts](https://github.com/danielrosehill/Awesome-Red-Alerts) — Curated list of Pikud HaOref API wrappers and alert projects
+- [Miklat-MCP](https://github.com/danielrosehill/Miklat-MCP) — MCP server for finding nearby bomb shelters (miklatim)
+- [HFC-Guidance-Flip-Book](https://github.com/danielrosehill/HFC-Guidance-Flip-Book) — Homefront Command guidance as a digital flip book
+- [Pikud-Haoref-Guidelines-0326](https://github.com/danielrosehill/Pikud-Haoref-Guidelines-0326) — Pikud HaOref guidelines archive (March 2026)
+- [HA-Red-Alerts-Model-Automations](https://github.com/danielrosehill/HA-Red-Alerts-Model-Automations) — Model Home Assistant automations for red alert responses
+- [Red-Alert-MQTT-Desktop-Notifier-Public](https://github.com/danielrosehill/Red-Alert-MQTT-Desktop-Notifier-Public) — MQTT-based desktop notification client for red alerts
+- [Geopol-Forecaster-POC](https://github.com/danielrosehill/Geopol-Forecaster-POC) — Geopolitical forecasting proof of concept
 
 ## License
 
