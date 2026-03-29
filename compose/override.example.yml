@@ -10,10 +10,42 @@
 # =============================================================================
 
 services:
-  # -- Expose additional ports -------------------------------------------------
+  # -- InfluxDB: healthcheck + external volumes (reuse existing data) ----------
   # influxdb:
-  #   ports:
-  #     - "8086:8086"   # Already exposed by default
+  #   volumes:
+  #     - influxdb-data:/var/lib/influxdb2
+  #     - influxdb-config:/etc/influxdb2
+  #   environment:
+  #     - DOCKER_INFLUXDB_INIT_RETENTION=0
+  #   healthcheck:
+  #     test: ["CMD", "influx", "ping"]
+  #     interval: 15s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
+
+  # -- Geodash: override InfluxDB connection or add extra env vars -------------
+  # geodash:
+  #   environment:
+  #     - INFLUX_URL=http://influxdb:8086
+  #     - INFLUX_TOKEN=${INFLUXDB_TOKEN}
+  #     - INFLUX_ORG=${INFLUXDB_ORG}
+  #     - INFLUX_BUCKET=${INFLUXDB_BUCKET}
+  #     - POLL_INTERVAL=3
+  #     - PYTHONUNBUFFERED=1
+  #     - GEMINI_API_KEY=${GEMINI_API_KEY}
+  #   depends_on:
+  #     influxdb:
+  #       condition: service_healthy
+  #     oref-proxy:
+  #       condition: service_started
+
+  # -- Override actuator settings (e.g., custom HA entity) ---------------------
+  # actuator:
+  #   environment:
+  #     - HASS_HOST=${HASS_HOST}
+  #     - HASS_TOKEN=${HASS_TOKEN}
+  #     - HASS_ENTITY=${HASS_ENTITY:-input_select.red_alert_state}
 
   # -- Add Cloudflare Tunnel for remote access ---------------------------------
   # cloudflared:
@@ -26,23 +58,16 @@ services:
   #   networks:
   #     - redalert
 
-  # -- Override actuator settings (e.g., custom poll interval) -----------------
-  # actuator:
+  # -- Override RSS feeds (use numbered env vars) ------------------------------
+  # rss-cache:
   #   environment:
-  #     - POLL_INTERVAL=5
-  #     - LIGHT_RESTORE_AFTER=300
-  #     - TTS_COOLDOWN=120
-
-  # -- Add extra MQTT topics at deploy time ------------------------------------
-  # actuator:
-  #   environment:
-  #     - MQTT_LIGHT_TOPICS=zigbee2mqtt/living_room/set,zigbee2mqtt/hallway/set,zigbee2mqtt/bedroom/set
-
-  # -- Mount custom Mosquitto config (for with-broker variant) -----------------
-  # mosquitto:
-  #   volumes:
-  #     - ../mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-  #     - ../mosquitto/passwd:/mosquitto/config/passwd:ro
+  #     - RSS_FEED_1_URL=https://www.timesofisrael.com/feed/
+  #     - RSS_FEED_1_NAME=Times of Israel
+  #     - RSS_FEED_2_URL=https://www.jns.org/feed/
+  #     - RSS_FEED_2_NAME=JNS
+  #     - RSS_FEED_3_URL=https://www.ynetnews.com/rss/news
+  #     - RSS_FEED_3_NAME=Ynet
+  #     - RSS_POLL_INTERVAL=120
 
   # -- Add a Grafana dashboard for InfluxDB visualization ----------------------
   # grafana:
@@ -58,17 +83,6 @@ services:
   #   networks:
   #     - redalert
 
-  # -- Override RSS feeds (use numbered env vars) ---------------------------------
-  # rss-cache:
-  #   environment:
-  #     - RSS_FEED_1_URL=https://www.timesofisrael.com/feed/
-  #     - RSS_FEED_1_NAME=Times of Israel
-  #     - RSS_FEED_2_URL=https://www.jns.org/feed/
-  #     - RSS_FEED_2_NAME=JNS
-  #     - RSS_FEED_3_URL=https://www.ynetnews.com/rss/news
-  #     - RSS_FEED_3_NAME=Ynet
-  #     - RSS_POLL_INTERVAL=120
-
   # -- Resource limits ---------------------------------------------------------
   # actuator:
   #   deploy:
@@ -77,6 +91,12 @@ services:
   #         memory: 256M
   #         cpus: '0.5'
 
-# -- Extra volumes (uncomment if adding services above) ----------------------
+# -- External volumes (uncomment if reusing existing InfluxDB data) ----------
 # volumes:
+#   influxdb-data:
+#     external: true
+#     name: geodash_influxdb-data
+#   influxdb-config:
+#     external: true
+#     name: geodash_influxdb-config
 #   grafana-data:
