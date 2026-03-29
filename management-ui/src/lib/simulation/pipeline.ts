@@ -9,7 +9,7 @@ import { gatherIntelligence } from "./gather";
 import { generateSitrep } from "./sitrep";
 import { generateForecasts } from "./forecast";
 import { generateSummary } from "./summarize";
-import { generatePdf, savePdf } from "./pdf";
+import { generatePdf, saveSimulationPdf } from "./pdf";
 import { sendEmail } from "../email";
 import { sendTelegram } from "../telegram";
 import { uploadToDrive } from "../drive";
@@ -97,7 +97,7 @@ export async function runPipeline(
       forecasts,
       summary,
     });
-    const pdfPath = await savePdf(pdf, sessionId, createdAt);
+    const pdfPath = await saveSimulationPdf(pdf, sessionId, createdAt);
     updateSession(sessionId, createdAt, "generating_pdf", { pdfPath });
 
     // Stage 6: Delivery

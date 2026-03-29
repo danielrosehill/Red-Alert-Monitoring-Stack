@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function SitrepPage() {
   const [schedule, setSchedule] = useState("");
   const [deliverTo, setDeliverTo] = useState("telegram");
+  const [saveToDrive, setSaveToDrive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [runResult, setRunResult] = useState<string | null>(null);
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export default function SitrepPage() {
       const resp = await fetch("/api/sitrep/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ deliver_to: targets }),
+        body: JSON.stringify({ deliver_to: targets, save_to_drive: saveToDrive }),
       });
       const data = await resp.json();
       setRunResult(JSON.stringify(data, null, 2));
@@ -56,6 +57,7 @@ export default function SitrepPage() {
       <h2 className="text-2xl font-bold mb-1">SITREP Management</h2>
       <p className="text-sm text-zinc-500 mb-6">
         Generate and deliver situation reports via the prompt runner service.
+        SITREPs are automatically saved as PDFs locally.
       </p>
 
       {/* Manual trigger */}
@@ -63,27 +65,38 @@ export default function SitrepPage() {
         <h3 className="font-semibold mb-3">Generate SITREP Now</h3>
         <p className="text-sm text-zinc-500 mb-4">
           Runs the <code className="text-zinc-400">daily_sitrep</code> template
-          via the prompt runner and delivers results.
+          via the prompt runner, generates a PDF, and delivers results.
         </p>
-        <div className="flex items-center gap-3 mb-4">
-          <label className="text-sm text-zinc-400">Deliver to:</label>
-          <input
-            type="text"
-            value={deliverTo}
-            onChange={(e) => setDeliverTo(e.target.value)}
-            placeholder="telegram,email"
-            className="flex-1 max-w-xs bg-zinc-900 border border-zinc-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-zinc-500"
-          />
-          <button
-            onClick={runSitrep}
-            disabled={loading}
-            className="px-4 py-1.5 text-sm bg-red-600 hover:bg-red-500 rounded font-medium disabled:opacity-50 transition-colors"
-          >
-            {loading ? "Generating..." : "Generate SITREP"}
-          </button>
+        <div className="space-y-3 mb-4">
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-zinc-400">Deliver to:</label>
+            <input
+              type="text"
+              value={deliverTo}
+              onChange={(e) => setDeliverTo(e.target.value)}
+              placeholder="telegram,email"
+              className="flex-1 max-w-xs bg-zinc-900 border border-zinc-700 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-zinc-500"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={saveToDrive}
+              onChange={(e) => setSaveToDrive(e.target.checked)}
+              className="accent-red-500"
+            />
+            Upload PDF to Google Drive
+          </label>
         </div>
+        <button
+          onClick={runSitrep}
+          disabled={loading}
+          className="px-4 py-1.5 text-sm bg-red-600 hover:bg-red-500 rounded font-medium disabled:opacity-50 transition-colors"
+        >
+          {loading ? "Generating..." : "Generate SITREP"}
+        </button>
         {runResult && (
-          <pre className="text-xs bg-zinc-900 rounded p-3 overflow-x-auto text-zinc-400 max-h-64">
+          <pre className="mt-4 text-xs bg-zinc-900 rounded p-3 overflow-x-auto text-zinc-400 max-h-64">
             {runResult}
           </pre>
         )}

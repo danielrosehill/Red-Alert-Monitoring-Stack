@@ -227,6 +227,8 @@ services:
       - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
       - GOOGLE_DRIVE_FOLDER_ID=${GOOGLE_DRIVE_FOLDER_ID:-}
       - GOOGLE_SERVICE_ACCOUNT_KEY=/app/secrets/service-account.json
+      - SITREP_SAVE_DIR=/app/data/sitreps
+      - SIMULATION_SAVE_DIR=/app/data/simulations
     volumes:
       - management-data:/app/data
       - ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH:-/dev/null}:/app/secrets/service-account.json:ro
