@@ -165,9 +165,11 @@ services:
       - PORT=${TELEGRAM_BOT_PORT:-8781}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - RSS_CACHE_URL=http://rss-cache:${RSS_CACHE_PORT:-8785}
       - ALERT_AREA=${ALERT_AREA:-}
+      - ALLOWED_TELEGRAM_USERS=${ALLOWED_TELEGRAM_USERS:-}
     depends_on:
       - oref-proxy
       - rss-cache

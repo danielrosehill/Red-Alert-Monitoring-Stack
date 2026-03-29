@@ -5,9 +5,9 @@ data and AI-generated situation reports. It does NOT push automatic
 notifications — alert pushing is handled by other services (Pushover for
 volumetric alerts, Actuator for physical alerts).
 
-The /sitrep command generates an AI situation report by querying two different
-LLMs in parallel via OpenRouter, then synthesizing both into a single concise
-briefing — optionally delivered as a voice note.
+The /sitrep command gathers context from three sources (Oref alerts, RSS
+headlines, Tavily news search) and generates a single AI situation report
+via OpenRouter — optionally delivered as a voice note.
 
 Architecture:
   This bot does NOT poll the Oref API directly. It reads from a local
@@ -15,20 +15,14 @@ Architecture:
   which handles all Oref polling centrally. Data is fetched on-demand
   when a user issues a command.
 
-Commands:
-  /start      — Subscribe with default area (Jerusalem Center)
-  /status     — Current alert summary
-  /area       — View/change monitored area
-  /sitrep     — AI situation report (dual-model synthesis + voice note)
-  /subscribe  — Enable notifications
-  /unsubscribe — Disable notifications
-  /help       — Show commands
-
 Environment variables:
-  TELEGRAM_BOT_TOKEN     — Required. Bot token from @BotFather
-  OPENROUTER_API_KEY     — Optional. Enables /sitrep and chat features
-  OREF_PROXY_URL         — Required. URL of the Oref Alert Proxy
-  DATA_DIR               — Subscriber data directory (default: ./data)
+  TELEGRAM_BOT_TOKEN       — Required. Bot token from @BotFather
+  OPENROUTER_API_KEY       — Optional. Enables /sitrep and chat features
+  OREF_PROXY_URL           — Required. URL of the Oref Alert Proxy
+  RSS_CACHE_URL            — Optional. URL of RSS Cache service for news headlines
+  TAVILY_API_KEY           — Optional. Enables Tavily news search for richer sitreps
+  ALLOWED_TELEGRAM_USERS   — Optional. Comma-separated user IDs to restrict access
+  DATA_DIR                 — Subscriber data directory (default: ./data)
 """
 
 import asyncio
@@ -56,15 +50,19 @@ log = logging.getLogger("redalert.bot")
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://localhost:8764")
+RSS_CACHE_URL = os.environ.get("RSS_CACHE_URL", "")
 DATA_DIR = Path(os.environ.get("DATA_DIR", "./data"))
+ALLOWED_USERS_RAW = os.environ.get("ALLOWED_TELEGRAM_USERS", "")
+ALLOWED_USERS: set[int] = {int(u.strip()) for u in ALLOWED_USERS_RAW.split(",") if u.strip()}
 
-# OpenRouter models
-SITREP_MODEL_A = os.environ.get("SITREP_MODEL_A", "google/gemini-2.0-flash-lite-001")
-SITREP_MODEL_B = os.environ.get("SITREP_MODEL_B", "meta-llama/llama-4-scout")
-SITREP_SYNTHESIS_MODEL = os.environ.get("SITREP_SYNTHESIS_MODEL", "google/gemini-2.0-flash-001")
-CHAT_MODEL = os.environ.get("CHAT_MODEL", "google/gemini-2.0-flash-lite-001")
-TTS_MODEL = os.environ.get("TTS_MODEL", "openai/gpt-4o-mini-audio-preview")
+# OpenRouter models (hardcoded)
+SITREP_MODEL = "google/gemini-3-flash-preview"
+CHAT_MODEL = "google/gemini-3.1-flash-lite-preview"
+TTS_MODEL = "openai/gpt-audio-mini"
+
+TAVILY_API_URL = "https://api.tavily.com/search"
 
 TELEGRAM_API = "https://api.telegram.org/bot{token}"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -153,6 +151,62 @@ class ProxyConsumer:
         except Exception as e:
             log.error("Proxy history error: %s", e)
             return []
+
+
+# ── News Context ────────────────────────────────────────────────────────────
+
+async def fetch_rss_headlines(http_client: httpx.AsyncClient) -> str:
+    """Fetch recent headlines from the RSS Cache service."""
+    if not RSS_CACHE_URL:
+        return ""
+    try:
+        resp = await http_client.get(f"{RSS_CACHE_URL}/api/news", timeout=10)
+        data = resp.json()
+        articles = data if isinstance(data, list) else data.get("articles", [])
+        if not articles:
+            return ""
+        lines = ["Recent news headlines:"]
+        for a in articles[:15]:
+            title = a.get("title", "")
+            source = a.get("source", "")
+            if title:
+                lines.append(f"- {title}" + (f" ({source})" if source else ""))
+        return "\n".join(lines)
+    except Exception as e:
+        log.warning("RSS cache fetch failed: %s", e)
+        return ""
+
+
+async def fetch_tavily_news(http_client: httpx.AsyncClient) -> str:
+    """Search Tavily for recent Israel security news."""
+    if not TAVILY_API_KEY:
+        return ""
+    try:
+        resp = await http_client.post(
+            TAVILY_API_URL,
+            json={
+                "api_key": TAVILY_API_KEY,
+                "query": "Israel rocket attack missile alert security today",
+                "search_depth": "basic",
+                "topic": "news",
+                "max_results": 8,
+            },
+            timeout=15,
+        )
+        data = resp.json()
+        results = data.get("results", [])
+        if not results:
+            return ""
+        lines = ["Tavily news search results:"]
+        for r in results:
+            title = r.get("title", "")
+            snippet = r.get("content", "")[:200]
+            if title:
+                lines.append(f"- {title}: {snippet}")
+        return "\n".join(lines)
+    except Exception as e:
+        log.warning("Tavily search failed: %s", e)
+        return ""
 
 
 # ── OpenRouter Client ────────────────────────────────────────────────────────
@@ -364,6 +418,9 @@ class TelegramBot:
         if not chat_id or not text:
             return
 
+        if ALLOWED_USERS and chat_id not in ALLOWED_USERS:
+            return
+
         if text == "/start" or text.startswith("/start "):
             self.subscribe(chat_id)
             await self.send_message(chat_id, (
@@ -484,63 +541,48 @@ class TelegramBot:
 
         await self.send_message(chat_id, "\n".join(lines))
 
-    # ── Sitrep: Dual-Model Synthesis ─────────────────────────────────────
+    # ── Sitrep ───────────────────────────────────────────────────────────
 
     async def _handle_sitrep(self, chat_id: int):
         if not OPENROUTER_API_KEY:
             await self.send_message(chat_id, "Sitrep unavailable (OPENROUTER_API_KEY not set).")
             return
 
-        await self.send_message(chat_id, "Generating situation report (querying two AI models)...")
+        await self.send_message(chat_id, "Generating situation report...")
 
-        await self.proxy.fetch_alerts()
-        context = self._build_alert_context()
+        # Gather all context in parallel
+        _, rss_context, tavily_context = await asyncio.gather(
+            self.proxy.fetch_alerts(),
+            fetch_rss_headlines(self.http_client),
+            fetch_tavily_news(self.http_client),
+        )
+
+        alert_context = self._build_alert_context()
+
+        # Build combined context
+        context_parts = [f"Current alert data:\n{alert_context}"]
+        if rss_context:
+            context_parts.append(rss_context)
+        if tavily_context:
+            context_parts.append(tavily_context)
+        full_context = "\n\n".join(context_parts)
 
         sitrep_system = (
             "You are a military-style situation report (sitrep) generator for Israel's "
             "Homefront Command alert system. Generate a concise, professional sitrep "
-            "summarizing the current situation. "
+            "summarizing the current situation. You are provided with real-time alert data, "
+            "RSS news headlines, and web search results for context. "
             "Use clear, direct language. Structure: SITUATION, KEY DEVELOPMENTS, ASSESSMENT. "
-            "Keep it under 200 words. Do not use markdown formatting — plain text only."
-        )
-        sitrep_prompt = f"Current alert data:\n{context}\n\nGenerate sitrep."
-
-        # Query two models in parallel
-        report_a, report_b = await asyncio.gather(
-            self.llm.chat(SITREP_MODEL_A, sitrep_system, sitrep_prompt),
-            self.llm.chat(SITREP_MODEL_B, sitrep_system, sitrep_prompt),
+            "Keep it under 300 words. Do not use markdown formatting — plain text only."
         )
 
-        if not report_a and not report_b:
-            await self.send_message(chat_id, "Failed to generate sitrep — both models returned empty.")
+        final_sitrep = await self.llm.chat(
+            SITREP_MODEL, sitrep_system, f"{full_context}\n\nGenerate sitrep."
+        )
+
+        if not final_sitrep:
+            await self.send_message(chat_id, "Failed to generate sitrep.")
             return
-
-        # If only one model responded, use it directly
-        if not report_a or not report_b:
-            final_sitrep = report_a or report_b
-        else:
-            # Synthesize both reports into one
-            synthesis_system = (
-                "You are an intelligence analyst. You will receive two independent "
-                "situation reports about the same event from different AI models. "
-                "Synthesize them into a single authoritative sitrep that draws the "
-                "best analysis from each source. Resolve any contradictions by "
-                "favoring the more specific/detailed claim. "
-                "Structure: SITUATION, KEY DEVELOPMENTS, ASSESSMENT. "
-                "Keep it under 200 words. Plain text only, no markdown."
-            )
-            synthesis_prompt = (
-                f"Report A ({SITREP_MODEL_A}):\n{report_a}\n\n"
-                f"Report B ({SITREP_MODEL_B}):\n{report_b}\n\n"
-                f"Synthesize into one authoritative sitrep."
-            )
-
-            final_sitrep = await self.llm.chat(
-                SITREP_SYNTHESIS_MODEL, synthesis_system, synthesis_prompt
-            )
-            if not final_sitrep:
-                # Fallback to model A's report if synthesis fails
-                final_sitrep = report_a
 
         await self.send_message(chat_id, f"<b>SITREP</b>\n\n{final_sitrep}", parse_mode="HTML")
 
@@ -669,7 +711,8 @@ async def main():
         log.info("Red Alert Telegram Bot starting (on-demand mode)...")
         log.info("Proxy: %s", OREF_PROXY_URL)
         log.info("AI features: %s", "enabled" if OPENROUTER_API_KEY else "disabled")
-        log.info("Sitrep models: %s + %s → %s", SITREP_MODEL_A, SITREP_MODEL_B, SITREP_SYNTHESIS_MODEL)
+        log.info("Sitrep model: %s | Chat model: %s", SITREP_MODEL, CHAT_MODEL)
+        log.info("Tavily: %s | RSS Cache: %s", "enabled" if TAVILY_API_KEY else "disabled", RSS_CACHE_URL or "disabled")
         log.info("Subscribers: %d", len(bot.subscribers))
 
         await bot.start_telegram_polling()

@@ -19,6 +19,8 @@ const MANAGED_KEYS = [
   "pushover_api_token",
   "pushover_user_key",
   "telegram_bot_token",
+  "tavily_api_key",
+  "allowed_telegram_users",
   "snapcast_server",
   "snapcast_port",
 ];

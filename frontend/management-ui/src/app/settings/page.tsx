@@ -83,6 +83,8 @@ const SETTING_GROUPS: { title: string; fields: SettingField[] }[] = [
       { key: "pushover_api_token", label: "Pushover API Token", type: "password" },
       { key: "pushover_user_key", label: "Pushover User Key(s)", type: "password", help: "Comma-separated for multiple recipients." },
       { key: "telegram_bot_token", label: "Telegram Bot Token", type: "password" },
+      { key: "allowed_telegram_users", label: "Allowed Telegram Users", help: "Comma-separated user IDs. Leave empty for open access." },
+      { key: "tavily_api_key", label: "Tavily API Key", type: "password", help: "Enables news search for richer AI sitreps." },
     ],
   },
   {
