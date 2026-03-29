@@ -81,7 +81,7 @@ const SETTING_GROUPS: { title: string; fields: SettingField[] }[] = [
     title: "Notifications",
     fields: [
       { key: "pushover_api_token", label: "Pushover API Token", type: "password" },
-      { key: "pushover_user_key", label: "Pushover User Key", type: "password" },
+      { key: "pushover_user_key", label: "Pushover User Key(s)", type: "password", help: "Comma-separated for multiple recipients." },
       { key: "telegram_bot_token", label: "Telegram Bot Token", type: "password" },
     ],
   },

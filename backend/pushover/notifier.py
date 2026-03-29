@@ -27,7 +27,8 @@ log = logging.getLogger("pushover-notifier")
 
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://localhost:8764/api/alerts")
 PUSHOVER_API_TOKEN = os.environ.get("PUSHOVER_API_TOKEN", "")
-PUSHOVER_USER_KEY = os.environ.get("PUSHOVER_USER_KEY", "")
+PUSHOVER_USER_KEYS_RAW = os.environ.get("PUSHOVER_USER_KEY", "")
+PUSHOVER_USER_KEYS = [k.strip() for k in PUSHOVER_USER_KEYS_RAW.split(",") if k.strip()]
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "3"))
 AREA_THRESHOLDS = sorted(
     int(t) for t in os.environ.get(
@@ -93,32 +94,35 @@ async def send_pushover(
     priority: int = 0,
     sound: str = "pushover",
 ) -> bool:
-    """Send a single Pushover notification.  Returns True on success."""
-    payload: dict = {
-        "token": PUSHOVER_API_TOKEN,
-        "user": PUSHOVER_USER_KEY,
-        "title": title,
-        "message": message,
-        "priority": priority,
-        "html": 1,
-    }
-    if sound:
-        payload["sound"] = sound
-    if priority == 2:
-        payload["retry"] = 60
-        payload["expire"] = 600
+    """Send Pushover notification to all configured user keys.  Returns True if all succeed."""
+    all_ok = True
+    for user_key in PUSHOVER_USER_KEYS:
+        payload: dict = {
+            "token": PUSHOVER_API_TOKEN,
+            "user": user_key,
+            "title": title,
+            "message": message,
+            "priority": priority,
+            "html": 1,
+        }
+        if sound:
+            payload["sound"] = sound
+        if priority == 2:
+            payload["retry"] = 60
+            payload["expire"] = 600
 
-    try:
-        resp = await client.post(PUSHOVER_API_URL, data=payload, timeout=10)
-        data = resp.json()
-        if data.get("status") == 1:
-            log.info("Pushover sent: %s (priority=%d)", title, priority)
-            return True
-        log.warning("Pushover API error: %s", data.get("errors", data))
-        return False
-    except Exception as exc:
-        log.error("Pushover send failed: %s", exc)
-        return False
+        try:
+            resp = await client.post(PUSHOVER_API_URL, data=payload, timeout=10)
+            data = resp.json()
+            if data.get("status") == 1:
+                log.info("Pushover sent to %s...: %s (priority=%d)", user_key[:8], title, priority)
+            else:
+                log.warning("Pushover API error for %s...: %s", user_key[:8], data.get("errors", data))
+                all_ok = False
+        except Exception as exc:
+            log.error("Pushover send failed for %s...: %s", user_key[:8], exc)
+            all_ok = False
+    return all_ok
 
 
 # ---------------------------------------------------------------------------
@@ -183,7 +187,7 @@ async def poll_loop() -> None:
 
 
 def main() -> None:
-    if not PUSHOVER_API_TOKEN or not PUSHOVER_USER_KEY:
+    if not PUSHOVER_API_TOKEN or not PUSHOVER_USER_KEYS:
         log.error(
             "PUSHOVER_API_TOKEN and PUSHOVER_USER_KEY must be set. Exiting."
         )

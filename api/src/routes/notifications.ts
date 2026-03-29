@@ -19,24 +19,30 @@ notificationsRouter.post("/test-pushover", async (req, res) => {
   const message = req.body.message ?? "This is a test notification from the Red Alert Management Console.";
   const priority = req.body.priority ?? 0;
 
-  try {
-    const resp = await fetch("https://api.pushover.net/1/messages.json", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token,
-        user,
-        title,
-        message,
-        priority,
-        sound: "pushover",
-        html: 1,
-      }),
-      signal: AbortSignal.timeout(10_000),
-    });
+  const userKeys = user.split(",").map((k: string) => k.trim()).filter(Boolean);
 
-    const data = await resp.json();
-    res.json({ ok: resp.ok, ...data });
+  try {
+    const results = await Promise.all(
+      userKeys.map(async (userKey: string) => {
+        const resp = await fetch("https://api.pushover.net/1/messages.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            token,
+            user: userKey,
+            title,
+            message,
+            priority,
+            sound: "pushover",
+            html: 1,
+          }),
+          signal: AbortSignal.timeout(10_000),
+        });
+        return { ok: resp.ok, ...(await resp.json()) };
+      })
+    );
+    const allOk = results.every((r) => r.ok);
+    res.json({ ok: allOk, recipients: results.length, results });
   } catch (e) {
     res.status(500).json({ error: (e as Error).message });
   }
