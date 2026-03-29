@@ -245,7 +245,6 @@ services:
       - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
     depends_on:
       - oref-proxy
-      - api
     networks:
       - redalert
 
