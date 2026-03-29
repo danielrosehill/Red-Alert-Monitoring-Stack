@@ -215,12 +215,12 @@ services:
     build:
       context: ../frontend/management-ui
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
     container_name: management-ui
     restart: unless-stopped
     ports:
       - "${MANAGEMENT_UI_PORT:-8888}:3000"
-    environment:
-      - API_URL=http://api:${API_PORT:-8890}
     depends_on:
       - api
     networks:

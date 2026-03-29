@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 interface SessionSummary {
   id: string;
@@ -19,7 +20,7 @@ export default function SimulationPage() {
 
   const loadSessions = useCallback(async () => {
     try {
-      const resp = await fetch("/api/simulation/sessions");
+      const resp = await fetch(api("/api/simulation/sessions"));
       setSessions(await resp.json());
     } catch {
       // ignore
@@ -44,7 +45,7 @@ export default function SimulationPage() {
     setProgress("Starting pipeline...");
 
     try {
-      const resp = await fetch("/api/simulation/run", {
+      const resp = await fetch(api("/api/simulation/run"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deliver_to: deliverTo }),
@@ -76,7 +77,7 @@ export default function SimulationPage() {
 
   async function uploadToDrive(sessionId: string) {
     try {
-      const resp = await fetch("/api/simulation/upload", {
+      const resp = await fetch(api("/api/simulation/upload"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: sessionId }),
@@ -95,7 +96,7 @@ export default function SimulationPage() {
 
   async function deleteSession(sessionId: string) {
     if (!confirm("Delete this simulation session?")) return;
-    await fetch(`/api/simulation/sessions?id=${sessionId}`, {
+    await fetch(api(`/api/simulation/sessions?id=${sessionId}`), {
       method: "DELETE",
     });
     loadSessions();
@@ -252,7 +253,7 @@ export default function SimulationPage() {
                           {s.step === "done" && (
                             <>
                               <a
-                                href={`/api/simulation/pdf?id=${s.id}`}
+                                href={api(`/api/simulation/pdf?id=${s.id}`)}
                                 className="text-xs text-red-600 hover:underline font-medium"
                               >
                                 PDF

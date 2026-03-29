@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 interface SettingField {
   key: string;
@@ -104,8 +105,8 @@ export default function SettingsPage() {
   const areaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch("/api/settings").then((r) => r.json()).then(setSettings);
-    fetch("/api/areas").then((r) => r.json()).then(setAreas).catch(() => {});
+    fetch(api("/api/settings")).then((r) => r.json()).then(setSettings);
+    fetch(api("/api/areas")).then((r) => r.json()).then(setAreas).catch(() => {});
   }, []);
 
   // Close area dropdown on outside click
@@ -134,7 +135,7 @@ export default function SettingsPage() {
     }
 
     try {
-      const resp = await fetch("/api/settings", {
+      const resp = await fetch(api("/api/settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

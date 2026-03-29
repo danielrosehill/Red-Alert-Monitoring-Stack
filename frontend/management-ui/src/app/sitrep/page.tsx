@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 export default function SitrepPage() {
   const [schedule, setSchedule] = useState("");
@@ -12,7 +13,7 @@ export default function SitrepPage() {
   const [saveMsg, setSaveMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/sitrep/schedule")
+    fetch(api("/api/sitrep/schedule"))
       .then((r) => r.json())
       .then((data) => {
         setSchedule(data.schedule || "");
@@ -25,7 +26,7 @@ export default function SitrepPage() {
     setRunResult(null);
     try {
       const targets = deliverTo.split(",").map((s) => s.trim());
-      const resp = await fetch("/api/sitrep/run", {
+      const resp = await fetch(api("/api/sitrep/run"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deliver_to: targets, save_to_drive: saveToDrive }),
@@ -41,7 +42,7 @@ export default function SitrepPage() {
   async function saveSchedule() {
     setSaveMsg(null);
     try {
-      await fetch("/api/sitrep/schedule", {
+      await fetch(api("/api/sitrep/schedule"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ schedule, deliver_to: deliverTo }),

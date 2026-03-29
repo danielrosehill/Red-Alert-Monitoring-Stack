@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { api } from "@/lib/api";
 
 interface ServiceDef {
   name: string;
@@ -31,7 +32,7 @@ export default function DashboardPage() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const resp = await fetch("/api/health");
+      const resp = await fetch(api("/api/health"));
       setData(await resp.json());
     } catch {
       setData(null);
@@ -48,7 +49,7 @@ export default function DashboardPage() {
   async function sendTestAlert(type: string) {
     setTestResult("Sending...");
     try {
-      const resp = await fetch("/api/alerts/test", {
+      const resp = await fetch(api("/api/alerts/test"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ alert_type: type }),
@@ -63,7 +64,7 @@ export default function DashboardPage() {
   async function testPushover() {
     setPushoverResult("Sending...");
     try {
-      const resp = await fetch("/api/notifications/test-pushover", {
+      const resp = await fetch(api("/api/notifications/test-pushover"), {
         method: "POST",
       });
       const result = await resp.json();
@@ -199,7 +200,7 @@ export default function DashboardPage() {
                       : "bg-green-600 hover:bg-green-500 text-white"
                   }`}
                 >
-                  {type.replace("_", " ")}
+                  {type === "red_alert" ? "Red Alert" : type === "early_warning" ? "Early Warning" : "All Clear"}
                 </button>
               ))}
             </div>
