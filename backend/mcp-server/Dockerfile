@@ -15,6 +15,6 @@ ENV PORT=8786
 
 EXPOSE ${PORT}
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD curl -f http://localhost:${PORT:-8786}/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD curl -s -o /dev/null -w '%{http_code}' http://localhost:${PORT:-8786}/mcp | grep -q '[2-4][0-9][0-9]' || exit 1
 
 CMD ["python", "server.py"]

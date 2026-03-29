@@ -24,6 +24,6 @@ EXPOSE 8890
 
 VOLUME ["/app/data"]
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD curl -f http://localhost:${PORT:-8890}/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD curl -f http://localhost:${PORT:-8890}/api/health || exit 1
 
 CMD ["npx", "tsx", "src/server.ts"]
