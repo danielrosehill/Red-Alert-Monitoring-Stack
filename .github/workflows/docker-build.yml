@@ -7,6 +7,7 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'api/**'
+      - 'compose/**'
 
 jobs:
   # ── Detect which services changed ──────────────────────────────────────────
@@ -137,3 +138,30 @@ jobs:
             danielrosehill/${{ matrix.name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ── Deploy to ubuntuvm ─────────────────────────────────────────────────────
+  deploy:
+    needs: [changes, build]
+    if: always() && needs.build.result != 'failure'
+    runs-on: [self-hosted, deploy]
+    steps:
+      - name: Pull latest code
+        run: |
+          cd ~/repos/github/Red-Alert-Monitoring-Stack-Public
+          git pull
+
+      - name: Pull updated images and redeploy
+        run: |
+          cd ~/repos/github/Red-Alert-Monitoring-Stack-Public
+          COMPOSE_FILES="-f compose/default.yml"
+          [ -f compose/override.yml ] && COMPOSE_FILES="$COMPOSE_FILES -f compose/override.yml"
+          docker compose $COMPOSE_FILES pull
+          docker compose $COMPOSE_FILES up -d --remove-orphans
+
+      - name: Health check
+        run: |
+          sleep 10
+          cd ~/repos/github/Red-Alert-Monitoring-Stack-Public
+          COMPOSE_FILES="-f compose/default.yml"
+          [ -f compose/override.yml ] && COMPOSE_FILES="$COMPOSE_FILES -f compose/override.yml"
+          docker compose $COMPOSE_FILES ps --format "table {{.Name}}\t{{.Status}}" | head -20
