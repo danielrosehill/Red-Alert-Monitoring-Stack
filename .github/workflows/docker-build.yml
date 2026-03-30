@@ -156,7 +156,8 @@ jobs:
           COMPOSE_FILES="-f compose/default.yml"
           [ -f compose/override.yml ] && COMPOSE_FILES="$COMPOSE_FILES -f compose/override.yml"
           docker compose $COMPOSE_FILES pull
-          docker compose $COMPOSE_FILES up -d --remove-orphans
+          docker compose $COMPOSE_FILES down --timeout 30
+          docker compose $COMPOSE_FILES up -d
 
       - name: Health check
         run: |
