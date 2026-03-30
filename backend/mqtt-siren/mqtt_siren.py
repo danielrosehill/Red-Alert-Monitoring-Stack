@@ -10,7 +10,7 @@ User configures separate topics per alert state (warning, active, all-clear)
 so different sirens or different alarm modes can be used per state.
 
 Environment variables: see .env.example
-"""  # noqa: D205
+"""
 
 import asyncio
 import json
