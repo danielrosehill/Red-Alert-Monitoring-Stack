@@ -10,6 +10,7 @@ import { settingsRouter } from "./routes/settings.js";
 import { notificationsRouter } from "./routes/notifications.js";
 import { driveRouter } from "./routes/drive.js";
 import { areasRouter } from "./routes/areas.js";
+import { modulesRouter } from "./routes/modules.js";
 import { startRssPoller } from "./lib/rss.js";
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/api/settings", settingsRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/drive", driveRouter);
 app.use("/api/areas", areasRouter);
+app.use("/api/modules", modulesRouter);
 
 // Root health check
 app.get("/", (_req, res) => {

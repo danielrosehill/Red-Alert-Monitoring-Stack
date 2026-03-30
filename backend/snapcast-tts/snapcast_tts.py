@@ -83,6 +83,33 @@ TTS_ON_CLEAR = _env_bool("TTS_ON_CLEAR", True)
 TTS_ON_THRESHOLD = _env_bool("TTS_ON_THRESHOLD", True)
 CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
+# Module enable check via API
+API_URL = os.environ.get("API_URL", "http://red-alert-api:8890")
+_enabled_cache: bool = True
+_enabled_last_check: float = 0
+_ENABLE_CHECK_INTERVAL = 30  # seconds
+
+
+async def _check_module_enabled(http_client: httpx.AsyncClient) -> bool:
+    """Check if this module is enabled via the API. Cached for 30s, fail-open."""
+    global _enabled_cache, _enabled_last_check
+    now = time.time()
+    if now - _enabled_last_check < _ENABLE_CHECK_INTERVAL:
+        return _enabled_cache
+    _enabled_last_check = now
+    try:
+        resp = await http_client.get(f"{API_URL}/api/modules/snapcast-tts", timeout=3)
+        data = resp.json()
+        was_enabled = _enabled_cache
+        _enabled_cache = data.get("enabled", True)
+        if was_enabled and not _enabled_cache:
+            log.info("Module disabled via management UI — going dormant")
+        elif not was_enabled and _enabled_cache:
+            log.info("Module re-enabled via management UI — resuming")
+    except Exception:
+        pass
+    return _enabled_cache
+
 # Alert categories (from shared module)
 from alert_constants import ACTIVE_CATEGORIES, RED_CATEGORIES, THRESHOLD_LEVELS
 
@@ -478,6 +505,8 @@ class AlertMonitor:
         self.all_clear_sent: bool = False
 
     async def poll(self):
+        if not await _check_module_enabled(self.http_client):
+            return
         try:
             resp = await self.http_client.get(
                 f"{OREF_PROXY_URL}/api/alerts", timeout=10

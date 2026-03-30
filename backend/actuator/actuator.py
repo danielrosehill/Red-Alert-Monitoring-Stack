@@ -57,6 +57,12 @@ LOCAL_AREA = os.environ.get("ALERT_AREA", "") or os.environ.get("LOCAL_AREA", ""
 HTTP_PORT = int(os.environ.get("PORT", "8782"))
 PROMPT_RUNNER_URL = os.environ.get("PROMPT_RUNNER_URL", "http://prompt-runner:8787")
 
+# Module enable check via API
+API_URL = os.environ.get("API_URL", "http://red-alert-api:8890")
+_enabled_cache: bool = True
+_enabled_last_check: float = 0
+_ENABLE_CHECK_INTERVAL = 30  # seconds
+
 # When to trigger the prompt runner for immediate intel.
 # Values: "active" (default), "warning", "both"
 PROMPT_RUNNER_TRIGGER = os.environ.get("PROMPT_RUNNER_TRIGGER", "active").lower()
@@ -188,6 +194,30 @@ async def _send_pushover(http_client: httpx.AsyncClient, title: str, message: st
             log.error("Pushover failed for %s...: %s", user_key[:8], e)
 
 
+# ── Module Enable Check ─────────────────────────────────────────────────────
+
+
+async def _check_module_enabled(http_client: httpx.AsyncClient) -> bool:
+    """Check if this module is enabled via the API. Cached for 30s, fail-open."""
+    global _enabled_cache, _enabled_last_check
+    now = time.time()
+    if now - _enabled_last_check < _ENABLE_CHECK_INTERVAL:
+        return _enabled_cache
+    _enabled_last_check = now
+    try:
+        resp = await http_client.get(f"{API_URL}/api/modules/actuator", timeout=3)
+        data = resp.json()
+        was_enabled = _enabled_cache
+        _enabled_cache = data.get("enabled", True)
+        if was_enabled and not _enabled_cache:
+            log.info("Module disabled via management UI — going dormant")
+        elif not was_enabled and _enabled_cache:
+            log.info("Module re-enabled via management UI — resuming")
+    except Exception:
+        pass  # fail-open: assume enabled if API unreachable
+    return _enabled_cache
+
+
 # ── Alert Monitor ────────────────────────────────────────────────────────────
 
 
@@ -205,6 +235,8 @@ class AlertMonitor:
 
     async def poll(self):
         """Fetch alerts from proxy and trigger state changes."""
+        if not await _check_module_enabled(self.http_client):
+            return
         try:
             resp = await self.http_client.get(
                 f"{OREF_PROXY_URL}/api/alerts", timeout=10

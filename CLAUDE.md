@@ -20,8 +20,9 @@ All services build from source in this monorepo. No external Docker Hub images r
 - **Snapcast TTS** (`snapcast-tts/`) — TTS announcements via Snapcast speaker groups on alert events
 - **MCP Server** (`mcp-server/`) — Streamable HTTP MCP exposing alert tools for AI agents
 - **Management UI** (`management-ui/`) — Next.js dashboard: service health, SITREP management, geopolitical simulation (6-lens forecasting pipeline with PDF generation), settings management, Google Drive upload
+- **Webhook** (`webhook/`) — HTTP POST payloads on all alert events for external integrations
+- **SMS Relay** (`sms-relay/`) — Twilio SMS + automated voice calls (rings you when all-clear)
 - **InfluxDB** — Time-series storage (external image)
-- **Mosquitto** — MQTT broker (optional bundled, or bring your own)
 
 ### Data Flow
 
@@ -35,7 +36,9 @@ Oref Alert Proxy (:8764)
        |----> Actuator (:8782) ---> Home Assistant (input_select)
        |         |----> Prompt Runner (:8787) ---> Telegram Bot
        |----> Snapcast TTS (:8783) ---> Snapcast Server (TCP audio)
+       |----> Webhook (:8784) ---> External URLs (HTTP POST)
        |----> MCP Server (:8786)
+       |----> SMS Relay (:8792) ---> Twilio (SMS + voice calls)
        |----> Management UI (:8888)
 
 RSS Cache (:8785) ----> Geodash, MCP Server, Prompt Runner
@@ -62,21 +65,18 @@ Management UI (:8888) ---> Prompt Runner (SITREP triggers)
 | Prompt Runner | 8787 | `PROMPT_RUNNER_PORT` |
 | Management UI | 8888 | `MANAGEMENT_UI_PORT` |
 | Snapcast TTS | 8783 | `SNAPCAST_TTS_PORT` |
-| Mosquitto MQTT | 1883 | `MQTT_EXTERNAL_PORT` |
+| Webhook | 8784 | `WEBHOOK_PORT` |
+| SMS Relay | 8792 | `SMS_RELAY_PORT` |
 
-## Docker Compose Variants
+## Docker Compose
 
-All compose files live in `compose/`. Run from the repo root with `-f`:
-
-| File | Use Case |
-|------|----------|
-| `compose/default.yml` | External MQTT broker on your LAN |
-| `compose/with-broker.yml` | Self-contained with bundled Mosquitto |
-| `compose/ha.yml` | Home Assistant users — no actuator, HA handles automations directly |
+Single compose file at `compose/default.yml`. All services start, but optional
+modules can be disabled from the Management UI (`/modules` page) — disabled
+modules stay running but go dormant (skip processing).
 
 ```bash
 cp .env.example .env   # fill in your values
-docker compose -f compose/default.yml up -d --build
+docker compose -f compose/default.yml up -d
 ```
 
 ## Customization via Override
@@ -102,8 +102,7 @@ Use these slash commands to walk through interactive setup:
 
 | Command | Purpose |
 |---------|---------|
-| `/setup` | Full guided setup — MQTT, lights, Snapcast, Cloudflare Tunnel |
-| `/setup-mqtt` | Create a dedicated MQTT user in your Mosquitto broker for the stack |
+| `/setup` | Full guided setup — lights, Snapcast, Cloudflare Tunnel |
 | `/setup-lights` | Choose which smart lights to include in alert automations |
 | `/setup-snapcast` | Configure Snapcast whole-house audio integration |
 | `/setup-tunnel` | Set up Cloudflare Tunnel for secure remote access |
@@ -131,9 +130,11 @@ The code for these lives in `AlertMonitor._process_localized_alerts()` and `Aler
 
 - `.env.example` — All configuration variables with documentation
 - `.env` — Your actual config (gitignored)
-- `compose/` — All Docker Compose files (default, with-broker, ha, override)
-- `mosquitto/mosquitto.conf` — MQTT broker config (used by bundled broker variant)
+- `compose/default.yml` — Docker Compose (single file, all services)
 - `actuator/actuator.py` — HA bridge (sets input_select state + test alerts)
+- `webhook/webhook.py` — HTTP POST webhook notifications
+- `sms-relay/sms_relay.py` — Twilio SMS + voice call notifications
+- `api/src/routes/modules.ts` — Module enable/disable API
 - `ha/` — HA input_select definition + example automations
 - `archive/` — Retired code (old MQTT-direct actuator)
 - `prompt-runner/templates/` — AI prompt templates (immediate_intel, daily_sitrep)
@@ -151,6 +152,9 @@ All config is in `.env`. The `ALERT_AREA` variable is passed to every service:
 - `HASS_TOKEN` — HA long-lived access token
 - `PUSHOVER_API_TOKEN` / `PUSHOVER_USER_KEY` — For push notifications
 - `TELEGRAM_BOT_TOKEN` — For Telegram bot
+- `WEBHOOK_URLS` — Comma-separated webhook destination URLs
+- `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_FROM_NUMBER` — Twilio SMS
+- `SMS_RECIPIENTS` — Comma-separated phone numbers for SMS + voice calls
 
 Key optional variables:
 - `HASS_ENTITY` — HA input_select entity (default: `input_select.red_alert_state`)

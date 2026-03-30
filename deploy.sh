@@ -5,9 +5,7 @@
 # Validates environment, checks for required variables, and brings up the stack.
 #
 # Usage:
-#   ./deploy.sh                          # default.yml
-#   ./deploy.sh --variant with-broker    # with-broker.yml
-#   ./deploy.sh --variant ha             # ha.yml
+#   ./deploy.sh                          # deploy all services
 #   ./deploy.sh --service management-ui  # rebuild single service
 #   ./deploy.sh --check-only             # just validate, don't deploy
 # =============================================================================
@@ -24,7 +22,6 @@ if [[ ! -f "$OVERRIDE_FILE" && -f "$SCRIPT_DIR/../docker-compose.override.yml" ]
     OVERRIDE_FILE="$SCRIPT_DIR/../docker-compose.override.yml"
 fi
 
-VARIANT="default"
 SERVICE=""
 CHECK_ONLY=false
 ENV_FILE_OVERRIDE=""
@@ -33,7 +30,6 @@ ENV_FILE_OVERRIDE=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --variant|-v)   VARIANT="$2"; shift 2 ;;
         --service|-s)   SERVICE="$2"; shift 2 ;;
         --check-only)   CHECK_ONLY=true; shift ;;
         --env-file)     ENV_FILE_OVERRIDE="$2"; shift 2 ;;
@@ -41,7 +37,6 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: ./deploy.sh [OPTIONS]"
             echo ""
             echo "Options:"
-            echo "  --variant, -v NAME    Compose variant: default, with-broker, ha (default: default)"
             echo "  --service, -s NAME    Rebuild only this service"
             echo "  --env-file PATH       Use a specific .env file"
             echo "  --check-only          Validate env vars without deploying"
@@ -199,12 +194,12 @@ fi
 echo ""
 echo -e "${BOLD}Compose configuration${NC}"
 
-COMPOSE_FILE="$COMPOSE_DIR/$VARIANT.yml"
+COMPOSE_FILE="$COMPOSE_DIR/default.yml"
 if [[ ! -f "$COMPOSE_FILE" ]]; then
     fail "Compose file not found: $COMPOSE_FILE"
     exit 1
 fi
-ok "Variant: $VARIANT ($COMPOSE_FILE)"
+ok "Compose: $COMPOSE_FILE"
 
 COMPOSE_ARGS=("--env-file" "$ENV_FILE" "-f" "$COMPOSE_FILE")
 

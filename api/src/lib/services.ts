@@ -68,6 +68,20 @@ export const SERVICES: Record<string, ServiceDef> = {
     port: 8787,
     description: "Templated AI prompt execution for intel reports",
   },
+  webhook: {
+    name: "Webhook",
+    url: process.env.WEBHOOK_URL || "http://webhook:8784",
+    health: "/health",
+    port: 8784,
+    description: "HTTP POST notifications on alert events",
+  },
+  "sms-relay": {
+    name: "SMS Relay",
+    url: process.env.SMS_RELAY_URL || "http://sms-relay:8792",
+    health: "/health",
+    port: 8792,
+    description: "Twilio SMS and voice call notifications",
+  },
 };
 
 export interface ServiceStatus {
