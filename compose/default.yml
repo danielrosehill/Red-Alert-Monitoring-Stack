@@ -1,5 +1,5 @@
 # =============================================================================
-# Red Alert Monitoring Stack — Docker Compose
+# Red Alert Monitoring Stack — Docker Compose (CI/CD managed)
 # =============================================================================
 # Uses pre-built images from Docker Hub by default.
 # To build from source instead, uncomment the `build:` blocks and remove `image:`.
