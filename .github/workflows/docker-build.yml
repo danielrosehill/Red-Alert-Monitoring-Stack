@@ -154,17 +154,17 @@ jobs:
       - name: Pull updated images and redeploy
         run: |
           cd ~/repos/github/Red-Alert-Monitoring-Stack-Public
-          COMPOSE_FILES="-f compose/default.yml"
-          [ -f compose/override.yml ] && COMPOSE_FILES="$COMPOSE_FILES -f compose/override.yml"
-          docker compose $COMPOSE_FILES pull
-          docker compose $COMPOSE_FILES down --timeout 30
+          COMPOSE_CMD="docker compose --env-file .env -f compose/default.yml"
+          [ -f compose/override.yml ] && COMPOSE_CMD="$COMPOSE_CMD -f compose/override.yml"
+          $COMPOSE_CMD pull
+          $COMPOSE_CMD down --timeout 30
           sleep 5
-          docker compose $COMPOSE_FILES up -d --force-recreate
+          $COMPOSE_CMD up -d --force-recreate
 
       - name: Health check
         run: |
           sleep 10
           cd ~/repos/github/Red-Alert-Monitoring-Stack-Public
-          COMPOSE_FILES="-f compose/default.yml"
-          [ -f compose/override.yml ] && COMPOSE_FILES="$COMPOSE_FILES -f compose/override.yml"
-          docker compose $COMPOSE_FILES ps --format "table {{.Name}}\t{{.Status}}" | head -20
+          COMPOSE_CMD="docker compose --env-file .env -f compose/default.yml"
+          [ -f compose/override.yml ] && COMPOSE_CMD="$COMPOSE_CMD -f compose/override.yml"
+          $COMPOSE_CMD ps --format "table {{.Name}}\t{{.Status}}" | head -20
