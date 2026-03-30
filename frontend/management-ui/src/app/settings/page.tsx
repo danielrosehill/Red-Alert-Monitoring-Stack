@@ -8,8 +8,9 @@ interface SettingField {
   key: string;
   label: string;
   placeholder?: string;
-  type?: "text" | "password" | "area-select";
+  type?: "text" | "password" | "area-select" | "select";
   help?: string;
+  options?: { value: string; label: string }[];
 }
 
 interface AreaOption {
@@ -72,19 +73,57 @@ const SETTING_GROUPS: { title: string; fields: SettingField[] }[] = [
     ],
   },
   {
-    title: "Google Drive",
+    title: "Network",
     fields: [
-      { key: "google_drive_folder_id", label: "Drive Folder ID", help: "The ID of the Google Drive folder for report uploads." },
+      { key: "lan_url", label: "LAN URL", placeholder: "http://10.0.0.4", help: "Base URL for services on your local network." },
+      { key: "wan_url", label: "WAN URL", placeholder: "https://redalert.example.com", help: "Public URL if exposed via Cloudflare Tunnel or reverse proxy." },
     ],
   },
   {
-    title: "Notifications",
+    title: "Google Drive",
+    fields: [
+      { key: "google_drive_sitrep_folder_id", label: "SITREP Folder ID", help: "Google Drive folder for SITREP PDF uploads." },
+      { key: "google_drive_forecast_folder_id", label: "Forecast Folder ID", help: "Google Drive folder for simulation/forecast PDF uploads." },
+    ],
+  },
+  {
+    title: "Notifications (Pushover)",
     fields: [
       { key: "pushover_api_token", label: "Pushover API Token", type: "password" },
       { key: "pushover_user_key", label: "Pushover User Key(s)", type: "password", help: "Comma-separated for multiple recipients." },
+    ],
+  },
+  {
+    title: "Notifications (Twilio SMS & Voice)",
+    fields: [
+      { key: "twilio_account_sid", label: "Account SID", type: "password", placeholder: "AC..." },
+      { key: "twilio_auth_token", label: "Auth Token", type: "password" },
+      { key: "twilio_from_number", label: "From Number", placeholder: "+1234567890", help: "Your Twilio phone number." },
+      { key: "sms_recipients", label: "Recipients", placeholder: "+972501234567,+972509876543", help: "Comma-separated phone numbers for SMS and voice calls." },
+      {
+        key: "twilio_delivery_mode", label: "Delivery Mode", type: "select",
+        help: "How to notify recipients: SMS only, voice call only, or both.",
+        options: [
+          { value: "sms", label: "SMS only" },
+          { value: "voice", label: "Voice calls only" },
+          { value: "both", label: "SMS + Voice calls" },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Telegram",
+    fields: [
       { key: "telegram_bot_token", label: "Telegram Bot Token", type: "password" },
       { key: "allowed_telegram_users", label: "Allowed Telegram Users", help: "Comma-separated user IDs. Leave empty for open access." },
       { key: "tavily_api_key", label: "Tavily API Key", type: "password", help: "Enables news search for richer AI sitreps." },
+    ],
+  },
+  {
+    title: "Webhooks",
+    fields: [
+      { key: "webhook_urls", label: "Webhook URLs", placeholder: "https://example.com/hook,https://n8n.local/webhook/abc", help: "Comma-separated HTTP POST destinations for alert events." },
+      { key: "webhook_secret", label: "Webhook Secret", type: "password", help: "HMAC-SHA256 signing key (sent as X-Webhook-Signature header)." },
     ],
   },
   {
@@ -284,6 +323,16 @@ export default function SettingsPage() {
                           </div>
                         )}
                       </div>
+                    ) : field.type === "select" && field.options ? (
+                      <select
+                        value={settings[field.key] ?? field.options[0]?.value ?? ""}
+                        onChange={(e) => updateField(field.key, e.target.value)}
+                        className="w-full max-w-lg bg-white border border-zinc-300 rounded px-3 py-1.5 text-sm text-zinc-900 focus:outline-none focus:border-zinc-400"
+                      >
+                        {field.options.map((opt) => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
                     ) : (
                       <input
                         type={field.type ?? "text"}

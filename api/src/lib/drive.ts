@@ -18,13 +18,19 @@ function getAuth() {
 
 export async function uploadToDrive(
   filePath: string,
-  fileName?: string
+  fileName?: string,
+  type: "sitrep" | "forecast" = "sitrep"
 ): Promise<{ ok: boolean; url?: string; fileId?: string; error?: string }> {
   const auth = getAuth();
   if (!auth) return { ok: false, error: "GOOGLE_SERVICE_ACCOUNT_KEY not configured or file not found" };
 
-  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
-  if (!folderId) return { ok: false, error: "GOOGLE_DRIVE_FOLDER_ID not configured" };
+  // Use type-specific folder, fall back to generic GOOGLE_DRIVE_FOLDER_ID
+  const folderId =
+    (type === "forecast"
+      ? process.env.GOOGLE_DRIVE_FORECAST_FOLDER_ID
+      : process.env.GOOGLE_DRIVE_SITREP_FOLDER_ID) ||
+    process.env.GOOGLE_DRIVE_FOLDER_ID;
+  if (!folderId) return { ok: false, error: "Google Drive folder ID not configured" };
 
   try {
     const drive = google.drive({ version: "v3", auth });

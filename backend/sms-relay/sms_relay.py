@@ -58,6 +58,9 @@ TWILIO_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "")
 TWILIO_FROM = os.environ.get("TWILIO_FROM_NUMBER", "")
 SMS_RECIPIENTS = [r.strip() for r in os.environ.get("SMS_RECIPIENTS", "").split(",") if r.strip()]
 
+# Delivery mode: "sms", "voice", or "both"
+DELIVERY_MODE = os.environ.get("TWILIO_DELIVERY_MODE", "both").lower()
+
 # Voice call on all-clear (the fun part)
 VOICE_ON_CLEAR = os.environ.get("TWILIO_VOICE_ON_CLEAR", "true").lower() == "true"
 VOICE_MESSAGE = os.environ.get(
@@ -120,7 +123,7 @@ def _timestamp() -> str:
 
 def _send_sms(body: str) -> int:
     """Send SMS to all recipients. Returns number sent."""
-    if not _twilio or not SMS_RECIPIENTS:
+    if not _twilio or not SMS_RECIPIENTS or DELIVERY_MODE == "voice":
         return 0
     sent = 0
     for number in SMS_RECIPIENTS:
@@ -135,7 +138,7 @@ def _send_sms(body: str) -> int:
 
 def _place_voice_call() -> int:
     """Place voice call to all recipients with the all-clear message."""
-    if not _twilio or not SMS_RECIPIENTS or not VOICE_ON_CLEAR:
+    if not _twilio or not SMS_RECIPIENTS or not VOICE_ON_CLEAR or DELIVERY_MODE == "sms":
         return 0
     twiml = f'<Response><Say voice="alice" language="en-US">{VOICE_MESSAGE}</Say></Response>'
     placed = 0
