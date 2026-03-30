@@ -158,7 +158,8 @@ jobs:
           [ -f compose/override.yml ] && COMPOSE_FILES="$COMPOSE_FILES -f compose/override.yml"
           docker compose $COMPOSE_FILES pull
           docker compose $COMPOSE_FILES down --timeout 30
-          docker compose $COMPOSE_FILES up -d
+          sleep 5
+          docker compose $COMPOSE_FILES up -d --force-recreate
 
       - name: Health check
         run: |
