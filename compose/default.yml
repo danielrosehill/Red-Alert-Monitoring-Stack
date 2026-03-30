@@ -364,5 +364,8 @@ networks:
 
 volumes:
   influxdb-data:
+    name: redalert-influxdb-data
   mcp-data:
+    name: redalert-mcp-data
   api-data:
+    name: redalert-api-data
