@@ -36,7 +36,7 @@ MESSAGES = {
         "Seek shelter immediately."
     ),
     "warning": (
-        "Early warning. Alerts are expected shortly in your area. "
+        "Alerts expected. Alerts are expected shortly in your area. "
         "Move to a protected space and stay nearby."
     ),
     "clear": (
@@ -98,7 +98,7 @@ MESSAGES = {
         "This is only a test."
     ),
     "test_warning": (
-        "This is a test. Early warning test in progress. "
+        "This is a test. Alerts expected test in progress. "
         "This is only a test."
     ),
     "test_clear": (

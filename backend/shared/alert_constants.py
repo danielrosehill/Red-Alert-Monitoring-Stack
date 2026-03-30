@@ -8,7 +8,7 @@ from here rather than redefining in each service.
 # Active threat categories — everything except 13 (all-clear) and drills (15-28)
 ACTIVE_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 14}
 
-# Red (immediate threat) categories — active minus pre-warning (14)
+# Red (immediate threat) categories — active minus alerts-expected (14)
 RED_CATEGORIES = {1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12}
 
 # Nationwide volume thresholds, checked high-to-low
@@ -28,7 +28,7 @@ CATEGORY_NAMES = {
     11: "Radiological",
     12: "Hazardous Materials",
     13: "All Clear",
-    14: "Pre-Warning",
+    14: "Alerts Expected",
 }
 
 

@@ -69,7 +69,7 @@ function initMap() {
         var div = L.DomUtil.create("div", "legend");
         div.innerHTML =
             '<div class="legend-item"><div class="legend-swatch" style="background:#e94560"></div> Active Alert</div>' +
-            '<div class="legend-item"><div class="legend-swatch" style="background:#ff9800"></div> Pre-Warning</div>' +
+            '<div class="legend-item"><div class="legend-swatch" style="background:#ff9800"></div> Alerts Expected</div>' +
             '<div class="legend-item"><div class="legend-swatch" style="background:#4ecca3"></div> All Clear</div>';
         return div;
     };

@@ -48,7 +48,7 @@ const TITLE_TRANSLATIONS = {
     "צונאמי": "Tsunami",
     "חומרים מסוכנים": "Hazardous Materials",
     "אירוע רדיולוגי": "Radiological Event",
-    "התרעת קדם": "Pre-Warning",
+    "התרעת קדם": "Alerts Expected",
     "ירי רקטות": "Rocket Fire",
     "טיל בליסטי": "Ballistic Missile",
     "כלי טיס עוין": "UAV",
@@ -60,7 +60,7 @@ const TITLE_TRANSLATIONS = {
     "יש לשהות בסמיכות למרחב המוגן": "Stay Near Protected Space",
     "ניתן לצאת מהמרחב המוגן אך יש להישאר בקרבתו": "May Leave Shelter - Stay Nearby",
     "מגן אך יש להישאר בקרבתו": "Shield - Stay Nearby",
-    "בדקות הקרובות צפויות להתקבל התרעות באזורך": "Early Warning - Alerts Expected Shortly",
+    "בדקות הקרובות צפויות להתקבל התרעות באזורך": "Alerts Expected Shortly",
     "האירוע הסתיים": "All Clear",
 };
 
@@ -114,7 +114,7 @@ const CATEGORY_LABELS = {
     1: "Rockets", 2: "UAV", 3: "Chemical", 4: "Warning",
     6: "UAV",
     7: "Earthquake", 8: "Earthquake", 9: "CBRNE", 10: "Infiltration",
-    11: "Tsunami", 12: "Hazmat", 13: "All Clear", 14: "Early Warning",
+    11: "Tsunami", 12: "Hazmat", 13: "All Clear", 14: "Alerts Expected",
 };
 
 // Shelter instruction titles — post-event messages that should show as all-clear
@@ -133,24 +133,32 @@ function isShelterInstruction(title) {
 
 // ── National Severity Levels ────────────────────────────────────────────────
 
+// Alert severity thresholds — "active" = warnings (cat 14) + active (cat 1-12), NOT all-clear.
+// Counter animation begins at ANIMATION_THRESHOLD (200).
+const ALERT_THRESHOLDS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+const ANIMATION_THRESHOLD = 200;
+
 const SEVERITY_LEVELS = [
-    { min: 0,   max: 0,   level: 0, label: "No Active Threats",    color: "#7eddb8" },
-    { min: 1,   max: 10,  level: 1, label: "Low",                  color: "#ffeb3b" },
-    { min: 11,  max: 50,  level: 2, label: "Moderate",             color: "#ff9800" },
-    { min: 51,  max: 100, level: 3, label: "Elevated",             color: "#ff5722" },
-    { min: 101, max: 200, level: 4, label: "High",                 color: "#e94560" },
-    { min: 201, max: 300, level: 5, label: "Severe",               color: "#d32f2f" },
-    { min: 301, max: 400, level: 6, label: "Critical",             color: "#b71c1c" },
-    { min: 401, max: 500, level: 7, label: "Extreme",              color: "#880e4f" },
-    { min: 501, max: 700, level: 8, label: "Maximum",              color: "#4a0072" },
+    { min: 0,    max: 0,    level: 0,  label: "No Active Threats",    color: "#7eddb8" },
+    { min: 1,    max: 49,   level: 1,  label: "Low",                  color: "#ffeb3b" },
+    { min: 50,   max: 99,   level: 2,  label: "Moderate",             color: "#ff9800" },
+    { min: 100,  max: 199,  level: 3,  label: "Elevated",             color: "#ff5722" },
+    { min: 200,  max: 299,  level: 4,  label: "High",                 color: "#e94560" },
+    { min: 300,  max: 399,  level: 5,  label: "Severe",               color: "#d32f2f" },
+    { min: 400,  max: 499,  level: 6,  label: "Critical",             color: "#b71c1c" },
+    { min: 500,  max: 599,  level: 7,  label: "Extreme",              color: "#880e4f" },
+    { min: 600,  max: 699,  level: 8,  label: "Extreme+",             color: "#6a0080" },
+    { min: 700,  max: 799,  level: 9,  label: "Maximum",              color: "#4a0072" },
+    { min: 800,  max: 899,  level: 10, label: "Maximum+",             color: "#3a005c" },
+    { min: 900,  max: 999,  level: 11, label: "Unprecedented",        color: "#2a0046" },
+    { min: 1000, max: Infinity, level: 12, label: "Catastrophic",     color: "#1a0030" },
 ];
 
 function getSeverity(activeCount) {
-    if (activeCount > 700) return SEVERITY_LEVELS[SEVERITY_LEVELS.length - 1];
     for (const s of SEVERITY_LEVELS) {
         if (activeCount >= s.min && activeCount <= s.max) return s;
     }
-    return SEVERITY_LEVELS[0];
+    return SEVERITY_LEVELS[SEVERITY_LEVELS.length - 1];
 }
 
 // Polygons are invisible by default — no outlines shown
@@ -979,11 +987,11 @@ function updateFlashBar(alerts) {
         bar.classList.add('warning-active');
         const byType = {};
         for (const w of warnings) {
-            const typeLabel = translateTitle(w.title) || 'Pre-Warning';
+            const typeLabel = translateTitle(w.title) || 'Alerts Expected';
             byType[typeLabel] = (byType[typeLabel] || 0) + 1;
         }
         const typeSummary = Object.entries(byType).map(([t, n]) => `${t}: ${n}`).join(' \u00b7 ');
-        label.textContent = 'PRE-WARNING';
+        label.textContent = 'ALERTS EXPECTED';
         text.textContent = typeSummary;
         count.textContent = `${warnings.length} area${warnings.length > 1 ? 's' : ''}`;
     } else if (allClears.length > 0) {
@@ -1090,7 +1098,7 @@ function updateCounterOverlay(alerts) {
     const labelEl = document.getElementById('overlay-label');
     if (!overlay || !countEl || !labelEl) return;
 
-    overlay.classList.remove('active-red', 'active-warning', 'quiet');
+    overlay.classList.remove('active-red', 'active-warning', 'quiet', 'animating');
 
     let redCount = 0;
     let warnCount = 0;
@@ -1100,7 +1108,7 @@ function updateCounterOverlay(alerts) {
         else redCount++;
     }
 
-    const total = redCount + warnCount;
+    const activeTotal = redCount + warnCount;
 
     if (redCount > 0) {
         overlay.classList.add('active-red');
@@ -1109,11 +1117,16 @@ function updateCounterOverlay(alerts) {
     } else if (warnCount > 0) {
         overlay.classList.add('active-warning');
         countEl.textContent = warnCount;
-        labelEl.textContent = warnCount === 1 ? 'WARNING' : 'WARNINGS';
+        labelEl.textContent = warnCount === 1 ? 'EXPECTED' : 'EXPECTED';
     } else {
         overlay.classList.add('quiet');
         countEl.textContent = '0';
         labelEl.textContent = 'ALERTS';
+    }
+
+    // Animate counter when active alerts cross the animation threshold
+    if (activeTotal >= ANIMATION_THRESHOLD) {
+        overlay.classList.add('animating');
     }
 }
 

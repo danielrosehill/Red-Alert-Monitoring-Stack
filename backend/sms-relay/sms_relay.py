@@ -169,7 +169,7 @@ def build_alert_message(alerts: list[dict]) -> str:
 def build_warning_message(alerts: list[dict]) -> str:
     areas = ", ".join(a.get("data", "?") for a in alerts[:5])
     ts = _timestamp()
-    return f"\u26a0\ufe0f EARLY WARNING\n{areas}\n[Pikud HaOref \u2014 {ts}]"
+    return f"\u26a0\ufe0f ALERTS EXPECTED\n{areas}\n[Pikud HaOref \u2014 {ts}]"
 
 
 def build_clear_message() -> str:

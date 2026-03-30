@@ -22,7 +22,7 @@ const CATEGORY_LABELS = {
     1: "Rockets", 2: "Drone", 3: "Chemical", 4: "Warning",
     6: "UAV",
     7: "Earthquake", 8: "Earthquake", 9: "CBRNE", 10: "Infiltration",
-    11: "Tsunami", 12: "Hazmat", 13: "All Clear", 14: "Early Warning",
+    11: "Tsunami", 12: "Hazmat", 13: "All Clear", 14: "Alerts Expected",
 };
 
 const DEFAULT_STYLE = {
@@ -46,7 +46,7 @@ const TITLE_TRANSLATIONS = {
     "חומרים מסוכנים": "Hazardous Materials",
     "אירוע חומרים מסוכנים": "Hazardous Materials Event",
     "אירוע רדיולוגי": "Radiological Event",
-    "התרעת קדם": "Pre-Warning",
+    "התרעת קדם": "Alerts Expected",
     "ירי רקטות": "Rocket Fire",
     "טיל בליסטי": "Ballistic Missile",
     "כלי טיס עוין": "UAV",
@@ -61,7 +61,7 @@ const TITLE_TRANSLATIONS = {
     "סיום שהייה בסמיכות למרחב המוגן": "End Shelter Proximity",
     "יש לשהות בסמיכות למרחב המוגן": "Stay Near Protected Space",
     "ניתן לצאת מהמרחב המוגן אך יש להישאר בקרבתו": "May Leave Shelter - Stay Nearby",
-    "בדקות הקרובות צפויות להתקבל התרעות באזורך": "Early Warning - Alerts Expected Shortly",
+    "בדקות הקרובות צפויות להתקבל התרעות באזורך": "Alerts Expected Shortly",
     "האירוע הסתיים": "All Clear",
 };
 
@@ -141,7 +141,7 @@ legend.onAdd = function () {
     const div = L.DomUtil.create("div", "legend");
     div.innerHTML = `
         <div class="legend-item"><div class="legend-swatch" style="background:#e94560"></div> Active Alert</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#ff9800"></div> Pre-Warning</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#ff9800"></div> Alerts Expected</div>
         <div class="legend-item"><div class="legend-swatch" style="background:#4ecca3"></div> All Clear</div>
     `;
     return div;

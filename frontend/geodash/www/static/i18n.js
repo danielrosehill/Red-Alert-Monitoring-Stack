@@ -29,7 +29,7 @@ const GEODASH_TRANSLATIONS = {
         "dash.clearTests": "Clear Tests",
         "dash.noActiveAlerts": "No active alerts",
         "dash.activeAlerts": "ACTIVE ALERTS",
-        "dash.preWarning": "PRE-WARNING",
+        "dash.preWarning": "ALERTS EXPECTED",
         "dash.allClear": "ALL CLEAR",
         "dash.live": "LIVE",
         "dash.allClearStatus": "All clear",
@@ -44,7 +44,7 @@ const GEODASH_TRANSLATIONS = {
 
         // Legend
         "legend.activeAlert": "Active Alert",
-        "legend.preWarning": "Pre-Warning",
+        "legend.preWarning": "Alerts Expected",
         "legend.allClear": "All Clear",
 
         // Sidebar
@@ -135,7 +135,7 @@ const GEODASH_TRANSLATIONS = {
         "cat.11": "🌊 Tsunami",
         "cat.12": "⚠️ Hazmat",
         "cat.13": "✅ All Clear",
-        "cat.14": "⏳ Early Warning",
+        "cat.14": "⏳ Alerts Expected",
 
         // Categories (plain, no emoji — for history page)
         "cat.plain.1": "Rockets",
@@ -150,7 +150,7 @@ const GEODASH_TRANSLATIONS = {
         "cat.plain.11": "Tsunami",
         "cat.plain.12": "Hazmat",
         "cat.plain.13": "All Clear",
-        "cat.plain.14": "Early Warning",
+        "cat.plain.14": "Alerts Expected",
 
         // TV
         "tv.desktop": "Desktop",

@@ -393,6 +393,13 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.04); }
         }
+        @keyframes counter-animate {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.9; }
+        }
+        .alert-counter-overlay.animating .overlay-count {
+            animation: counter-animate 1.5s ease-in-out infinite;
+        }
 
         .legend {
             position: absolute;
@@ -730,7 +737,7 @@
                 <span class="severity-indicator" id="severity-indicator" style="display:none">Severity: No Active Threats (0)</span>
                 <div class="test-alert-group" id="test-alert-group">
                     <button class="test-alert-btn test-red" id="test-red-btn" title="Test red alert (rockets/missiles)">Test Red</button>
-                    <button class="test-alert-btn test-warning" id="test-warning-btn" title="Test early warning / pre-warning">Test Warning</button>
+                    <button class="test-alert-btn test-warning" id="test-warning-btn" title="Test alerts expected notification">Test Warning</button>
                     <button class="test-alert-btn test-allclear" id="test-allclear-btn" title="Test all-clear notification">Test All Clear</button>
                     <button class="test-alert-btn test-clear" id="test-clear-btn" title="Clear all test alerts" style="display:none">Clear Tests</button>
                 </div>

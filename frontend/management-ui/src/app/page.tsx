@@ -200,7 +200,7 @@ export default function DashboardPage() {
                       : "bg-green-600 hover:bg-green-500 text-white"
                   }`}
                 >
-                  {type === "red_alert" ? "Red Alert" : type === "early_warning" ? "Early Warning" : "All Clear"}
+                  {type === "red_alert" ? "Red Alert" : type === "early_warning" ? "Alerts Expected" : "All Clear"}
                 </button>
               ))}
             </div>

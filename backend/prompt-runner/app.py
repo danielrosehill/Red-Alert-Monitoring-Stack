@@ -27,6 +27,7 @@ import asyncio
 import json
 import logging
 import os
+import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -66,6 +67,11 @@ IMMEDIATE_INTEL_MODEL = os.environ.get("IMMEDIATE_INTEL_MODEL", "llama-3.3-70b-v
 SITREP_MODEL = os.environ.get("SITREP_MODEL", "google/gemini-2.0-flash-001")
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
+
+# Debounce / cooldown for immediate_intel to prevent duplicate flash reports.
+# Only one immediate_intel report per INTEL_COOLDOWN seconds (default 10 min).
+INTEL_COOLDOWN = int(os.environ.get("INTEL_COOLDOWN", "600"))
+_last_intel_time: float = 0
 
 # ── Template Storage ────────────────────────────────────────────────────────
 
@@ -338,6 +344,8 @@ async def list_templates():
 @app.post("/api/run", response_model=RunResponse)
 async def run_template(req: RunRequest):
     """Execute a prompt template and optionally deliver the output."""
+    global _last_intel_time
+
     templates = load_templates()
     template_data = templates.get(req.template)
 
@@ -346,6 +354,17 @@ async def run_template(req: RunRequest):
             status="error", template=req.template,
             error=f"Template '{req.template}' not found. Available: {list(templates.keys())}"
         )
+
+    # Debounce immediate_intel — skip if within cooldown window
+    if req.template == "immediate_intel" and INTEL_COOLDOWN > 0:
+        elapsed = time.time() - _last_intel_time
+        if elapsed < INTEL_COOLDOWN:
+            remaining = INTEL_COOLDOWN - elapsed
+            log.info("Immediate intel skipped: cooldown (%.0fs remaining)", remaining)
+            return RunResponse(
+                status="skipped", template=req.template,
+                error=f"Cooldown active ({remaining:.0f}s remaining of {INTEL_COOLDOWN}s)"
+            )
 
     async with httpx.AsyncClient() as client:
         # Gather context
@@ -393,6 +412,10 @@ async def run_template(req: RunRequest):
         if "email" in req.deliver_to:
             if await send_to_email(client, output):
                 delivered.append("email")
+
+        # Update cooldown timestamp for immediate_intel
+        if req.template == "immediate_intel":
+            _last_intel_time = time.time()
 
         log.info(
             "Template '%s' executed (%d chars), delivered to: %s",

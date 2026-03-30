@@ -19,7 +19,7 @@ const SAMPLE_PAYLOADS = {
     timestamp: "2026-03-30T14:20:00Z",
     area: "\u05d9\u05e8\u05d5\u05e9\u05dc\u05d9\u05dd - \u05d3\u05e8\u05d5\u05dd",
     category: 14,
-    category_name: "Pre-Warning",
+    category_name: "Alerts Expected",
     source: "red-alert-stack",
   },
   localized_clear: {
@@ -45,7 +45,7 @@ type PayloadKey = keyof typeof SAMPLE_PAYLOADS;
 
 const PAYLOAD_LABELS: Record<PayloadKey, { label: string; color: string }> = {
   localized_active: { label: "Red Alert (Active)", color: "bg-red-100 text-red-700 border-red-200" },
-  localized_warning: { label: "Early Warning", color: "bg-orange-100 text-orange-700 border-orange-200" },
+  localized_warning: { label: "Alerts Expected", color: "bg-orange-100 text-orange-700 border-orange-200" },
   localized_clear: { label: "All Clear", color: "bg-green-100 text-green-700 border-green-200" },
   threshold: { label: "Threshold Crossed", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
 };
@@ -101,7 +101,7 @@ export default function WebhooksPage() {
         <h1 className="text-xl font-semibold text-zinc-900">Webhooks</h1>
         <p className="text-sm text-zinc-500 mt-1">
           The webhook service sends HTTP POST payloads to configured URLs on
-          every alert event — localized alerts, early warnings, all-clear, and
+          every alert event — localized alerts, alerts expected, all-clear, and
           nationwide threshold crossings.
         </p>
       </div>
