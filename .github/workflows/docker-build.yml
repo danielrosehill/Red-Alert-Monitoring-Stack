@@ -1,0 +1,139 @@
+name: Build & Push Docker Images
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'api/**'
+
+jobs:
+  # ── Detect which services changed ──────────────────────────────────────────
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_changes: ${{ steps.set-matrix.outputs.has_changes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - id: changed
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD)
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - id: set-matrix
+        run: |
+          SERVICES='[]'
+          CHANGED="${{ steps.changed.outputs.files }}"
+
+          add_service() {
+            local name="$1" context="$2" dockerfile="$3"
+            SERVICES=$(echo "$SERVICES" | jq -c ". + [{\"name\": \"$name\", \"context\": \"$context\", \"dockerfile\": \"$dockerfile\"}]")
+          }
+
+          # Services with backend/ context (use shared/alert_constants.py)
+          if echo "$CHANGED" | grep -qE '^backend/(actuator|shared)/'; then
+            add_service "redalert-actuator" "backend" "backend/actuator/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/(telegram-bot|shared)/'; then
+            add_service "redalert-telegram-bot" "backend" "backend/telegram-bot/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/(snapcast-tts|shared)/'; then
+            add_service "redalert-snapcast-tts" "backend" "backend/snapcast-tts/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/(webhook|shared)/'; then
+            add_service "redalert-webhook" "backend" "backend/webhook/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/(sms-relay|shared)/'; then
+            add_service "redalert-sms-relay" "backend" "backend/sms-relay/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/(mqtt-siren|shared)/'; then
+            add_service "redalert-mqtt-siren" "backend" "backend/mqtt-siren/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/(pushover|shared)/'; then
+            add_service "redalert-pushover" "backend" "backend/pushover/Dockerfile"
+          fi
+
+          # Services with their own context (no shared files)
+          if echo "$CHANGED" | grep -qE '^backend/oref-proxy/'; then
+            add_service "redalert-oref-proxy" "backend/oref-proxy" "backend/oref-proxy/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/osint-notifier/'; then
+            add_service "redalert-osint-notifier" "backend/osint-notifier" "backend/osint-notifier/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/prompt-runner/'; then
+            add_service "redalert-prompt-runner" "backend/prompt-runner" "backend/prompt-runner/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/rss-cache/'; then
+            add_service "redalert-rss-cache" "backend/rss-cache" "backend/rss-cache/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^backend/mcp-server/'; then
+            add_service "redalert-mcp-server" "backend/mcp-server" "backend/mcp-server/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^frontend/geodash/'; then
+            add_service "redalert-geodash" "frontend/geodash" "frontend/geodash/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^frontend/management-ui/'; then
+            add_service "redalert-management-ui" "frontend/management-ui" "frontend/management-ui/Dockerfile"
+          fi
+          if echo "$CHANGED" | grep -qE '^api/'; then
+            add_service "redalert-api" "api" "api/Dockerfile"
+          fi
+
+          # Also rebuild all shared-dependent services if shared/ changed alone
+          if echo "$CHANGED" | grep -qE '^backend/shared/' && ! echo "$CHANGED" | grep -qE '^backend/(actuator|telegram-bot|snapcast-tts|webhook|sms-relay|mqtt-siren|pushover)/'; then
+            add_service "redalert-actuator" "backend" "backend/actuator/Dockerfile"
+            add_service "redalert-telegram-bot" "backend" "backend/telegram-bot/Dockerfile"
+            add_service "redalert-snapcast-tts" "backend" "backend/snapcast-tts/Dockerfile"
+            add_service "redalert-webhook" "backend" "backend/webhook/Dockerfile"
+            add_service "redalert-sms-relay" "backend" "backend/sms-relay/Dockerfile"
+            add_service "redalert-mqtt-siren" "backend" "backend/mqtt-siren/Dockerfile"
+            add_service "redalert-pushover" "backend" "backend/pushover/Dockerfile"
+          fi
+
+          # Deduplicate
+          SERVICES=$(echo "$SERVICES" | jq -c 'unique_by(.name)')
+
+          COUNT=$(echo "$SERVICES" | jq 'length')
+          if [ "$COUNT" -gt 0 ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "matrix={\"include\":$SERVICES}" >> "$GITHUB_OUTPUT"
+          echo "Building $COUNT image(s): $(echo "$SERVICES" | jq -r '.[].name' | tr '\n' ' ')"
+
+  # ── Build and push each changed image ──────────────────────────────────────
+  build:
+    needs: changes
+    if: needs.changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.changes.outputs.matrix) }}
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            danielrosehill/${{ matrix.name }}:latest
+            danielrosehill/${{ matrix.name }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
