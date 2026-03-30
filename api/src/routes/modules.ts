@@ -70,6 +70,13 @@ const MODULE_DEFS: ModuleDef[] = [
     requiredConfig: [],
     service: "geodash",
   },
+  {
+    id: "mqtt-siren",
+    name: "MQTT Sirens",
+    description: "Direct Zigbee siren control via MQTT on alert events (TS0601 / NEO NAS-AB02B2)",
+    requiredConfig: ["MQTT_BROKER", "MQTT_SIREN_TOPICS_ACTIVE"],
+    service: "mqtt-siren",
+  },
 ];
 
 function dbKey(moduleId: string): string {

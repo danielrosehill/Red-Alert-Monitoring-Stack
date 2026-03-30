@@ -39,6 +39,7 @@ Oref Alert Proxy (:8764)
        |----> Webhook (:8784) ---> External URLs (HTTP POST)
        |----> MCP Server (:8786)
        |----> SMS Relay (:8792) ---> Twilio (SMS + voice calls)
+       |----> MQTT Siren (:8789) ---> MQTT Broker ---> Zigbee2MQTT Sirens
        |----> Management UI (:8888)
 
 RSS Cache (:8785) ----> Geodash, MCP Server, Prompt Runner
@@ -67,6 +68,7 @@ Management UI (:8888) ---> Prompt Runner (SITREP triggers)
 | Snapcast TTS | 8783 | `SNAPCAST_TTS_PORT` |
 | Webhook | 8784 | `WEBHOOK_PORT` |
 | SMS Relay | 8792 | `SMS_RELAY_PORT` |
+| MQTT Siren | 8789 | `MQTT_SIREN_PORT` |
 
 ## Docker Compose
 

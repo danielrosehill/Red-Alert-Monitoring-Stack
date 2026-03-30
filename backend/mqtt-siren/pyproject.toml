@@ -1,0 +1,11 @@
+[project]
+name = "red-alert-mqtt-siren"
+version = "1.0.0"
+description = "Direct Zigbee siren control via MQTT on Red Alert events"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "paho-mqtt>=2.1",
+]

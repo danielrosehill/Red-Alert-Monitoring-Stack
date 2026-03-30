@@ -82,6 +82,13 @@ export const SERVICES: Record<string, ServiceDef> = {
     port: 8792,
     description: "Twilio SMS and voice call notifications",
   },
+  "mqtt-siren": {
+    name: "MQTT Siren",
+    url: process.env.MQTT_SIREN_URL || "http://mqtt-siren:8789",
+    health: "/health",
+    port: 8789,
+    description: "Direct Zigbee siren control via MQTT",
+  },
 };
 
 export interface ServiceStatus {
