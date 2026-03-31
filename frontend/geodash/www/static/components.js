@@ -531,6 +531,7 @@ const COMPONENT_CSS = `
     color: #667;
     direction: ltr;
     letter-spacing: 0.3px;
+    text-align: center;
 }
 
 .geodash-footer-credit a {

@@ -511,32 +511,32 @@ legend.onAdd = function () {
     L.DomEvent.disableClickPropagation(div);
     div.innerHTML = `
         <div class="legend-counter-box box-warning">
-            <span class="counter-label-icon">&#9888;</span>
             <span class="counter-num" id="legend-warn-count">0</span>
+            <span class="counter-label-icon">&#9888;</span>
             <span class="counter-label">Warning</span>
         </div>
         <div class="legend-counter-box box-active">
-            <span class="counter-label-icon">&#9760;</span>
             <span class="counter-num" id="legend-active-count">0</span>
+            <span class="counter-label-icon">&#9760;</span>
             <span class="counter-label">Active</span>
         </div>
         <div class="legend-type-stack">
             <div class="legend-counter-box box-type" title="Rockets / Missiles">
                 <div class="counter-icon">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C12 2 15 6 15 10L17 12L15 14V18L12 20L9 18V14L7 12L9 10C9 6 12 2 12 2ZM12 5.5C11 7.5 10.5 9 10.5 10.5H13.5C13.5 9 13 7.5 12 5.5ZM10 15V17L12 18L14 17V15H10Z"/></svg>
                     <span class="counter-num" id="legend-rocket-count">0</span>
+                    <svg viewBox="0 0 24 24"><path d="M12 2C12 2 15 6 15 10L17 12L15 14V18L12 20L9 18V14L7 12L9 10C9 6 12 2 12 2ZM12 5.5C11 7.5 10.5 9 10.5 10.5H13.5C13.5 9 13 7.5 12 5.5ZM10 15V17L12 18L14 17V15H10Z"/></svg>
                 </div>
             </div>
             <div class="legend-counter-box box-type" title="UAV / Drones">
                 <div class="counter-icon">
-                    <svg viewBox="0 0 24 24"><path d="M22 11h-2.5c-.3-1.4-1.1-2.6-2.2-3.4L19 6l-1.4-1.4-2.5 2.5C14.4 6.7 13.7 6.5 13 6.5V4h-2v2.5c-.7 0-1.4.2-2.1.6L6.4 4.6 5 6l1.7 1.6C5.6 8.4 4.8 9.6 4.5 11H2v2h2.5c.3 1.4 1.1 2.6 2.2 3.4L5 18l1.4 1.4 2.5-2.5c.7.4 1.4.6 2.1.6V20h2v-2.5c.7 0 1.4-.2 2.1-.6l2.5 2.5L19 18l-1.7-1.6c1.1-.8 1.9-2 2.2-3.4H22v-2zm-10 4c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/></svg>
                     <span class="counter-num" id="legend-uav-count">0</span>
+                    <svg viewBox="0 0 24 24"><path d="M22 11h-2.5c-.3-1.4-1.1-2.6-2.2-3.4L19 6l-1.4-1.4-2.5 2.5C14.4 6.7 13.7 6.5 13 6.5V4h-2v2.5c-.7 0-1.4.2-2.1.6L6.4 4.6 5 6l1.7 1.6C5.6 8.4 4.8 9.6 4.5 11H2v2h2.5c.3 1.4 1.1 2.6 2.2 3.4L5 18l1.4 1.4 2.5-2.5c.7.4 1.4.6 2.1.6V20h2v-2.5c.7 0 1.4-.2 2.1-.6l2.5 2.5L19 18l-1.7-1.6c1.1-.8 1.9-2 2.2-3.4H22v-2zm-10 4c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/></svg>
                 </div>
             </div>
         </div>
         <div class="legend-counter-box box-allclear">
-            <span class="counter-label-icon">&#10004;</span>
             <span class="counter-num" id="legend-clear-count">0</span>
+            <span class="counter-label-icon">&#10004;</span>
             <span class="counter-label">All Clear</span>
         </div>
     `;
@@ -742,7 +742,7 @@ function renderAlertFeed() {
             const firstName = translateArea(entry.areas[0]);
             const extra = entry.areas.length - 1;
             const tooltip = entry.areas.map(a => escapeAttr(translateArea(a))).join('&#10;');
-            areaHtml = `<td class="alert-area-cell" title="${tooltip}">${escapeHtml(firstName)} <span class="alert-region">(+${extra})</span></td>`;
+            areaHtml = `<td class="alert-area-cell" title="${tooltip}">${escapeHtml(firstName)} <span class="alert-extra">\u2014 +${extra}</span></td>`;
         } else {
             const regionHtml = getRegion(entry.area) ? ` <span class="alert-region">(${escapeHtml(getRegion(entry.area))})</span>` : '';
             areaHtml = `<td class="alert-area-cell">${escapeHtml(translateArea(entry.area))}${regionHtml}</td>`;
@@ -1030,7 +1030,18 @@ function updateFlashBar(alerts) {
         label.textContent = 'ALL CLEAR';
         text.textContent = allClears.map(a => translateArea(a)).join(' · ');
     } else {
-        label.textContent = 'LIVE';
+        // Show HFC connection status when idle
+        const elapsed = Date.now() - lastHfcPoll;
+        if (lastHfcPoll > 0 && elapsed < 60000) {
+            label.textContent = 'HFC LIVE';
+            label.style.color = '';
+        } else if (lastHfcPoll > 0) {
+            label.textContent = 'HFC OFFLINE';
+            label.style.color = '#e94560';
+        } else {
+            label.textContent = 'CONNECTING';
+            label.style.color = '';
+        }
         text.textContent = '';
     }
 
@@ -1233,6 +1244,8 @@ function updateCounterOverlay(alerts) {
 
 // ── Polling ────────────────────────────────────────────────────────────────────
 
+let lastHfcPoll = 0;
+
 async function pollAlerts() {
     const hfcDot = document.getElementById("hfc-dot");
 
@@ -1241,6 +1254,7 @@ async function pollAlerts() {
         if (!resp.ok) { console.error('API error', resp.status); return; }
         const data = await resp.json();
         cache_alerts_raw = data;
+        lastHfcPoll = Date.now();
 
         processAlerts(data);
 
@@ -1248,10 +1262,38 @@ async function pollAlerts() {
             hfcDot.classList.add("flash");
             setTimeout(() => hfcDot.classList.remove("flash"), 600);
         }
+        updateHfcStatus(true);
     } catch (err) {
         console.error("Poll error:", err);
+        updateHfcStatus(false);
     }
 }
+
+function updateHfcStatus(success) {
+    const label = document.getElementById('flashbar-label');
+    const bar = document.getElementById('alert-flash-bar');
+    if (!label) return;
+
+    // If no alerts are active, show HFC status in the flash bar label
+    const isAlertState = bar && (bar.classList.contains('alert-active') || bar.classList.contains('warning-active') || bar.classList.contains('allclear-active'));
+    if (isAlertState) return; // don't override alert labels
+
+    const elapsed = Date.now() - lastHfcPoll;
+    if (success || elapsed < 60000) {
+        label.textContent = 'HFC LIVE';
+        label.style.color = '';
+    } else {
+        label.textContent = 'HFC OFFLINE';
+        label.style.color = '#e94560';
+    }
+}
+
+// Periodically check HFC staleness
+setInterval(() => {
+    if (lastHfcPoll > 0 && (Date.now() - lastHfcPoll) > 60000) {
+        updateHfcStatus(false);
+    }
+}, 10000);
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 

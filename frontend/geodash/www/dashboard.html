@@ -426,19 +426,19 @@
             background: transparent;
             display: flex;
             gap: 6px;
-            align-items: stretch;
+            align-items: flex-end;
         }
         .legend-counter-box {
-            background: rgba(22, 33, 62, 0.92);
-            border-radius: 8px;
-            padding: clamp(8px, 0.8vh, 16px) clamp(12px, 1vw, 22px);
+            width: clamp(70px, 5.5vw, 110px);
+            height: clamp(70px, 5.5vw, 110px);
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: clamp(60px, 5vw, 100px);
             border: 2px solid transparent;
             text-align: center;
+            gap: 2px;
         }
         .legend-counter-box.box-warning {
             background: rgba(230, 81, 0, 0.92);
@@ -455,26 +455,27 @@
         .legend-counter-box.box-type {
             background: rgba(233, 69, 96, 0.85);
             border-color: #e94560;
-            padding: clamp(4px, 0.4vh, 8px) clamp(10px, 0.8vw, 18px);
+            width: clamp(55px, 4.5vw, 90px);
+            height: clamp(55px, 4.5vw, 90px);
         }
         .legend-counter-box .counter-num {
-            font-size: clamp(1.8rem, 2.8vw, 3.5rem);
+            font-size: clamp(1.6rem, 2.5vw, 3rem);
             font-weight: 900;
             line-height: 1;
             color: #fff;
             font-variant-numeric: tabular-nums;
         }
         .legend-counter-box .counter-label {
-            font-size: clamp(0.6rem, 0.7vw, 0.9rem);
+            font-size: clamp(0.55rem, 0.65vw, 0.8rem);
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
             color: rgba(255,255,255,0.85);
-            margin-top: 2px;
         }
         .legend-counter-box .counter-label-icon {
-            font-size: clamp(0.85rem, 1vw, 1.3rem);
-            margin-bottom: 2px;
+            font-size: clamp(0.75rem, 0.85vw, 1.1rem);
+            color: rgba(255,255,255,0.8);
+            line-height: 1;
         }
         .legend-type-stack {
             display: flex;
@@ -484,16 +485,16 @@
         .legend-counter-box .counter-icon {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
         .legend-counter-box .counter-icon svg {
-            width: clamp(20px, 2vw, 32px);
-            height: clamp(20px, 2vw, 32px);
+            width: clamp(16px, 1.5vw, 24px);
+            height: clamp(16px, 1.5vw, 24px);
             fill: #fff;
             opacity: 0.9;
         }
         .legend-counter-box .counter-icon .counter-num {
-            font-size: clamp(1.2rem, 1.8vw, 2.2rem);
+            font-size: clamp(1rem, 1.5vw, 1.8rem);
         }
         .legend-counter-box.legend-pulse {
             animation: legend-pulse-glow 1.2s ease-in-out infinite;
@@ -592,20 +593,20 @@
         .alert-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: clamp(0.78rem, 0.88vw, 1.2rem);
+            font-size: clamp(0.92rem, 1.05vw, 1.45rem);
         }
         .alert-table th {
             text-align: left;
             padding: 6px 8px;
             color: #667;
-            font-size: clamp(0.65rem, 0.72vw, 0.9rem);
+            font-size: clamp(0.7rem, 0.8vw, 1rem);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
             border-bottom: 1px solid #0f3460;
         }
         .alert-table td {
-            padding: 5px 8px;
+            padding: 6px 8px;
             border-bottom: 1px solid rgba(15, 52, 96, 0.4);
             vertical-align: middle;
         }
@@ -616,10 +617,13 @@
             color: #dde;
             font-variant-numeric: tabular-nums;
             white-space: nowrap;
-            font-size: clamp(0.75rem, 0.82vw, 1.1rem);
         }
         .alert-table .alert-area-cell {
             color: #eef;
+            font-weight: 600;
+        }
+        .alert-table .alert-extra {
+            color: #bbc;
             font-weight: 600;
         }
         .alert-table .alert-region {
@@ -632,15 +636,14 @@
             align-items: center;
             gap: 5px;
             font-weight: 700;
-            font-size: clamp(0.72rem, 0.8vw, 1.1rem);
             white-space: nowrap;
             color: #e94560;
         }
         .alert-table .alert-type::before {
             content: '';
             display: inline-block;
-            width: clamp(7px, 0.5vw, 10px);
-            height: clamp(7px, 0.5vw, 10px);
+            width: clamp(8px, 0.6vw, 11px);
+            height: clamp(8px, 0.6vw, 11px);
             border-radius: 50%;
             background: #e94560;
             flex-shrink: 0;
@@ -799,7 +802,7 @@
             </div>
             <!-- Alert flash bar -->
             <div class="alert-flash-bar" id="alert-flash-bar">
-                <span class="flashbar-label" id="flashbar-label">LIVE</span>
+                <span class="flashbar-label" id="flashbar-label">HFC LIVE</span>
                 <span class="flashbar-text" id="flashbar-text"></span>
                 <span class="flashbar-count" id="flashbar-count"></span>
                 <span class="severity-indicator" id="severity-indicator" style="display:none">Severity: No Active Threats (0)</span>
@@ -838,8 +841,8 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/static/components.js?v=16"></script>
+    <script src="/static/components.js?v=17"></script>
     <script>renderHeader('live'); renderFooter();</script>
-    <script src="/static/dashboard.js?v=24"></script>
+    <script src="/static/dashboard.js?v=25"></script>
 </body>
 </html>
