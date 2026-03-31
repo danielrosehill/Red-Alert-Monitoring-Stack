@@ -1,6 +1,6 @@
 # Red Alert Monitoring Stack
 
-![Geodash component displaying a nationwide range of warnings, Mar 30, Iran-Israel War 2026](alerts.png)
+![Geodash dashboard showing real-time alert monitoring, Mar 31 2026](alerts.png)
 
 Microservices stack for monitoring Israel's Homefront Command (Pikud HaOref) alerts with real-time visualization, push notifications, AI situation reports, and home automation integration.
 
