@@ -123,8 +123,8 @@ const COMPONENT_CSS = `
 
 .geodash-clock-block.utc .geodash-clock-time {
     color: #3a9a5a;
-    font-size: clamp(1.4rem, 1.8vw, 2.6rem);
-    font-weight: 600;
+    font-size: clamp(2.2rem, 2.8vw, 4rem);
+    font-weight: 400;
 }
 
 .geodash-clock-block {
@@ -144,10 +144,11 @@ const COMPONENT_CSS = `
 
 .geodash-clock-time {
     color: #7eddb8;
-    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    font-family: 'Rajdhani', -apple-system, sans-serif;
     font-size: clamp(2.2rem, 2.8vw, 4rem);
-    font-weight: 400;
-    letter-spacing: 2px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
 }
 
 .geodash-refresh-btn {
@@ -799,10 +800,10 @@ function renderFooter() {
             </div>
         </div>
         <div class="geodash-footer-meta">
-            <span class="motto">\u05d1\u05d9\u05d7\u05d3 \u05e0\u05e0\u05e6\u05d7</span> · <span class="geodash-hfc-status" title="Flashes when new data received from HFC">HFC <span class="geodash-hfc-dot" id="hfc-dot"></span></span> · <a href="/settings">Settings</a> · v1.8.0
+            <span class="motto">\u05d1\u05d9\u05d7\u05d3 \u05e0\u05e0\u05e6\u05d7</span> · <span class="geodash-hfc-status" title="Flashes when new data received from HFC">HFC <span class="geodash-hfc-dot" id="hfc-dot"></span></span> · v1.8.0
         </div>
         <div class="geodash-footer-credit">
-            An open source Red Alert display dashboard by <a href="https://danielrosehill.com" target="_blank" rel="noopener">Daniel Rosehill</a>
+            Open source by <a href="https://danielrosehill.com" target="_blank" rel="noopener">Daniel Rosehill</a>
         </div>
     `;
 }

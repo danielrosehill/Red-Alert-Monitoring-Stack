@@ -511,17 +511,19 @@ legend.onAdd = function () {
     L.DomEvent.disableClickPropagation(div);
     div.innerHTML = `
         <div class="legend-counter-box box-warning">
+            <span class="counter-label-icon">&#9888;</span>
             <span class="counter-num" id="legend-warn-count">0</span>
             <span class="counter-label">Warning</span>
         </div>
         <div class="legend-counter-box box-active">
+            <span class="counter-label-icon">&#9760;</span>
             <span class="counter-num" id="legend-active-count">0</span>
             <span class="counter-label">Active</span>
         </div>
         <div class="legend-type-stack">
             <div class="legend-counter-box box-type" title="Rockets / Missiles">
                 <div class="counter-icon">
-                    <svg viewBox="0 0 24 24"><path d="M2.5 18.5l2-2 3 3-2 2-3-3zm13.8-13.8c1.5-1.5 4.1-1.5 5.7 0 1.5 1.5 1.5 4.1 0 5.7l-4.2 4.2-1.4-1.4 4.2-4.2c.8-.8.8-2.1 0-2.8-.8-.8-2.1-.8-2.8 0L13.5 10l-1.4-1.4 3.2-3.9zM7.1 16.9l-1.4-1.4 7.8-7.8 1.4 1.4-7.8 7.8zm2.8-12.5L6.5 7.8 5.1 6.4 8.5 3l1.4 1.4zM18 14.5l-3.4 3.4-1.4-1.4L16.6 13l1.4 1.5z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 2C12 2 15 6 15 10L17 12L15 14V18L12 20L9 18V14L7 12L9 10C9 6 12 2 12 2ZM12 5.5C11 7.5 10.5 9 10.5 10.5H13.5C13.5 9 13 7.5 12 5.5ZM10 15V17L12 18L14 17V15H10Z"/></svg>
                     <span class="counter-num" id="legend-rocket-count">0</span>
                 </div>
             </div>
@@ -533,6 +535,7 @@ legend.onAdd = function () {
             </div>
         </div>
         <div class="legend-counter-box box-allclear">
+            <span class="counter-label-icon">&#10004;</span>
             <span class="counter-num" id="legend-clear-count">0</span>
             <span class="counter-label">All Clear</span>
         </div>
@@ -730,29 +733,32 @@ function renderAlertFeed() {
         return;
     }
 
-    feed.innerHTML = alertHistory.map(entry => {
+    const rows = alertHistory.map(entry => {
         const effectiveCat = (entry.category !== 13 && isShelterInstruction(entry.title)) ? 13 : entry.category;
         const catClass = effectiveCat === 13 ? 'cat-13' : effectiveCat === 14 ? 'cat-14' : '';
 
-        // Grouped entry (e.g. "All Clear — Bnei Brak (+19 areas)")
+        let areaHtml;
         if (entry.grouped && entry.areas && entry.areas.length > 1) {
             const firstName = translateArea(entry.areas[0]);
             const extra = entry.areas.length - 1;
             const tooltip = entry.areas.map(a => escapeAttr(translateArea(a))).join('&#10;');
-            return `<div class="alert-item" title="${tooltip}">
-                <span class="alert-time">${entry.time}</span>
-                <span class="alert-type ${catClass}">${escapeHtml(entry.label)}</span>
-                <div class="alert-area">${escapeHtml(firstName)} <span class="alert-region">(+${extra} areas)</span></div>
-            </div>`;
+            areaHtml = `<td class="alert-area-cell" title="${tooltip}">${escapeHtml(firstName)} <span class="alert-region">(+${extra})</span></td>`;
+        } else {
+            const regionHtml = getRegion(entry.area) ? ` <span class="alert-region">(${escapeHtml(getRegion(entry.area))})</span>` : '';
+            areaHtml = `<td class="alert-area-cell">${escapeHtml(translateArea(entry.area))}${regionHtml}</td>`;
         }
 
-        const regionHtml = getRegion(entry.area) ? ` <span class="alert-region">(${escapeHtml(getRegion(entry.area))})</span>` : '';
-        return `<div class="alert-item">
-            <span class="alert-time">${entry.time}</span>
-            <span class="alert-type ${catClass}">${escapeHtml(entry.label)}</span>
-            <div class="alert-area">${escapeHtml(translateArea(entry.area))}${regionHtml}</div>
-        </div>`;
+        return `<tr>
+            <td class="alert-time">${entry.time}</td>
+            ${areaHtml}
+            <td><span class="alert-type ${catClass}">${escapeHtml(entry.label)}</span></td>
+        </tr>`;
     }).join('');
+
+    feed.innerHTML = `<table class="alert-table">
+        <thead><tr><th>Time</th><th>Area</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody>
+    </table>`;
 }
 
 function processAlerts(alerts) {
@@ -1025,7 +1031,7 @@ function updateFlashBar(alerts) {
         text.textContent = allClears.map(a => translateArea(a)).join(' · ');
     } else {
         label.textContent = 'LIVE';
-        text.textContent = 'No active alerts';
+        text.textContent = '';
     }
 
     // Update national severity level
@@ -1149,6 +1155,21 @@ function updateAlertCounterBoxes(alerts) {
     rocketEl.textContent = rocketCount;
     uavEl.textContent = uavCount;
     clearEl.textContent = clearCount;
+
+    // Pulsate any counter box when its value exceeds 50
+    const pulsePairs = [
+        [warnEl, warnCount],
+        [activeEl, activeCount],
+        [rocketEl, rocketCount],
+        [uavEl, uavCount],
+        [clearEl, clearCount],
+    ];
+    for (const [el, count] of pulsePairs) {
+        const box = el.closest('.legend-counter-box');
+        if (box) {
+            box.classList.toggle('legend-pulse', count > 50);
+        }
+    }
 }
 
 // ── Alert Counter Overlay (bottom-right of maps) ────────────────────────────

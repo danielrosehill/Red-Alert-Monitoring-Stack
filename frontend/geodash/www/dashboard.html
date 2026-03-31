@@ -73,12 +73,26 @@
             left: 12px;
             z-index: 1000;
             background: rgba(22, 33, 62, 0.92);
-            padding: clamp(6px, 0.6vh, 14px) clamp(16px, 1.2vw, 28px);
-            border-radius: 6px;
-            font-size: clamp(1rem, 1.1vw, 1.6rem);
+            padding: clamp(4px, 0.4vh, 10px) clamp(14px, 1vw, 24px);
+            border-radius: 20px;
             font-weight: 600;
             color: #eef;
             pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .map-label .label-region {
+            font-size: clamp(0.7rem, 0.8vw, 1rem);
+            color: #7eddb8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .map-label .label-detail {
+            font-size: clamp(0.85rem, 0.95vw, 1.3rem);
+            color: #ccd;
+            font-weight: 600;
         }
 
         .map-wrap {
@@ -412,7 +426,7 @@
             background: transparent;
             display: flex;
             gap: 6px;
-            align-items: flex-end;
+            align-items: stretch;
         }
         .legend-counter-box {
             background: rgba(22, 33, 62, 0.92);
@@ -421,8 +435,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-width: clamp(60px, 5vw, 100px);
             border: 2px solid transparent;
+            text-align: center;
         }
         .legend-counter-box.box-warning {
             background: rgba(230, 81, 0, 0.92);
@@ -456,6 +472,10 @@
             color: rgba(255,255,255,0.85);
             margin-top: 2px;
         }
+        .legend-counter-box .counter-label-icon {
+            font-size: clamp(0.85rem, 1vw, 1.3rem);
+            margin-bottom: 2px;
+        }
         .legend-type-stack {
             display: flex;
             flex-direction: column;
@@ -474,6 +494,13 @@
         }
         .legend-counter-box .counter-icon .counter-num {
             font-size: clamp(1.2rem, 1.8vw, 2.2rem);
+        }
+        .legend-counter-box.legend-pulse {
+            animation: legend-pulse-glow 1.2s ease-in-out infinite;
+        }
+        @keyframes legend-pulse-glow {
+            0%, 100% { transform: scale(1); box-shadow: none; }
+            50% { transform: scale(1.06); box-shadow: 0 0 16px rgba(255,255,255,0.4); }
         }
 
         /* ── Sidebar ─────────────────────────────────────────── */
@@ -562,76 +589,66 @@
             font-weight: 700;
         }
 
-        .alert-item {
-            padding: clamp(6px, 0.6vh, 14px) clamp(10px, 0.8vw, 18px);
-            margin-bottom: clamp(2px, 0.3vh, 6px);
-            border-radius: 4px;
-            background: rgba(15, 52, 96, 0.5);
-            font-size: clamp(0.8rem, 0.9vw, 1.3rem);
-            line-height: 1.3;
-            display: grid;
-            grid-template-columns: auto 1fr;
-            grid-template-rows: auto auto;
-            column-gap: 8px;
-            row-gap: 1px;
+        .alert-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(0.78rem, 0.88vw, 1.2rem);
         }
-
-        .alert-item .alert-time {
-            color: #dde;
-            font-size: clamp(0.78rem, 0.85vw, 1.2rem);
-            font-variant-numeric: tabular-nums;
-            grid-row: 1;
-            grid-column: 1;
-        }
-
-        .alert-item .alert-type {
-            color: #e94560;
-            font-size: clamp(0.72rem, 0.8vw, 1.1rem);
+        .alert-table th {
+            text-align: left;
+            padding: 6px 8px;
+            color: #667;
+            font-size: clamp(0.65rem, 0.72vw, 0.9rem);
             font-weight: 700;
-            grid-row: 1;
-            grid-column: 2;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #0f3460;
+        }
+        .alert-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid rgba(15, 52, 96, 0.4);
+            vertical-align: middle;
+        }
+        .alert-table tr:hover {
+            background: rgba(15, 52, 96, 0.5);
+        }
+        .alert-table .alert-time {
+            color: #dde;
+            font-variant-numeric: tabular-nums;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-size: clamp(0.75rem, 0.82vw, 1.1rem);
         }
-
-        .alert-item .alert-type::before {
-            content: '';
-            display: inline-block;
-            width: clamp(8px, 0.6vw, 12px);
-            height: clamp(8px, 0.6vw, 12px);
-            border-radius: 50%;
-            background: #e94560;
-            flex-shrink: 0;
-        }
-
-        .alert-item .alert-type.cat-13::before {
-            background: #7eddb8;
-        }
-
-        .alert-item .alert-type.cat-14::before {
-            background: #e65100;
-        }
-
-        .alert-item .alert-area {
+        .alert-table .alert-area-cell {
             color: #eef;
             font-weight: 600;
-            grid-row: 2;
-            grid-column: 1 / -1;
-            font-size: clamp(0.82rem, 0.95vw, 1.35rem);
         }
-
-        .alert-item .alert-region {
+        .alert-table .alert-region {
             color: #8899aa;
             font-weight: 400;
             font-size: 0.85em;
         }
-
-        .alert-item .alert-type.cat-13 { color: #7eddb8; }
-        .alert-item .alert-type.cat-14 { color: #e65100; }
+        .alert-table .alert-type {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 700;
+            font-size: clamp(0.72rem, 0.8vw, 1.1rem);
+            white-space: nowrap;
+            color: #e94560;
+        }
+        .alert-table .alert-type::before {
+            content: '';
+            display: inline-block;
+            width: clamp(7px, 0.5vw, 10px);
+            height: clamp(7px, 0.5vw, 10px);
+            border-radius: 50%;
+            background: #e94560;
+            flex-shrink: 0;
+        }
+        .alert-table .alert-type.cat-13 { color: #7eddb8; }
+        .alert-table .alert-type.cat-13::before { background: #7eddb8; }
+        .alert-table .alert-type.cat-14 { color: #e65100; }
+        .alert-table .alert-type.cat-14::before { background: #e65100; }
 
         .alert-feed .no-alerts {
             color: #667;
@@ -752,18 +769,18 @@
                 <!-- Left: Israel Country View -->
                 <div class="map-column">
                     <div class="map-card">
-                        <div class="map-label">Israel — Country View</div>
+                        <div class="map-label"><span class="label-region">Israel</span> <span class="label-detail">Country View</span></div>
                         <div class="map-wrap"><div id="map-country"></div></div>
                     </div>
                 </div>
                 <!-- Right: Jerusalem split 50/50 -->
                 <div class="map-column">
                     <div class="map-card">
-                        <div class="map-label">Jerusalem & Surroundings</div>
+                        <div class="map-label"><span class="label-region">Jerusalem</span> <span class="label-detail">Surroundings</span></div>
                         <div class="map-wrap"><div id="map-jerusalem-wide"></div></div>
                     </div>
                     <div class="map-card">
-                        <div class="map-label">Jerusalem — City Detail</div>
+                        <div class="map-label"><span class="label-region">Jerusalem</span> <span class="label-detail">City Detail</span></div>
                         <div class="map-wrap"><div id="map-jerusalem"></div></div>
                     </div>
                 </div>
@@ -783,7 +800,7 @@
             <!-- Alert flash bar -->
             <div class="alert-flash-bar" id="alert-flash-bar">
                 <span class="flashbar-label" id="flashbar-label">LIVE</span>
-                <span class="flashbar-text" id="flashbar-text">No active alerts</span>
+                <span class="flashbar-text" id="flashbar-text"></span>
                 <span class="flashbar-count" id="flashbar-count"></span>
                 <span class="severity-indicator" id="severity-indicator" style="display:none">Severity: No Active Threats (0)</span>
                 <div class="test-alert-group" id="test-alert-group">
@@ -821,8 +838,8 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/static/components.js?v=15"></script>
+    <script src="/static/components.js?v=16"></script>
     <script>renderHeader('live'); renderFooter();</script>
-    <script src="/static/dashboard.js?v=23"></script>
+    <script src="/static/dashboard.js?v=24"></script>
 </body>
 </html>
