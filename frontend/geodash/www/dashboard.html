@@ -455,8 +455,6 @@
         .legend-counter-box.box-type {
             background: rgba(233, 69, 96, 0.85);
             border-color: #e94560;
-            width: clamp(55px, 4.5vw, 90px);
-            height: clamp(55px, 4.5vw, 90px);
         }
         .legend-counter-box .counter-num {
             font-size: clamp(1.6rem, 2.5vw, 3rem);
@@ -476,25 +474,6 @@
             font-size: clamp(0.75rem, 0.85vw, 1.1rem);
             color: rgba(255,255,255,0.8);
             line-height: 1;
-        }
-        .legend-type-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .legend-counter-box .counter-icon {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .legend-counter-box .counter-icon svg {
-            width: clamp(16px, 1.5vw, 24px);
-            height: clamp(16px, 1.5vw, 24px);
-            fill: #fff;
-            opacity: 0.9;
-        }
-        .legend-counter-box .counter-icon .counter-num {
-            font-size: clamp(1rem, 1.5vw, 1.8rem);
         }
         .legend-counter-box.legend-pulse {
             animation: legend-pulse-glow 1.2s ease-in-out infinite;
@@ -843,6 +822,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/static/components.js?v=17"></script>
     <script>renderHeader('live'); renderFooter();</script>
-    <script src="/static/dashboard.js?v=25"></script>
+    <script src="/static/dashboard.js?v=26"></script>
 </body>
 </html>

@@ -520,19 +520,13 @@ legend.onAdd = function () {
             <span class="counter-label-icon">&#9760;</span>
             <span class="counter-label">Active</span>
         </div>
-        <div class="legend-type-stack">
-            <div class="legend-counter-box box-type" title="Rockets / Missiles">
-                <div class="counter-icon">
-                    <span class="counter-num" id="legend-rocket-count">0</span>
-                    <svg viewBox="0 0 24 24"><path d="M12 2C12 2 15 6 15 10L17 12L15 14V18L12 20L9 18V14L7 12L9 10C9 6 12 2 12 2ZM12 5.5C11 7.5 10.5 9 10.5 10.5H13.5C13.5 9 13 7.5 12 5.5ZM10 15V17L12 18L14 17V15H10Z"/></svg>
-                </div>
-            </div>
-            <div class="legend-counter-box box-type" title="UAV / Drones">
-                <div class="counter-icon">
-                    <span class="counter-num" id="legend-uav-count">0</span>
-                    <svg viewBox="0 0 24 24"><path d="M22 11h-2.5c-.3-1.4-1.1-2.6-2.2-3.4L19 6l-1.4-1.4-2.5 2.5C14.4 6.7 13.7 6.5 13 6.5V4h-2v2.5c-.7 0-1.4.2-2.1.6L6.4 4.6 5 6l1.7 1.6C5.6 8.4 4.8 9.6 4.5 11H2v2h2.5c.3 1.4 1.1 2.6 2.2 3.4L5 18l1.4 1.4 2.5-2.5c.7.4 1.4.6 2.1.6V20h2v-2.5c.7 0 1.4-.2 2.1-.6l2.5 2.5L19 18l-1.7-1.6c1.1-.8 1.9-2 2.2-3.4H22v-2zm-10 4c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/></svg>
-                </div>
-            </div>
+        <div class="legend-counter-box box-type" title="Rockets / Missiles">
+            <span class="counter-num" id="legend-rocket-count">0</span>
+            <span class="counter-label">Rockets</span>
+        </div>
+        <div class="legend-counter-box box-type" title="UAV / Drones">
+            <span class="counter-num" id="legend-uav-count">0</span>
+            <span class="counter-label">UAV</span>
         </div>
         <div class="legend-counter-box box-allclear">
             <span class="counter-num" id="legend-clear-count">0</span>
