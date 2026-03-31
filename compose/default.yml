@@ -109,6 +109,7 @@ services:
       - WEBHOOK_URL=http://webhook:${WEBHOOK_PORT:-8784}
       - SMS_RELAY_URL=http://sms-relay:${SMS_RELAY_PORT:-8792}
       - MQTT_SIREN_URL=http://mqtt-siren:${MQTT_SIREN_PORT:-8789}
+      - SNAPCAST_TTS_URL=http://snapcast-tts:${SNAPCAST_TTS_PORT:-8783}
       - ALERT_AREA=${ALERT_AREA:-}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
@@ -135,6 +136,7 @@ services:
     volumes:
       - api-data:/app/data
       - ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH:-/dev/null}:/app/secrets/service-account.json:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - oref-proxy
     networks:

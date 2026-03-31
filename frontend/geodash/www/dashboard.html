@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Red Alert Geodash</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: #1a1a2e;
             color: #eee;
             height: 100vh;
@@ -406,23 +409,71 @@
             bottom: 20px;
             left: 10px;
             z-index: 1000;
-            background: rgba(22, 33, 62, 0.92);
-            padding: clamp(10px, 1vh, 18px) clamp(14px, 1vw, 24px);
-            border-radius: 6px;
-            font-size: clamp(0.85rem, 0.95vw, 1.3rem);
+            background: transparent;
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
         }
-        .legend-item {
+        .legend-counter-box {
+            background: rgba(22, 33, 62, 0.92);
+            border-radius: 8px;
+            padding: clamp(8px, 0.8vh, 16px) clamp(12px, 1vw, 22px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: clamp(60px, 5vw, 100px);
+            border: 2px solid transparent;
+        }
+        .legend-counter-box.box-warning {
+            background: rgba(230, 81, 0, 0.92);
+            border-color: #ff9800;
+        }
+        .legend-counter-box.box-active {
+            background: rgba(233, 69, 96, 0.92);
+            border-color: #e94560;
+        }
+        .legend-counter-box.box-allclear {
+            background: rgba(78, 204, 163, 0.88);
+            border-color: #4ecca3;
+        }
+        .legend-counter-box.box-type {
+            background: rgba(233, 69, 96, 0.85);
+            border-color: #e94560;
+            padding: clamp(4px, 0.4vh, 8px) clamp(10px, 0.8vw, 18px);
+        }
+        .legend-counter-box .counter-num {
+            font-size: clamp(1.8rem, 2.8vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+        }
+        .legend-counter-box .counter-label {
+            font-size: clamp(0.6rem, 0.7vw, 0.9rem);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.85);
+            margin-top: 2px;
+        }
+        .legend-type-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .legend-counter-box .counter-icon {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin: 4px 0;
-            color: #dde;
+            gap: 6px;
         }
-        .legend-swatch {
-            width: 18px;
-            height: 12px;
-            border-radius: 2px;
-            border: 1px solid rgba(255,255,255,0.3);
+        .legend-counter-box .counter-icon svg {
+            width: clamp(20px, 2vw, 32px);
+            height: clamp(20px, 2vw, 32px);
+            fill: #fff;
+            opacity: 0.9;
+        }
+        .legend-counter-box .counter-icon .counter-num {
+            font-size: clamp(1.2rem, 1.8vw, 2.2rem);
         }
 
         /* ── Sidebar ─────────────────────────────────────────── */
@@ -736,6 +787,7 @@
                 <span class="flashbar-count" id="flashbar-count"></span>
                 <span class="severity-indicator" id="severity-indicator" style="display:none">Severity: No Active Threats (0)</span>
                 <div class="test-alert-group" id="test-alert-group">
+                    <button class="test-alert-btn" id="news-toggle-btn" title="Toggle news ticker" onclick="if(typeof toggleNewsTicker==='function')toggleNewsTicker()">News Off</button>
                     <button class="test-alert-btn test-red" id="test-red-btn" title="Test red alert (rockets/missiles)">Test Red</button>
                     <button class="test-alert-btn test-warning" id="test-warning-btn" title="Test alerts expected notification">Test Warning</button>
                     <button class="test-alert-btn test-allclear" id="test-allclear-btn" title="Test all-clear notification">Test All Clear</button>
@@ -769,8 +821,8 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/static/components.js?v=14"></script>
+    <script src="/static/components.js?v=15"></script>
     <script>renderHeader('live'); renderFooter();</script>
-    <script src="/static/dashboard.js?v=22"></script>
+    <script src="/static/dashboard.js?v=23"></script>
 </body>
 </html>

@@ -11,6 +11,8 @@ import { notificationsRouter } from "./routes/notifications.js";
 import { driveRouter } from "./routes/drive.js";
 import { areasRouter } from "./routes/areas.js";
 import { modulesRouter } from "./routes/modules.js";
+import { logsRouter } from "./routes/logs.js";
+import { snapcastRouter } from "./routes/snapcast.js";
 import { startRssPoller } from "./lib/rss.js";
 
 const app = express();
@@ -30,6 +32,8 @@ app.use("/api/notifications", notificationsRouter);
 app.use("/api/drive", driveRouter);
 app.use("/api/areas", areasRouter);
 app.use("/api/modules", modulesRouter);
+app.use("/api/logs", logsRouter);
+app.use("/api/snapcast", snapcastRouter);
 
 // Root health check
 app.get("/", (_req, res) => {

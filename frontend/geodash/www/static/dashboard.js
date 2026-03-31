@@ -508,10 +508,34 @@ L.polyline(ISRAEL_BORDER, borderStyle).addTo(mapJerusalem);
 const legend = L.control({ position: "bottomleft" });
 legend.onAdd = function () {
     const div = L.DomUtil.create("div", "legend");
+    L.DomEvent.disableClickPropagation(div);
     div.innerHTML = `
-        <div class="legend-item"><div class="legend-swatch" style="background:#e94560"></div> Active Alert</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#ff9800"></div> Warning</div>
-        <div class="legend-item"><div class="legend-swatch" style="background:#4ecca3"></div> All Clear</div>
+        <div class="legend-counter-box box-warning">
+            <span class="counter-num" id="legend-warn-count">0</span>
+            <span class="counter-label">Warning</span>
+        </div>
+        <div class="legend-counter-box box-active">
+            <span class="counter-num" id="legend-active-count">0</span>
+            <span class="counter-label">Active</span>
+        </div>
+        <div class="legend-type-stack">
+            <div class="legend-counter-box box-type" title="Rockets / Missiles">
+                <div class="counter-icon">
+                    <svg viewBox="0 0 24 24"><path d="M2.5 18.5l2-2 3 3-2 2-3-3zm13.8-13.8c1.5-1.5 4.1-1.5 5.7 0 1.5 1.5 1.5 4.1 0 5.7l-4.2 4.2-1.4-1.4 4.2-4.2c.8-.8.8-2.1 0-2.8-.8-.8-2.1-.8-2.8 0L13.5 10l-1.4-1.4 3.2-3.9zM7.1 16.9l-1.4-1.4 7.8-7.8 1.4 1.4-7.8 7.8zm2.8-12.5L6.5 7.8 5.1 6.4 8.5 3l1.4 1.4zM18 14.5l-3.4 3.4-1.4-1.4L16.6 13l1.4 1.5z"/></svg>
+                    <span class="counter-num" id="legend-rocket-count">0</span>
+                </div>
+            </div>
+            <div class="legend-counter-box box-type" title="UAV / Drones">
+                <div class="counter-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 11h-2.5c-.3-1.4-1.1-2.6-2.2-3.4L19 6l-1.4-1.4-2.5 2.5C14.4 6.7 13.7 6.5 13 6.5V4h-2v2.5c-.7 0-1.4.2-2.1.6L6.4 4.6 5 6l1.7 1.6C5.6 8.4 4.8 9.6 4.5 11H2v2h2.5c.3 1.4 1.1 2.6 2.2 3.4L5 18l1.4 1.4 2.5-2.5c.7.4 1.4.6 2.1.6V20h2v-2.5c.7 0 1.4-.2 2.1-.6l2.5 2.5L19 18l-1.7-1.6c1.1-.8 1.9-2 2.2-3.4H22v-2zm-10 4c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/></svg>
+                    <span class="counter-num" id="legend-uav-count">0</span>
+                </div>
+            </div>
+        </div>
+        <div class="legend-counter-box box-allclear">
+            <span class="counter-num" id="legend-clear-count">0</span>
+            <span class="counter-label">All Clear</span>
+        </div>
     `;
     return div;
 };
@@ -902,6 +926,7 @@ function processAlerts(alerts) {
     // Update alert counters (red + warning, excludes all-clear/drills)
     updateHeaderCounter(newAlerts);
     updateCounterOverlay(newAlerts);
+    updateAlertCounterBoxes(newAlerts);
 
     // Auto-zoom country map to active alerts
     autoZoomToAlerts(newAlerts);
@@ -1090,6 +1115,42 @@ function updateHeaderCounter(alerts) {
     }
 }
 
+// ── Legend Counter Boxes (bottom-left of country map) ─────────────────────────
+
+function updateAlertCounterBoxes(alerts) {
+    const warnEl = document.getElementById('legend-warn-count');
+    const activeEl = document.getElementById('legend-active-count');
+    const rocketEl = document.getElementById('legend-rocket-count');
+    const uavEl = document.getElementById('legend-uav-count');
+    const clearEl = document.getElementById('legend-clear-count');
+    if (!warnEl || !activeEl || !rocketEl || !uavEl || !clearEl) return;
+
+    let warnCount = 0, activeCount = 0, rocketCount = 0, uavCount = 0, clearCount = 0;
+
+    for (const [, info] of alerts) {
+        if (info.category >= 15) continue;
+        if (info.category === 13) {
+            clearCount++;
+        } else if (info.category === 14) {
+            warnCount++;
+        } else {
+            activeCount++;
+            // Break down by type
+            if (info.category === 2 || info.category === 6) {
+                uavCount++;
+            } else if (info.category === 1) {
+                rocketCount++;
+            }
+        }
+    }
+
+    warnEl.textContent = warnCount;
+    activeEl.textContent = activeCount;
+    rocketEl.textContent = rocketCount;
+    uavEl.textContent = uavCount;
+    clearEl.textContent = clearCount;
+}
+
 // ── Alert Counter Overlay (bottom-right of maps) ────────────────────────────
 
 function updateCounterOverlay(alerts) {
@@ -1110,18 +1171,20 @@ function updateCounterOverlay(alerts) {
 
     const activeTotal = redCount + warnCount;
 
+    const totalActive = redCount + warnCount;
+
     if (redCount > 0) {
         overlay.classList.add('active-red');
-        countEl.textContent = redCount;
-        labelEl.textContent = redCount === 1 ? 'ALERT' : 'ALERTS';
+        countEl.textContent = totalActive;
+        labelEl.textContent = 'TOTAL';
     } else if (warnCount > 0) {
         overlay.classList.add('active-warning');
-        countEl.textContent = warnCount;
-        labelEl.textContent = warnCount === 1 ? 'EXPECTED' : 'EXPECTED';
+        countEl.textContent = totalActive;
+        labelEl.textContent = 'TOTAL';
     } else {
         overlay.classList.add('quiet');
         countEl.textContent = '0';
-        labelEl.textContent = 'ALERTS';
+        labelEl.textContent = 'TOTAL';
     }
 
     // Animate counter when active alerts cross the animation threshold
@@ -1405,6 +1468,8 @@ function initNewsTicker() {
     const showNews = localStorage.getItem('geodash-news') === 'true';
     const ticker = document.getElementById('news-ticker');
     if (ticker) ticker.style.display = showNews ? 'flex' : 'none';
+    const newsBtn = document.getElementById('news-toggle-btn');
+    if (newsBtn) newsBtn.textContent = showNews ? 'News On' : 'News Off';
 
     fetchTickerNews().then(() => {
         if (showNews) showTickerItem();
@@ -1421,7 +1486,7 @@ function toggleNewsTicker() {
     localStorage.setItem('geodash-news', visible ? 'false' : 'true');
     // Update button text
     const btn = document.getElementById('news-toggle-btn');
-    if (btn) btn.textContent = visible ? 'News: OFF' : 'News: ON';
+    if (btn) btn.textContent = visible ? 'News Off' : 'News On';
 }
 
 // ── Auto-Refresh on New Deployment ────────────────────────────────────────────

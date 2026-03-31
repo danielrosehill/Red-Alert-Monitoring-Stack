@@ -28,6 +28,7 @@ const MODULE_DEFS: ModuleDef[] = [
     name: "Snapcast TTS",
     description: "Whole-house audio announcements via Snapcast on alert events",
     requiredConfig: ["SNAPCAST_SERVER"],
+    service: "snapcast-tts",
   },
   {
     id: "prompt-runner",

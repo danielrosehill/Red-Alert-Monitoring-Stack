@@ -89,6 +89,13 @@ export const SERVICES: Record<string, ServiceDef> = {
     port: 8789,
     description: "Direct Zigbee siren control via MQTT",
   },
+  "snapcast-tts": {
+    name: "Snapcast TTS",
+    url: process.env.SNAPCAST_TTS_URL || "http://snapcast-tts:8783",
+    health: "/health",
+    port: 8783,
+    description: "Whole-house audio announcements via Snapcast",
+  },
 };
 
 export interface ServiceStatus {

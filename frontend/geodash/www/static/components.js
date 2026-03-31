@@ -16,6 +16,7 @@ const COMPONENT_CSS = `
     border-bottom: 2px solid #0f3460;
     flex-shrink: 0;
     gap: 12px;
+    font-family: 'Rajdhani', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .geodash-header-left {
@@ -72,7 +73,6 @@ const COMPONENT_CSS = `
 
 .geodash-clocks {
     display: flex;
-    flex-wrap: wrap;
     gap: 0;
     flex-shrink: 1;
     align-items: center;
@@ -80,25 +80,24 @@ const COMPONENT_CSS = `
     min-width: 0;
 }
 
-.geodash-clock-date-row {
+.geodash-clock-block.date-block {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    justify-content: flex-end;
-    margin-bottom: 2px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
 }
 
 .geodash-clock-date {
-    color: #889;
-    font-size: clamp(0.72rem, 0.85vw, 1.1rem);
-    font-weight: 600;
+    color: #bbc;
+    font-size: clamp(0.9rem, 1vw, 1.3rem);
+    font-weight: 700;
     white-space: nowrap;
+    letter-spacing: 0.5px;
 }
 
 .geodash-clock-hebrew {
     color: #7a8a6a;
-    font-size: clamp(0.68rem, 0.8vw, 1rem);
+    font-size: clamp(0.65rem, 0.75vw, 0.95rem);
     font-weight: 600;
     white-space: nowrap;
     direction: rtl;
@@ -106,7 +105,7 @@ const COMPONENT_CSS = `
 
 .geodash-clock-shabbat {
     color: #c9a84c;
-    font-size: clamp(0.65rem, 0.75vw, 0.95rem);
+    font-size: clamp(0.6rem, 0.7vw, 0.9rem);
     font-weight: 600;
     white-space: nowrap;
 }
@@ -145,8 +144,9 @@ const COMPONENT_CSS = `
 
 .geodash-clock-time {
     color: #7eddb8;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
     font-size: clamp(2.2rem, 2.8vw, 4rem);
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: 2px;
 }
 
@@ -252,15 +252,14 @@ const COMPONENT_CSS = `
 /* ── Fullscreen Button ─────────────────────────────────── */
 .geodash-fullscreen-btn {
     color: #aab;
-    font-size: clamp(0.82rem, 0.9vw, 1.3rem);
-    font-weight: 600;
+    font-size: clamp(1.1rem, 1.3vw, 2rem);
     padding: clamp(5px, 0.5vh, 12px) clamp(10px, 0.8vw, 20px);
     border-radius: 4px;
     cursor: pointer;
     border: 1px solid #1a3a6e;
     background: none;
     transition: all 0.2s;
-    white-space: nowrap;
+    line-height: 1;
 }
 
 .geodash-fullscreen-btn:hover {
@@ -547,6 +546,23 @@ const COMPONENT_CSS = `
 // ── Inject CSS ─────────────────────────────────────────────────────────────
 
 (function injectComponentCSS() {
+    // Inject Google Fonts for all pages
+    if (!document.querySelector('link[href*="Rajdhani"]')) {
+        const preconnect1 = document.createElement('link');
+        preconnect1.rel = 'preconnect';
+        preconnect1.href = 'https://fonts.googleapis.com';
+        document.head.appendChild(preconnect1);
+        const preconnect2 = document.createElement('link');
+        preconnect2.rel = 'preconnect';
+        preconnect2.href = 'https://fonts.gstatic.com';
+        preconnect2.crossOrigin = '';
+        document.head.appendChild(preconnect2);
+        const fontLink = document.createElement('link');
+        fontLink.rel = 'stylesheet';
+        fontLink.href = 'https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap';
+        document.head.appendChild(fontLink);
+    }
+
     const style = document.createElement('style');
     style.textContent = COMPONENT_CSS;
     document.head.appendChild(style);
@@ -574,11 +590,15 @@ function renderHeader(activePage) {
         { href: '/tv', label: 'TV', id: 'tv' },
     ];
 
-    // TV links
-    const tvLinks = [
-        { href: 'https://www.oref.org.il/eng', label: 'HFC' },
-        { href: 'https://www.kan.org.il/live/', label: 'KAN' },
-        { href: 'https://video.i24news.tv/live/brightcove/en', label: 'i24' },
+    // Links (was TV)
+    const linksItems = [
+        { href: 'https://www.oref.org.il/eng', label: 'Pikud HaOref (HFC)' },
+        { href: 'https://www.kan.org.il/live/', label: 'KAN News (Live)' },
+        { href: 'https://video.i24news.tv/live/brightcove/en', label: 'i24 News (Live)' },
+        { href: 'https://www.ynet.co.il/home/0,7340,L-8,00.html', label: 'Ynet' },
+        { href: 'https://www.timesofisrael.com/', label: 'Times of Israel' },
+        { href: 'https://www.jns.org/', label: 'JNS' },
+        { href: 'https://www.jpost.com/', label: 'Jerusalem Post' },
     ];
 
     const makeNav = (links) => links.map(p =>
@@ -591,7 +611,7 @@ function renderHeader(activePage) {
         `<a href="${p.href}" class="${p.id === activePage ? 'active' : ''}">${p.label}</a>`
     ).join('');
 
-    const tvMenuHtml = tvLinks.map(l =>
+    const linksMenuHtml = linksItems.map(l =>
         `<a href="${l.href}" target="_blank" rel="noopener">${l.label}</a>`
     ).join('');
 
@@ -601,13 +621,9 @@ function renderHeader(activePage) {
     const ttsTitle = speechOn ? 'TTS: ON (click to disable)' : 'TTS: OFF (click to enable)';
     const ttsBtnHtml = `<button class="geodash-tts-toggle ${ttsClass}" id="tts-toggle-btn" title="${ttsTitle}">${ttsIcon}</button>`;
 
-    const newsOn = localStorage.getItem('geodash-news') === 'true';
-    const newsLabel = newsOn ? 'News: ON' : 'News: OFF';
-    const newsBtnHtml = `<button class="geodash-tts-toggle ${newsOn ? 'tts-on' : 'tts-off'}" id="news-toggle-btn" title="Toggle news ticker" onclick="if(typeof toggleNewsTicker==='function')toggleNewsTicker()">${newsLabel}</button>`;
-
     const refreshHtml = `<a href="#" class="geodash-refresh-btn" onclick="event.preventDefault();window.location.reload();" title="Refresh page">↻</a>`;
     const settingsHtml = `<a href="/settings" class="${activePage === 'settings' ? 'active' : ''}">⚙</a>`;
-    const fullscreenHtml = `<button class="geodash-fullscreen-btn" id="fullscreen-btn" title="Toggle fullscreen">Fullscreen</button>`;
+    const fullscreenHtml = `<button class="geodash-fullscreen-btn" id="fullscreen-btn" title="Toggle fullscreen">⛶</button>`;
 
     const el = document.getElementById('geodash-header');
     if (!el) return;
@@ -625,23 +641,23 @@ function renderHeader(activePage) {
                 <button class="geodash-dropdown-btn" title="Display mode">Display ▾</button>
                 <div class="geodash-dropdown-menu">${displayMenuHtml}</div>
             </div>
-            <div class="geodash-dropdown-wrap" id="tv-dropdown">
-                <button class="geodash-dropdown-btn" title="Live TV channels">TV ▾</button>
-                <div class="geodash-dropdown-menu">${tvMenuHtml}</div>
+            <div class="geodash-dropdown-wrap" id="links-dropdown">
+                <button class="geodash-dropdown-btn" title="Links">Links ▾</button>
+                <div class="geodash-dropdown-menu">${linksMenuHtml}</div>
             </div>
             ${sep}
             ${ttsBtnHtml}
-            ${newsBtnHtml}
             ${fullscreenHtml}
             ${sep}
             <nav class="geodash-nav">${refreshHtml}${settingsHtml}</nav>
         </div>
         <div class="geodash-clocks">
-            <div class="geodash-clock-date-row">
+            <div class="geodash-clock-block date-block">
                 <span class="geodash-clock-date" id="clock-date"></span>
                 <span class="geodash-clock-hebrew" id="clock-hebrew"></span>
                 <span class="geodash-clock-shabbat" id="clock-shabbat"></span>
             </div>
+            <span class="geodash-clock-separator">|</span>
             <div class="geodash-clock-block">
                 <span class="geodash-clock-label">Israel</span>
                 <span class="geodash-clock-time" id="clock-local">--:--</span>
@@ -758,7 +774,7 @@ function renderHeader(activePage) {
             }
         });
         document.addEventListener('fullscreenchange', () => {
-            fsBtn.textContent = document.fullscreenElement ? 'Exit FS' : 'Fullscreen';
+            fsBtn.textContent = document.fullscreenElement ? '⛶' : '⛶';
             fsBtn.title = document.fullscreenElement ? 'Exit fullscreen' : 'Toggle fullscreen';
         });
     }
