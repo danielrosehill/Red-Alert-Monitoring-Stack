@@ -1,7 +1,7 @@
 """Red Alert Prompt Runner — Templated AI prompt execution service.
 
-Runs templated prompts via OpenRouter (supporting Groq, Gemini, etc.)
-and pipes output to the Telegram bot, email (via Resend), or both.
+Runs templated prompts via OpenRouter and pipes output to the Telegram bot,
+email (via Resend), or both.
 
 Templates are stored as JSON in templates/ and use Jinja2 for variable
 substitution. The service can be triggered:
@@ -11,7 +11,6 @@ substitution. The service can be triggered:
 
 Environment variables:
   OPENROUTER_API_KEY  — Required. API key for OpenRouter
-  GROQ_API_KEY        — Optional. Direct Groq API key (faster for immediate intel)
   TELEGRAM_BOT_URL    — Telegram bot internal URL for sending outputs
   RSS_CACHE_URL       — RSS cache for news context
   OREF_PROXY_URL      — Alert proxy for current situation data
@@ -51,7 +50,6 @@ log = logging.getLogger("redalert.prompt-runner")
 # ── Configuration ────────────────────────────────────────────────────────────
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 TELEGRAM_BOT_URL = os.environ.get("TELEGRAM_BOT_URL", "http://telegram-bot:8781")
 RSS_CACHE_URL = os.environ.get("RSS_CACHE_URL", "http://rss-cache:8785")
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://oref-proxy:8764")
@@ -60,11 +58,10 @@ ALERT_AREA = os.environ.get("ALERT_AREA", "")
 CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
 
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-# Models
-IMMEDIATE_INTEL_MODEL = os.environ.get("IMMEDIATE_INTEL_MODEL", "llama-3.3-70b-versatile")
-SITREP_MODEL = os.environ.get("SITREP_MODEL", "google/gemini-2.0-flash-001")
+# Models — all routed through OpenRouter
+IMMEDIATE_INTEL_MODEL = os.environ.get("IMMEDIATE_INTEL_MODEL", "meta-llama/llama-4-scout")
+SITREP_MODEL = os.environ.get("SITREP_MODEL", "meta-llama/llama-4-maverick")
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -72,6 +69,11 @@ TEMPLATES_DIR = Path(__file__).parent / "templates"
 # Only one immediate_intel report per INTEL_COOLDOWN seconds (default 10 min).
 INTEL_COOLDOWN = int(os.environ.get("INTEL_COOLDOWN", "600"))
 _last_intel_time: float = 0
+
+# Debounce / cooldown for daily_sitrep to prevent flurries during heavy activity.
+# Only one SITREP per SITREP_COOLDOWN seconds (default 30 min).
+SITREP_COOLDOWN = int(os.environ.get("SITREP_COOLDOWN", "1800"))
+_last_sitrep_time: float = 0
 
 # ── Template Storage ────────────────────────────────────────────────────────
 
@@ -89,37 +91,6 @@ def load_templates() -> dict[str, dict]:
 
 
 # ── LLM Clients ─────────────────────────────────────────────────────────────
-
-
-async def call_groq(
-    client: httpx.AsyncClient, model: str, system: str, user: str
-) -> str | None:
-    """Call Groq API directly (faster for immediate intel)."""
-    if not GROQ_API_KEY:
-        return None
-    try:
-        resp = await client.post(
-            GROQ_URL,
-            json={
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-            },
-            headers={
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json",
-            },
-            timeout=30,
-        )
-        data = resp.json()
-        choices = data.get("choices", [])
-        if choices:
-            return choices[0].get("message", {}).get("content")
-    except Exception as e:
-        log.error("Groq call failed: %s", e)
-    return None
 
 
 async def call_openrouter(
@@ -219,6 +190,16 @@ async def send_to_email(client: httpx.AsyncClient, text: str) -> bool:
 
 async def run_scheduled_sitrep(deliver_to: list[str]):
     """Execute the daily_sitrep template and deliver to specified targets."""
+    global _last_sitrep_time
+
+    # Rate-limit SITREPs to prevent flurries during heavy activity
+    if SITREP_COOLDOWN > 0:
+        elapsed = time.time() - _last_sitrep_time
+        if elapsed < SITREP_COOLDOWN:
+            remaining = SITREP_COOLDOWN - elapsed
+            log.info("Scheduled SITREP skipped: cooldown (%.0fs remaining)", remaining)
+            return
+
     templates = load_templates()
     template_data = templates.get("daily_sitrep")
     if not template_data:
@@ -258,6 +239,7 @@ async def run_scheduled_sitrep(deliver_to: list[str]):
             if await send_to_email(client, output):
                 delivered.append("email")
 
+        _last_sitrep_time = time.time()
         log.info("Scheduled SITREP delivered to: %s (%d chars)", delivered, len(output))
 
 
@@ -313,7 +295,6 @@ async def health():
         "service": "prompt-runner",
         "templates": list(templates.keys()),
         "openrouter": bool(OPENROUTER_API_KEY),
-        "groq": bool(GROQ_API_KEY),
         "resend": bool(RESEND_API_KEY),
         "scheduler": {
             "enabled": schedule is not None,
@@ -334,7 +315,6 @@ async def list_templates():
                 "name": t.get("name", t["id"]),
                 "description": t.get("description", ""),
                 "variables": list(t.get("variables", {}).keys()),
-                "api": t.get("api", "openrouter"),
             }
             for t in templates.values()
         ]
@@ -344,7 +324,7 @@ async def list_templates():
 @app.post("/api/run", response_model=RunResponse)
 async def run_template(req: RunRequest):
     """Execute a prompt template and optionally deliver the output."""
-    global _last_intel_time
+    global _last_intel_time, _last_sitrep_time
 
     templates = load_templates()
     template_data = templates.get(req.template)
@@ -364,6 +344,17 @@ async def run_template(req: RunRequest):
             return RunResponse(
                 status="skipped", template=req.template,
                 error=f"Cooldown active ({remaining:.0f}s remaining of {INTEL_COOLDOWN}s)"
+            )
+
+    # Debounce daily_sitrep — skip if within cooldown window
+    if req.template == "daily_sitrep" and SITREP_COOLDOWN > 0:
+        elapsed = time.time() - _last_sitrep_time
+        if elapsed < SITREP_COOLDOWN:
+            remaining = SITREP_COOLDOWN - elapsed
+            log.info("Daily SITREP skipped: cooldown (%.0fs remaining)", remaining)
+            return RunResponse(
+                status="skipped", template=req.template,
+                error=f"Cooldown active ({remaining:.0f}s remaining of {SITREP_COOLDOWN}s)"
             )
 
     async with httpx.AsyncClient() as client:
@@ -389,14 +380,9 @@ async def run_template(req: RunRequest):
         system_prompt = system_tmpl.render(**variables)
         user_prompt = user_tmpl.render(**variables)
 
-        # Choose API
-        api = template_data.get("api", "openrouter")
+        # All models routed through OpenRouter
         model = template_data.get("model", SITREP_MODEL)
-
-        if api == "groq" and GROQ_API_KEY:
-            output = await call_groq(client, model, system_prompt, user_prompt)
-        else:
-            output = await call_openrouter(client, model, system_prompt, user_prompt)
+        output = await call_openrouter(client, model, system_prompt, user_prompt)
 
         if not output:
             return RunResponse(
@@ -413,9 +399,11 @@ async def run_template(req: RunRequest):
             if await send_to_email(client, output):
                 delivered.append("email")
 
-        # Update cooldown timestamp for immediate_intel
+        # Update cooldown timestamps
         if req.template == "immediate_intel":
             _last_intel_time = time.time()
+        elif req.template == "daily_sitrep":
+            _last_sitrep_time = time.time()
 
         log.info(
             "Template '%s' executed (%d chars), delivered to: %s",

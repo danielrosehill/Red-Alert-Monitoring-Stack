@@ -3,7 +3,7 @@
   "name": "Daily Situation Report",
   "description": "Comprehensive daily SITREP modeled on ISW/Critical Threats reporting style. Covers coalition activities, Iranian operations, strikes, the home front, and conflict trajectory. Can be sent to Telegram or emailed.",
   "api": "openrouter",
-  "model": "google/gemini-2.0-flash-001",
+  "model": "meta-llama/llama-4-maverick",
   "variables": {
     "alert_area": ""
   },

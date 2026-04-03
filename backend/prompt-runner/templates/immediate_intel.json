@@ -2,8 +2,8 @@
   "id": "immediate_intel",
   "name": "Immediate Intelligence Report",
   "description": "Triggered automatically after a red alert in the user's area. Provides a rapid summary of the attack origin, munitions, and other areas under fire.",
-  "api": "groq",
-  "model": "llama-3.3-70b-versatile",
+  "api": "openrouter",
+  "model": "meta-llama/llama-4-scout",
   "variables": {
     "alert_area": ""
   },

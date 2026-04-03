@@ -241,7 +241,6 @@ services:
     environment:
       - PORT=${PROMPT_RUNNER_PORT:-8787}
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - GROQ_API_KEY=${GROQ_API_KEY:-}
       - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
       - RSS_CACHE_URL=http://red-alert-api:${API_PORT:-8890}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
@@ -251,6 +250,7 @@ services:
       - SITREP_EMAIL_TO=${SITREP_EMAIL_TO:-}
       - SITREP_SCHEDULE=${SITREP_SCHEDULE:-}
       - SITREP_DELIVER_TO=${SITREP_DELIVER_TO:-telegram}
+      - SITREP_COOLDOWN=${SITREP_COOLDOWN:-1800}
     depends_on:
       - oref-proxy
     networks:
