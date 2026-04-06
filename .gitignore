@@ -19,3 +19,6 @@ telegram-bot/data/
 
 # Private Claude instructions
 CLAUDE_PRIVATE.md
+
+# Private/local-only slash commands
+.claude/commands/deploy-local.md

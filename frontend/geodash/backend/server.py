@@ -6,7 +6,9 @@ cache for live state and from Postgres for history / timeline / stats.
 """
 
 import asyncio
+import csv
 import hashlib
+import io
 import json
 import logging
 import os
@@ -21,7 +23,7 @@ import httpx
 from fastapi import FastAPI, Query, Request, Response, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response as FastAPIResponse
 from fastapi.staticfiles import StaticFiles
 
 # ── Logging ─────────────────────────────────────────────────────────────────
@@ -40,6 +42,7 @@ POSTGRES_URL = os.environ.get(
     "postgresql://redalert:redalert-dev-password@timescaledb:5432/redalert",
 )
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "15"))
+ALERT_AREA = os.environ.get("ALERT_AREA", "") or os.environ.get("LOCAL_AREA", "")
 
 OREF_HEADERS = {
     "Referer": "https://www.oref.org.il/",
@@ -716,6 +719,142 @@ async def get_alert_log(
     except Exception as e:
         log.error("Alert log query error: %s", e)
         return []
+
+
+@app.get("/api/alert-export")
+async def export_alert_history(
+    format: str = Query(default="csv", pattern="^(csv|json)$"),
+    scope: str = Query(default="all", pattern="^(all|local)$"),
+    area: str = Query(default=None),
+    from_ts: str = Query(default=None, description="ISO 8601 start timestamp"),
+    to_ts: str = Query(default=None, description="ISO 8601 end timestamp"),
+):
+    """Export saved alert history from Postgres.
+
+    - scope=all: whole country (default)
+    - scope=local: filter by configured ALERT_AREA env var
+    - area=<name>: explicit area filter (overrides scope)
+    - from_ts/to_ts: optional ISO timestamps; omit both for entire database
+    """
+    if not pg_pool:
+        raise HTTPException(status_code=503, detail="Postgres not connected")
+
+    # Resolve area filter
+    area_filter = None
+    if area:
+        area_filter = area
+    elif scope == "local":
+        if not ALERT_AREA:
+            raise HTTPException(
+                status_code=400,
+                detail="scope=local requires ALERT_AREA env var to be set",
+            )
+        area_filter = ALERT_AREA
+
+    # Parse timestamps
+    def _parse(ts: str | None):
+        if not ts:
+            return None
+        try:
+            return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Invalid timestamp: {ts}")
+
+    start = _parse(from_ts)
+    end = _parse(to_ts)
+
+    where = []
+    params: list = []
+    if start:
+        params.append(start)
+        where.append(f"ts >= ${len(params)}")
+    if end:
+        params.append(end)
+        where.append(f"ts <= ${len(params)}")
+    if area_filter:
+        params.append(area_filter)
+        where.append(f"area = ${len(params)}")
+
+    sql = "SELECT ts, area, category, title, alert_date, source FROM alerts"
+    if where:
+        sql += " WHERE " + " AND ".join(where)
+    sql += " ORDER BY ts ASC"
+
+    try:
+        async with pg_pool.acquire() as conn:
+            rows = await conn.fetch(sql, *params)
+    except Exception as e:
+        log.error("Alert export query error: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+    suffix_parts = [scope if not area else f"area-{area}"]
+    if start:
+        suffix_parts.append(start.strftime("%Y%m%d"))
+    if end:
+        suffix_parts.append(end.strftime("%Y%m%d"))
+    suffix = "_".join(suffix_parts)
+    filename_base = f"alert-history_{suffix}" if suffix else "alert-history"
+
+    if format == "json":
+        payload = [
+            {
+                "ts": row["ts"].isoformat(),
+                "area": row["area"],
+                "category": row["category"],
+                "title": row["title"],
+                "alert_date": row["alert_date"],
+                "source": row["source"],
+            }
+            for row in rows
+        ]
+        return JSONResponse(
+            content={"count": len(payload), "alerts": payload},
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename_base}.json"'
+            },
+        )
+
+    # CSV
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["ts", "area", "category", "title", "alert_date", "source"])
+    for row in rows:
+        writer.writerow([
+            row["ts"].isoformat(),
+            row["area"],
+            row["category"],
+            row["title"],
+            row["alert_date"],
+            row["source"],
+        ])
+    return FastAPIResponse(
+        content=buf.getvalue(),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename_base}.csv"'
+        },
+    )
+
+
+@app.get("/api/alert-export/info")
+async def alert_export_info():
+    """Return metadata to help the export UI (configured area, row count, range)."""
+    if not pg_pool:
+        return {"connected": False}
+    try:
+        async with pg_pool.acquire() as conn:
+            total = await conn.fetchval("SELECT COUNT(*) FROM alerts") or 0
+            earliest = await conn.fetchval("SELECT MIN(ts) FROM alerts")
+            latest = await conn.fetchval("SELECT MAX(ts) FROM alerts")
+        return {
+            "connected": True,
+            "total_alerts": total,
+            "earliest": earliest.isoformat() if earliest else None,
+            "latest": latest.isoformat() if latest else None,
+            "configured_area": ALERT_AREA or None,
+        }
+    except Exception as e:
+        return {"connected": False, "error": str(e)}
 
 
 @app.get("/api/alert-snapshots")
