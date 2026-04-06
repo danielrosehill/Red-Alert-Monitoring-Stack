@@ -23,6 +23,13 @@ Environment variables:
   TAVILY_API_KEY           — Optional. Enables Tavily news search for richer sitreps
   ALLOWED_TELEGRAM_USERS   — Optional. Comma-separated user IDs to restrict access
   DATA_DIR                 — Subscriber data directory (default: ./data)
+  PORT                     — HTTP broadcast server port (default: 8781)
+
+HTTP API:
+  GET  /health             — Liveness probe
+  POST /api/broadcast      — Fan out a message to all subscribers.
+                             Body: {"text": "...", "source": "optional-tag",
+                                    "parse_mode": "HTML"}
 """
 
 import asyncio
@@ -35,6 +42,8 @@ import tempfile
 import time
 from pathlib import Path
 
+import aiohttp
+from aiohttp import web
 import httpx
 
 # ── Logging ──────────────────────────────────────────────────────────────────
@@ -54,6 +63,7 @@ TAVILY_API_KEY = os.environ.get("TAVILY_API_KEY", "")
 OREF_PROXY_URL = os.environ.get("OREF_PROXY_URL", "http://localhost:8764")
 RSS_CACHE_URL = os.environ.get("RSS_CACHE_URL", "")
 DATA_DIR = Path(os.environ.get("DATA_DIR", "./data"))
+HTTP_PORT = int(os.environ.get("PORT", "8781"))
 ALLOWED_USERS_RAW = os.environ.get("ALLOWED_TELEGRAM_USERS", "")
 ALLOWED_USERS: set[int] = {int(u.strip()) for u in ALLOWED_USERS_RAW.split(",") if u.strip()}
 
@@ -301,6 +311,38 @@ class TelegramBot:
             }))
         except Exception as e:
             log.warning("Could not save subscribers: %s", e)
+
+    # ── Broadcast (fan-out to all subscribers) ───────────────────────────
+
+    async def broadcast(self, text: str, parse_mode: str = "HTML",
+                        source: str = "") -> dict:
+        """Send a message to every subscriber. Returns delivery summary."""
+        if not text or not text.strip():
+            return {"ok": False, "error": "empty text", "delivered": 0, "failed": 0}
+
+        if not self.subscribers:
+            log.info("Broadcast requested but no subscribers (source=%s)", source or "?")
+            return {"ok": True, "delivered": 0, "failed": 0, "subscribers": 0}
+
+        delivered = 0
+        failed = 0
+        for chat_id in list(self.subscribers.keys()):
+            resp = await self.send_message(chat_id, text, parse_mode=parse_mode)
+            if resp and resp.get("ok"):
+                delivered += 1
+            else:
+                failed += 1
+
+        log.info(
+            "Broadcast (source=%s): delivered=%d failed=%d total=%d",
+            source or "?", delivered, failed, len(self.subscribers),
+        )
+        return {
+            "ok": failed == 0,
+            "delivered": delivered,
+            "failed": failed,
+            "subscribers": len(self.subscribers),
+        }
 
     # ── Telegram API ─────────────────────────────────────────────────────
 
@@ -630,6 +672,56 @@ class TelegramBot:
                 await asyncio.sleep(5)
 
 
+# ── HTTP Server (broadcast endpoint) ─────────────────────────────────────────
+
+def build_http_app(bot: "TelegramBot") -> web.Application:
+    """Build the aiohttp app exposing /health and /api/broadcast."""
+
+    async def health(_request: web.Request) -> web.Response:
+        return web.json_response({
+            "ok": True,
+            "subscribers": len(bot.subscribers),
+        })
+
+    async def broadcast(request: web.Request) -> web.Response:
+        try:
+            payload = await request.json()
+        except Exception:
+            return web.json_response(
+                {"ok": False, "error": "invalid json"}, status=400
+            )
+
+        text = (payload or {}).get("text", "")
+        if not isinstance(text, str) or not text.strip():
+            return web.json_response(
+                {"ok": False, "error": "missing 'text'"}, status=400
+            )
+
+        parse_mode = (payload or {}).get("parse_mode", "HTML")
+        source = (payload or {}).get("source", "")
+
+        result = await bot.broadcast(text, parse_mode=parse_mode, source=source)
+        status = 200 if result.get("ok") else 502
+        return web.json_response(result, status=status)
+
+    app = web.Application()
+    app.router.add_get("/health", health)
+    app.router.add_post("/api/broadcast", broadcast)
+    return app
+
+
+async def start_http_server(bot: "TelegramBot", port: int):
+    app = build_http_app(bot)
+    runner = web.AppRunner(app, access_log=None)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", port)
+    await site.start()
+    log.info("HTTP broadcast server listening on :%d", port)
+    # Keep the coroutine alive forever so it can be gathered alongside polling.
+    while True:
+        await asyncio.sleep(3600)
+
+
 # ── Utilities ────────────────────────────────────────────────────────────────
 
 def _human_duration(seconds: float) -> str:
@@ -699,7 +791,10 @@ async def main():
         log.info("Tavily: %s | RSS Cache: %s", "enabled" if TAVILY_API_KEY else "disabled", RSS_CACHE_URL or "disabled")
         log.info("Subscribers: %d", len(bot.subscribers))
 
-        await bot.start_telegram_polling()
+        await asyncio.gather(
+            bot.start_telegram_polling(),
+            start_http_server(bot, HTTP_PORT),
+        )
 
 
 if __name__ == "__main__":
