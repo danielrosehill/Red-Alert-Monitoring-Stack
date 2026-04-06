@@ -83,6 +83,7 @@ http_client: httpx.AsyncClient | None = None
 # Track previous alert set to detect transitions and avoid redundant writes
 prev_alert_areas: set[str] = set()
 prev_alert_hash: str = ""  # hash of alert set — only write to Postgres on change
+prev_alert_keys: set[tuple[str, int]] = set()  # (area, category) seen in previous poll
 
 # Active test alerts — {area: {alert_dict, expires: epoch}}
 test_alerts: dict[str, dict] = {}
@@ -443,7 +444,7 @@ async def poll_loop():
     Runs every POLL_INTERVAL seconds. Uses a single reusable HTTP client
     with standard browser headers — looks like normal traffic.
     """
-    global prev_alert_areas, prev_alert_hash, last_alert_time, last_alert_areas
+    global prev_alert_areas, prev_alert_hash, prev_alert_keys, last_alert_time, last_alert_areas
 
     log.info("Starting background alert poller (every %ds)", POLL_INTERVAL)
 
@@ -544,8 +545,24 @@ async def poll_loop():
             ).hexdigest()
 
             if alert_hash != prev_alert_hash:
-                if real_alerts or prev_alert_areas:
-                    await store_alerts_pg(alerts)
+                # Per-key diff: only persist (area, category) tuples that
+                # weren't already in the previous poll. This collapses a
+                # sustained 100-area event into 100 rows total instead of
+                # 100 rows per poll cycle. Read-time dedup at /api/alert-log
+                # remains as a safety net for restart-time re-inserts.
+                current_keys: set[tuple[str, int]] = {
+                    (a.get("data", ""), int(a.get("category", 0) or 0))
+                    for a in real_alerts
+                }
+                new_keys = current_keys - prev_alert_keys
+                if new_keys:
+                    new_alerts = [
+                        a for a in alerts
+                        if a.get("alert_type") != "test"
+                        and (a.get("data", ""), int(a.get("category", 0) or 0)) in new_keys
+                    ]
+                    await store_alerts_pg(new_alerts)
+                prev_alert_keys = current_keys
                 prev_alert_hash = alert_hash
 
             prev_alert_areas = current_areas
