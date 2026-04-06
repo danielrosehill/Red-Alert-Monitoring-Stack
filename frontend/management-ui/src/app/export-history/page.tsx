@@ -19,7 +19,7 @@ type ExportInfo = {
 export default function ExportHistoryPage() {
   const [info, setInfo] = useState<ExportInfo | null>(null);
   const [scope, setScope] = useState<"all" | "local">("all");
-  const [format, setFormat] = useState<"csv" | "json">("csv");
+  const [format, setFormat] = useState<"csv" | "json" | "jsonl" | "parquet">("csv");
   const [fromTs, setFromTs] = useState("");
   const [toTs, setToTs] = useState("");
   const [busy, setBusy] = useState(false);
@@ -179,12 +179,18 @@ export default function ExportHistoryPage() {
             <label className="block text-sm text-zinc-600 mb-1">Format</label>
             <select
               value={format}
-              onChange={(e) => setFormat(e.target.value as "csv" | "json")}
+              onChange={(e) => setFormat(e.target.value as "csv" | "json" | "jsonl" | "parquet")}
               className="bg-white border border-zinc-300 rounded px-3 py-1.5 text-sm"
             >
-              <option value="csv">CSV</option>
-              <option value="json">JSON</option>
+              <option value="csv">CSV — spreadsheets, quick inspection</option>
+              <option value="jsonl">JSONL — line-delimited, streaming/jq/DuckDB</option>
+              <option value="parquet">Parquet — columnar, compressed, analytics</option>
+              <option value="json">JSON — single object, small exports</option>
             </select>
+            <p className="text-xs text-zinc-400 mt-1">
+              For large exports prefer Parquet (best compression, native types) or
+              JSONL (streamable). CSV/JSON are convenient but verbose.
+            </p>
           </div>
 
           <div className="flex items-center gap-3 pt-2">

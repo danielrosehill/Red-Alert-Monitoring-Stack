@@ -740,7 +740,7 @@ async def get_alert_log(
 
 @app.get("/api/alert-export")
 async def export_alert_history(
-    format: str = Query(default="csv", pattern="^(csv|json)$"),
+    format: str = Query(default="csv", pattern="^(csv|json|jsonl|parquet)$"),
     scope: str = Query(default="all", pattern="^(all|local)$"),
     area: str = Query(default=None),
     from_ts: str = Query(default=None, description="ISO 8601 start timestamp"),
@@ -828,6 +828,59 @@ async def export_alert_history(
             content={"count": len(payload), "alerts": payload},
             headers={
                 "Content-Disposition": f'attachment; filename="{filename_base}.json"'
+            },
+        )
+
+    if format == "jsonl":
+        # Newline-delimited JSON: one alert object per line. Streamable,
+        # appendable, friendly for jq / pandas / DuckDB / Spark.
+        lines = []
+        for row in rows:
+            lines.append(json.dumps({
+                "ts": row["ts"].isoformat(),
+                "area": row["area"],
+                "category": row["category"],
+                "title": row["title"],
+                "alert_date": row["alert_date"],
+                "source": row["source"],
+            }, ensure_ascii=False))
+        body = ("\n".join(lines) + "\n") if lines else ""
+        return FastAPIResponse(
+            content=body,
+            media_type="application/x-ndjson; charset=utf-8",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename_base}.jsonl"'
+            },
+        )
+
+    if format == "parquet":
+        # Columnar, compressed (snappy), preserves native types. Best choice
+        # for analytical workloads — readable directly by pandas, polars,
+        # DuckDB, Spark, BigQuery external tables, etc.
+        try:
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+        except ImportError:
+            raise HTTPException(
+                status_code=500,
+                detail="pyarrow not installed in this geodash image",
+            )
+
+        table = pa.table({
+            "ts": pa.array([row["ts"] for row in rows], type=pa.timestamp("us", tz="UTC")),
+            "area": pa.array([row["area"] for row in rows], type=pa.string()),
+            "category": pa.array([row["category"] for row in rows], type=pa.int16()),
+            "title": pa.array([row["title"] for row in rows], type=pa.string()),
+            "alert_date": pa.array([row["alert_date"] for row in rows], type=pa.string()),
+            "source": pa.array([row["source"] for row in rows], type=pa.string()),
+        })
+        buf = io.BytesIO()
+        pq.write_table(table, buf, compression="snappy")
+        return FastAPIResponse(
+            content=buf.getvalue(),
+            media_type="application/vnd.apache.parquet",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename_base}.parquet"'
             },
         )
 
