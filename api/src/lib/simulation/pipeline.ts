@@ -33,7 +33,7 @@ export interface PipelineResult {
   error?: string;
 }
 
-function updateSession(
+async function updateSession(
   sessionId: string,
   createdAt: string,
   step: string,
@@ -45,8 +45,8 @@ function updateSession(
     pdfPath: string;
     driveUrl: string;
   }>
-) {
-  upsertSimulationSession({
+): Promise<void> {
+  await upsertSimulationSession({
     id: sessionId,
     createdAt,
     step,
@@ -68,27 +68,27 @@ export async function runPipeline(
 
   try {
     // Stage 1: Intelligence gathering
-    updateSession(sessionId, createdAt, "gathering", {});
+    await updateSession(sessionId, createdAt, "gathering", {});
     const groundTruth = await gatherIntelligence();
-    updateSession(sessionId, createdAt, "gathering", { groundTruth });
+    await updateSession(sessionId, createdAt, "gathering", { groundTruth });
 
     // Stage 2: SITREP generation
-    updateSession(sessionId, createdAt, "sitrep", {});
+    await updateSession(sessionId, createdAt, "sitrep", {});
     const sitrep = await generateSitrep(groundTruth);
-    updateSession(sessionId, createdAt, "sitrep", { sitrep });
+    await updateSession(sessionId, createdAt, "sitrep", { sitrep });
 
     // Stage 3: 6-lens forecasting
-    updateSession(sessionId, createdAt, "forecasting", {});
+    await updateSession(sessionId, createdAt, "forecasting", {});
     const forecasts = await generateForecasts(groundTruth);
-    updateSession(sessionId, createdAt, "forecasting", { forecasts });
+    await updateSession(sessionId, createdAt, "forecasting", { forecasts });
 
     // Stage 4: Executive summary
-    updateSession(sessionId, createdAt, "summarizing", {});
+    await updateSession(sessionId, createdAt, "summarizing", {});
     const summary = await generateSummary(forecasts);
-    updateSession(sessionId, createdAt, "summarizing", { summary });
+    await updateSession(sessionId, createdAt, "summarizing", { summary });
 
     // Stage 5: PDF generation
-    updateSession(sessionId, createdAt, "generating_pdf", {});
+    await updateSession(sessionId, createdAt, "generating_pdf", {});
     const { pdf } = await generatePdf({
       sessionId,
       createdAt,
@@ -98,17 +98,17 @@ export async function runPipeline(
       summary,
     });
     const pdfPath = await saveSimulationPdf(pdf, sessionId, createdAt);
-    updateSession(sessionId, createdAt, "generating_pdf", { pdfPath });
+    await updateSession(sessionId, createdAt, "generating_pdf", { pdfPath });
 
     // Stage 6: Delivery
-    updateSession(sessionId, createdAt, "uploading", {});
+    await updateSession(sessionId, createdAt, "uploading", {});
     const deliveryResults: Record<string, { ok: boolean; error?: string }> = {};
 
     if (deliverTo.includes("drive")) {
       const driveResult = await uploadToDrive(pdfPath);
       deliveryResults.drive = driveResult;
       if (driveResult.ok && driveResult.url) {
-        updateSession(sessionId, createdAt, "uploading", { driveUrl: driveResult.url });
+        await updateSession(sessionId, createdAt, "uploading", { driveUrl: driveResult.url });
       }
     }
 
@@ -131,7 +131,7 @@ export async function runPipeline(
       deliveryResults.telegram = telegramResult;
     }
 
-    updateSession(sessionId, createdAt, "done", {});
+    await updateSession(sessionId, createdAt, "done", {});
 
     return {
       sessionId,
@@ -148,13 +148,13 @@ export async function runPipeline(
     };
   } catch (e) {
     const err = (e as Error).message;
-    updateSession(sessionId, createdAt, "error", {});
+    await updateSession(sessionId, createdAt, "error", {});
     return { sessionId, step: "error", error: err };
   }
 }
 
 async function getSessionDriveUrl(sessionId: string): Promise<string | undefined> {
-  const row = getSimulationSession(sessionId);
+  const row = await getSimulationSession(sessionId);
   return row?.drive_url ?? undefined;
 }
 

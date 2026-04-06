@@ -30,21 +30,26 @@ services:
       - redalert
 
   # ── Storage ─────────────────────────────────────────────────────────────────
-  influxdb:
-    image: influxdb:2
-    container_name: influxdb
+  # Postgres + TimescaleDB replaces the previous InfluxDB + SQLite split.
+  # Schema is applied on first boot from /docker-entrypoint-initdb.d/.
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb
     restart: unless-stopped
     ports:
-      - "${INFLUXDB_PORT:-8086}:8086"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - influxdb-data:/var/lib/influxdb2
+      - timescaledb-data:/var/lib/postgresql/data
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_ADMIN_USER:-admin}
-      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_ADMIN_PASSWORD:-redalert-admin}
-      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG:-redalert}
-      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET:-alerts}
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+      - POSTGRES_USER=${POSTGRES_USER:-redalert}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-redalert-dev-password}
+      - POSTGRES_DB=${POSTGRES_DB:-redalert}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-redalert} -d ${POSTGRES_DB:-redalert}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - redalert
 
@@ -61,14 +66,13 @@ services:
     environment:
       - PORT=${GEODASH_PORT:-8083}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
-      - INFLUX_URL=${INFLUXDB_URL:-http://influxdb:8086}
-      - INFLUX_ORG=${INFLUXDB_ORG:-redalert}
-      - INFLUX_BUCKET=${INFLUXDB_BUCKET:-alerts}
-      - INFLUX_TOKEN=${INFLUXDB_TOKEN:-redalert-dev-token}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://redalert:redalert-dev-password@timescaledb:5432/redalert}
       - ALERT_AREA=${ALERT_AREA:-}
     depends_on:
-      - oref-proxy
-      - influxdb
+      oref-proxy:
+        condition: service_started
+      timescaledb:
+        condition: service_healthy
     networks:
       - redalert
 
@@ -101,7 +105,7 @@ services:
       - PORT=${API_PORT:-8890}
       - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
       - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
-      - INFLUXDB_URL=http://influxdb:${INFLUXDB_PORT:-8086}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://redalert:redalert-dev-password@timescaledb:5432/redalert}
       - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
       - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
       - TELEGRAM_BOT_URL=http://telegram-bot:${TELEGRAM_BOT_PORT:-8781}
@@ -138,7 +142,10 @@ services:
       - ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH:-/dev/null}:/app/secrets/service-account.json:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
-      - oref-proxy
+      oref-proxy:
+        condition: service_started
+      timescaledb:
+        condition: service_healthy
     networks:
       - redalert
 
@@ -303,7 +310,6 @@ services:
       - GEODASH_URL=http://geodash:${GEODASH_PORT:-8083}
       - ACTUATOR_URL=http://actuator:${ACTUATOR_PORT:-8782}
       - PROMPT_RUNNER_URL=http://prompt-runner:${PROMPT_RUNNER_PORT:-8787}
-      - INFLUXDB_URL=${INFLUXDB_URL:-http://influxdb:8086}
       - ALERT_AREA=${ALERT_AREA:-}
     volumes:
       - mcp-data:/app/data
@@ -401,8 +407,8 @@ networks:
     driver: bridge
 
 volumes:
-  influxdb-data:
-    name: redalert-influxdb-data
+  timescaledb-data:
+    name: redalert-timescaledb-data
   mcp-data:
     name: redalert-mcp-data
   api-data:

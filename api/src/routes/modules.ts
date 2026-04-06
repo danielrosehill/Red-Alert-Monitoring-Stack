@@ -84,8 +84,8 @@ function dbKey(moduleId: string): string {
   return `module_${moduleId}_enabled`;
 }
 
-function isEnabled(moduleId: string): boolean {
-  const val = getSetting(dbKey(moduleId));
+async function isEnabled(moduleId: string): Promise<boolean> {
+  const val = await getSetting(dbKey(moduleId));
   // Default to enabled if no setting exists
   return val === null ? true : val === "true";
 }
@@ -114,7 +114,7 @@ modulesRouter.get("/", async (_req, res) => {
         id: mod.id,
         name: mod.name,
         description: mod.description,
-        enabled: isEnabled(mod.id),
+        enabled: await isEnabled(mod.id),
         health: health.status,
         requiredConfig: mod.requiredConfig,
       };
@@ -137,14 +137,14 @@ modulesRouter.get("/:name", async (req, res) => {
     id: mod.id,
     name: mod.name,
     description: mod.description,
-    enabled: isEnabled(mod.id),
+    enabled: await isEnabled(mod.id),
     health: health.status,
     requiredConfig: mod.requiredConfig,
   });
 });
 
 // PUT /api/modules/:name — toggle enabled/disabled
-modulesRouter.put("/:name", (req, res) => {
+modulesRouter.put("/:name", async (req, res) => {
   const mod = MODULE_DEFS.find((m) => m.id === req.params.name);
   if (!mod) {
     return res.status(404).json({ error: `Unknown module: ${req.params.name}` });
@@ -153,6 +153,6 @@ modulesRouter.put("/:name", (req, res) => {
   if (typeof enabled !== "boolean") {
     return res.status(400).json({ error: "Body must include { enabled: true|false }" });
   }
-  setSetting(dbKey(mod.id), String(enabled));
+  await setSetting(dbKey(mod.id), String(enabled));
   res.json({ id: mod.id, enabled });
 });

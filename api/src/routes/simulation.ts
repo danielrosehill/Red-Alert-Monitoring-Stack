@@ -25,21 +25,23 @@ simulationRouter.post("/run", async (req, res) => {
 });
 
 // List / get sessions
-simulationRouter.get("/sessions", (req, res) => {
+simulationRouter.get("/sessions", async (req, res) => {
   const id = req.query.id as string | undefined;
 
   if (id) {
-    const session = getSimulationSession(id);
+    const session = await getSimulationSession(id);
     if (!session) return res.status(404).json({ error: "Session not found" });
     return res.json({
       ...session,
+      // sitrep is still TEXT (JSON-encoded Record<string,string>); forecasts
+      // and summary are JSONB — already parsed by the db layer.
       sitrep: session.sitrep ? JSON.parse(session.sitrep) : null,
-      forecasts: session.forecasts ? JSON.parse(session.forecasts) : null,
-      summary: session.summary ? JSON.parse(session.summary) : null,
+      forecasts: session.forecasts,
+      summary: session.summary,
     });
   }
 
-  const sessions = listSimulationSessions().map((s) => ({
+  const sessions = (await listSimulationSessions()).map((s) => ({
     id: s.id,
     created_at: s.created_at,
     step: s.step,
@@ -49,10 +51,10 @@ simulationRouter.get("/sessions", (req, res) => {
 });
 
 // Delete session
-simulationRouter.delete("/sessions", (req, res) => {
+simulationRouter.delete("/sessions", async (req, res) => {
   const id = req.query.id as string;
   if (!id) return res.status(400).json({ error: "id required" });
-  deleteSimulationSession(id);
+  await deleteSimulationSession(id);
   res.json({ ok: true });
 });
 
@@ -61,7 +63,7 @@ simulationRouter.get("/pdf", async (req, res) => {
   const id = req.query.id as string;
   if (!id) return res.status(400).send("id required");
 
-  const session = getSimulationSession(id);
+  const session = await getSimulationSession(id);
   if (!session) return res.status(404).send("Session not found");
 
   const { pdf } = await generatePdf({
@@ -69,8 +71,8 @@ simulationRouter.get("/pdf", async (req, res) => {
     createdAt: session.created_at,
     groundTruth: session.ground_truth || "No ground truth available.",
     sitrep: session.sitrep ? JSON.parse(session.sitrep) : null,
-    forecasts: session.forecasts ? JSON.parse(session.forecasts) : {},
-    summary: session.summary ? JSON.parse(session.summary) : null,
+    forecasts: (session.forecasts as Record<string, unknown>) ?? {},
+    summary: session.summary,
   });
 
   res.setHeader("Content-Type", "application/pdf");
@@ -86,11 +88,11 @@ simulationRouter.post("/deliver", async (req, res) => {
   const { id, target } = req.body;
   if (!id || !target) return res.status(400).json({ error: "id and target required" });
 
-  const session = getSimulationSession(id);
+  const session = await getSimulationSession(id);
   if (!session) return res.status(404).json({ error: "Session not found" });
   if (session.step !== "done") return res.status(400).json({ error: "Session not complete" });
 
-  const summary = session.summary ? JSON.parse(session.summary) : null;
+  const summary = session.summary;
 
   if (target === "email") {
     const { pdf } = await generatePdf({
@@ -98,7 +100,7 @@ simulationRouter.post("/deliver", async (req, res) => {
       createdAt: session.created_at,
       groundTruth: session.ground_truth || "",
       sitrep: session.sitrep ? JSON.parse(session.sitrep) : null,
-      forecasts: session.forecasts ? JSON.parse(session.forecasts) : {},
+      forecasts: (session.forecasts as Record<string, unknown>) ?? {},
       summary,
     });
     const ts = new Date(session.created_at).toISOString().slice(0, 16).replace("T", " ");
@@ -125,7 +127,7 @@ simulationRouter.post("/upload", async (req, res) => {
   const { id } = req.body;
   if (!id) return res.status(400).json({ error: "id required" });
 
-  const session = getSimulationSession(id);
+  const session = await getSimulationSession(id);
   if (!session) return res.status(404).json({ error: "Session not found" });
   if (!session.pdf_path)
     return res.status(400).json({ error: "No PDF generated for this session" });
@@ -133,7 +135,7 @@ simulationRouter.post("/upload", async (req, res) => {
   const result = await uploadToDrive(session.pdf_path);
   if (!result.ok) return res.status(500).json({ error: result.error });
 
-  upsertSimulationSession({
+  await upsertSimulationSession({
     id: session.id,
     createdAt: session.created_at,
     step: session.step,

@@ -40,12 +40,12 @@ export const SERVICES: Record<string, ServiceDef> = {
     port: 8782,
     description: "HA bridge: sets input_select state + triggers prompt runner",
   },
-  influxdb: {
-    name: "InfluxDB",
-    url: process.env.INFLUXDB_URL || "http://influxdb:8086",
-    health: "/health",
-    port: 8086,
-    description: "Time-series database for alert history",
+  timescaledb: {
+    name: "TimescaleDB",
+    url: process.env.POSTGRES_URL || "postgresql://timescaledb:5432/redalert",
+    health: "",  // Not an HTTP service — health via docker healthcheck (pg_isready)
+    port: 5432,
+    description: "Postgres + Timescale: alert history, settings, simulations",
   },
   "rss-cache": {
     name: "RSS Cache",

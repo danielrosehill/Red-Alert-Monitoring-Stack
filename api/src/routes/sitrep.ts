@@ -58,15 +58,16 @@ sitrepRouter.post("/run", async (req, res) => {
 });
 
 // Get/set SITREP schedule
-sitrepRouter.get("/schedule", (_req, res) => {
+sitrepRouter.get("/schedule", async (_req, res) => {
   res.json({
-    schedule: getSetting("sitrep_schedule") || process.env.SITREP_SCHEDULE || "",
-    deliver_to: getSetting("sitrep_deliver_to") || process.env.SITREP_DELIVER_TO || "telegram",
+    schedule: (await getSetting("sitrep_schedule")) || process.env.SITREP_SCHEDULE || "",
+    deliver_to:
+      (await getSetting("sitrep_deliver_to")) || process.env.SITREP_DELIVER_TO || "telegram",
   });
 });
 
-sitrepRouter.put("/schedule", (req, res) => {
-  if (req.body.schedule !== undefined) setSetting("sitrep_schedule", req.body.schedule);
-  if (req.body.deliver_to !== undefined) setSetting("sitrep_deliver_to", req.body.deliver_to);
+sitrepRouter.put("/schedule", async (req, res) => {
+  if (req.body.schedule !== undefined) await setSetting("sitrep_schedule", req.body.schedule);
+  if (req.body.deliver_to !== undefined) await setSetting("sitrep_deliver_to", req.body.deliver_to);
   res.json({ ok: true });
 });

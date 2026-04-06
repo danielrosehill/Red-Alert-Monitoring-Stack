@@ -36,7 +36,6 @@ RSS_CACHE_URL = os.getenv("RSS_CACHE_URL", "http://rss-cache:8785")
 GEODASH_URL = os.getenv("GEODASH_URL", "http://geodash:8083")
 ACTUATOR_URL = os.getenv("ACTUATOR_URL", "http://actuator:8782")
 PROMPT_RUNNER_URL = os.getenv("PROMPT_RUNNER_URL", "http://prompt-runner:8787")
-INFLUXDB_URL = os.getenv("INFLUXDB_URL", "http://influxdb:8086")
 SAMPLE_INTERVAL = int(os.getenv("SAMPLE_INTERVAL", "10800"))  # 3 hours
 SAMPLES_FILE = Path(os.getenv("SAMPLES_PATH", "/app/data/samples.json"))
 MAX_SAMPLES = int(os.getenv("MAX_SAMPLES", "100"))
@@ -253,7 +252,6 @@ async def check_stack_health() -> str:
     services = {
         "oref-proxy": f"{PROXY_URL}/api/status",
         "geodash": f"{GEODASH_URL}/health",
-        "influxdb": f"{INFLUXDB_URL}/health",
         "actuator": f"{ACTUATOR_URL}/health",
         "prompt-runner": f"{PROMPT_RUNNER_URL}/health",
         "rss-cache": f"{RSS_CACHE_URL}/health",

@@ -25,8 +25,8 @@ const MANAGED_KEYS = [
   "snapcast_port",
 ];
 
-settingsRouter.get("/", (_req, res) => {
-  const dbSettings = getAllSettings();
+settingsRouter.get("/", async (_req, res) => {
+  const dbSettings = await getAllSettings();
   const merged: Record<string, string> = {};
   for (const key of MANAGED_KEYS) {
     const envKey = key.toUpperCase();
@@ -35,7 +35,7 @@ settingsRouter.get("/", (_req, res) => {
   res.json(merged);
 });
 
-settingsRouter.put("/", (req, res) => {
+settingsRouter.put("/", async (req, res) => {
   const filtered: Record<string, string> = {};
   for (const [key, value] of Object.entries(req.body)) {
     if (MANAGED_KEYS.includes(key) && typeof value === "string") {
@@ -47,6 +47,6 @@ settingsRouter.put("/", (req, res) => {
     return res.status(400).json({ error: "No valid settings provided" });
   }
 
-  setSettings(filtered);
+  await setSettings(filtered);
   res.json({ ok: true, updated: Object.keys(filtered) });
 });

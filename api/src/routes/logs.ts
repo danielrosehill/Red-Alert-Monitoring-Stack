@@ -11,7 +11,7 @@ const CONTAINER_NAMES: Record<string, string> = {
   geodash: "geodash",
   "telegram-bot": "telegram-bot",
   actuator: "actuator",
-  influxdb: "influxdb",
+  timescaledb: "timescaledb",
   "rss-cache": "rss-cache",
   "mcp-server": "mcp-server",
   "prompt-runner": "prompt-runner",

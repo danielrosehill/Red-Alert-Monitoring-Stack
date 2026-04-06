@@ -8,8 +8,11 @@ dependencies = [
     "uvicorn[standard]>=0.27",
     "httpx>=0.27",
     "asyncpg>=0.29",
-    "influxdb-client>=1.38",
 ]
+
+[project.optional-dependencies]
+# Only needed when running migrate_influx_to_pg.py against an old Influx instance.
+migration = ["influxdb-client>=1.38"]
 
 [project.scripts]
 geodash = "server:app"
