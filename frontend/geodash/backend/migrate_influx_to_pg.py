@@ -26,6 +26,7 @@ Idempotency:
 """
 
 import asyncio
+import csv
 import json
 import os
 import sqlite3
@@ -33,6 +34,10 @@ import sys
 from datetime import datetime, timezone
 
 import asyncpg
+
+# Influx snapshot payloads can exceed the default 128KB CSV field limit used
+# by the influxdb_client CSV parser. Raise it so the parser can read them.
+csv.field_size_limit(sys.maxsize)
 
 try:
     from influxdb_client import InfluxDBClient
