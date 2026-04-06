@@ -149,6 +149,7 @@ services:
     #   context: ../backend/osint-notifier
     #   dockerfile: Dockerfile
     container_name: osint-notifier
+    profiles: ["osint"]
     restart: unless-stopped
     environment:
       - PUSHOVER_APP_TOKEN=${PUSHOVER_API_TOKEN}
