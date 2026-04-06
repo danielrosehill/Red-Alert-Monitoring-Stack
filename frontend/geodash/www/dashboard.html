@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Red Alert Geodash</title>
+    <script>
+        // Redirect mobile clients to the mobile-optimised page.
+        // Override with ?desktop=1 (persists via sessionStorage).
+        (function () {
+            try {
+                var p = new URLSearchParams(window.location.search);
+                if (p.get('desktop') === '1') {
+                    sessionStorage.setItem('forceDesktop', '1');
+                }
+                if (sessionStorage.getItem('forceDesktop') === '1') return;
+                var isNarrow = window.matchMedia('(max-width: 768px)').matches;
+                var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+                if (isNarrow || (isTouch && window.innerWidth < 900)) {
+                    window.location.replace('/mobile.html');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
