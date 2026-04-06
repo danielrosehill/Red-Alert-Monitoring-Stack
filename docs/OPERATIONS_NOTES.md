@@ -85,22 +85,73 @@ alerts than for official Oref alerts so they are clearly distinguishable on
 your phone. The classification path lives in
 `backend/osint-notifier/main.py` (`notify_missile`).
 
-## Telegram bot is purely reactive — nothing else can push through it
+## Telegram bot — broadcast endpoint contract
 
-`backend/telegram-bot/bot.py` is a command-only bot. It has **no HTTP
-server** and **no `/api/broadcast` endpoint**, despite the fact that
-`backend/prompt-runner/app.py` and `api/src/lib/telegram.ts` both POST to
-`http://telegram-bot:8781/api/broadcast` as if it existed. Those calls fail
-silently. As a result:
+`backend/telegram-bot/bot.py` runs **two things in one process**:
 
-- Scheduled SITREPs from `prompt-runner` do **not** reach Telegram. They
-  only land via email if Resend is configured.
-- "Send to Telegram" actions in the Management UI do nothing.
+1. A reactive Telegram polling loop (`/status`, `/sitrep`, `/area`, etc.)
+2. An aiohttp HTTP server on `${TELEGRAM_BOT_PORT:-8781}` exposing a
+   broadcast endpoint that fans out to every subscriber.
 
-If you want push-to-Telegram functionality (scheduled SITREPs, alert
-state-change notifications, UI broadcasts), you need a service that
-actually owns a chat ID and calls `api.telegram.org/sendMessage` directly.
-The current setup does not have one. Treat this as an open design gap
-rather than a bug to fix in passing — the right fix is a single dedicated
-notifier service so there is exactly one process holding the bot token and
-calling the Telegram API.
+This is the **only** process in the stack that holds `TELEGRAM_BOT_TOKEN`
+and calls `api.telegram.org`. Any service that wants to push to Telegram
+must go through this endpoint — do not add a second token holder.
+
+### Endpoints
+
+**`GET /health`**
+
+Liveness + subscriber count.
+
+```json
+{"ok": true, "subscribers": 3}
+```
+
+**`POST /api/broadcast`**
+
+Fans out a single message to every subscriber currently in
+`data/telegram_subscribers.json`.
+
+Request body:
+
+```json
+{
+  "text": "<b>SITREP</b>\nbody text...",
+  "source": "prompt-runner",
+  "parse_mode": "HTML"
+}
+```
+
+- `text` — required. Empty/whitespace returns 400.
+- `source` — optional free-form tag, logged for debugging.
+- `parse_mode` — optional, defaults to `HTML`. Set to `""` for plain text.
+
+Response:
+
+```json
+{"ok": true, "delivered": 3, "failed": 0, "subscribers": 3}
+```
+
+Returns HTTP 200 if every send succeeded, 502 if any failed, 400 on
+malformed input. A broadcast with zero subscribers returns 200 with
+`delivered: 0` — the endpoint is working, you just have no recipients.
+
+### Subscribers
+
+Subscribers are written to `data/telegram_subscribers.json` (volume-mounted
+in the container). A user becomes a subscriber by sending `/start` or
+`/subscribe` to the bot in Telegram. They can leave with `/unsubscribe`.
+There is no admin-side way to add subscribers; this is intentional — the
+bot only delivers to chats that have explicitly opted in.
+
+If `/api/broadcast` returns `delivered: 0` and you expected delivery, the
+fix is almost always "open the bot in Telegram and send `/start`."
+
+### Known callers
+
+- `backend/prompt-runner/app.py` — scheduled SITREPs and on-demand template
+  runs with `deliver_to: ["telegram"]`.
+- `api/src/lib/telegram.ts` — Management UI "send to Telegram" actions.
+
+Both use the same payload shape documented above. If you add a new caller,
+match this shape rather than inventing a new one.
