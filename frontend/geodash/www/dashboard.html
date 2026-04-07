@@ -17,7 +17,7 @@
                 var isNarrow = window.matchMedia('(max-width: 768px)').matches;
                 var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
                 if (isNarrow || (isTouch && window.innerWidth < 900)) {
-                    window.location.replace('/mobile.html');
+                    window.location.replace('/mobile');
                 }
             } catch (e) {}
         })();

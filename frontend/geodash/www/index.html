@@ -107,7 +107,7 @@
 
         // Check if already authenticated
         fetch('/api/check-auth').then(r => {
-            if (r.ok) window.location.href = (window.matchMedia('(max-width: 768px)').matches || (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 900)) ? '/mobile.html' : '/dashboard.html';
+            if (r.ok) window.location.href = (window.matchMedia('(max-width: 768px)').matches || (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 900)) ? '/mobile' : '/dashboard.html';
         });
 
         codeInput.focus();
@@ -142,7 +142,7 @@
                 const data = await resp.json();
 
                 if (resp.ok) {
-                    window.location.href = (window.matchMedia('(max-width: 768px)').matches || (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 900)) ? '/mobile.html' : '/dashboard.html';
+                    window.location.href = (window.matchMedia('(max-width: 768px)').matches || (('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 900)) ? '/mobile' : '/dashboard.html';
                     return;
                 }
 
