@@ -52,17 +52,37 @@ async def oref_poll_loop(
     poll_interval: int,
     thresholds: list[int],
     on_threshold,
+    thresholds_provider=None,
 ) -> None:
-    """Poll Oref proxy and call on_threshold(active_count, threshold) on crossings."""
+    """Poll Oref proxy and call on_threshold(active_count, threshold) on crossings.
+
+    If thresholds_provider is supplied, it is awaited each tick to refresh the
+    threshold list (e.g. from the management settings API). Falls back to the
+    static `thresholds` argument when the provider returns None.
+    """
     last_threshold_notified = 0
+    current_thresholds = list(thresholds)
 
     async with httpx.AsyncClient() as client:
         log.info(
             "Oref monitor started — proxy=%s interval=%ds thresholds=%s",
-            proxy_url, poll_interval, thresholds,
+            proxy_url, poll_interval, current_thresholds,
         )
 
         while True:
+            if thresholds_provider is not None:
+                try:
+                    refreshed = await thresholds_provider()
+                    if refreshed:
+                        if refreshed != current_thresholds:
+                            log.info(
+                                "Oref thresholds updated from settings: %s -> %s",
+                                current_thresholds, refreshed,
+                            )
+                        current_thresholds = refreshed
+                except Exception as exc:
+                    log.debug("threshold refresh failed: %s", exc)
+
             try:
                 resp = await client.get(proxy_url, timeout=10)
                 resp.raise_for_status()
@@ -78,7 +98,7 @@ async def oref_poll_loop(
                 continue
 
             active_count = count_active_areas(alerts)
-            current_threshold = highest_crossed_threshold(active_count, thresholds)
+            current_threshold = highest_crossed_threshold(active_count, current_thresholds)
 
             if current_threshold > last_threshold_notified:
                 await on_threshold(active_count, current_threshold)

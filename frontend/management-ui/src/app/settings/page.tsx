@@ -91,6 +91,12 @@ const SETTING_GROUPS: { title: string; fields: SettingField[] }[] = [
     fields: [
       { key: "pushover_api_token", label: "Pushover API Token", type: "password" },
       { key: "pushover_user_key", label: "Pushover User Key(s)", type: "password", help: "Comma-separated for multiple recipients." },
+      {
+        key: "oref_area_thresholds",
+        label: "Volumetric Alert Thresholds",
+        placeholder: "100,200,300,400,500,600,700,800,900,1000",
+        help: "Comma-separated nationwide active-area counts that trigger Pushover notifications. Default: 50,100,200…1000.",
+      },
     ],
   },
   {

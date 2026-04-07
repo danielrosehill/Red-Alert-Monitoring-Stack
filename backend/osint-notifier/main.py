@@ -20,6 +20,9 @@ import asyncio
 import logging
 import os
 import sys
+import time
+
+import httpx
 
 from classifiers import classify_en, classify_he
 from intel import generate_intel_report
@@ -66,8 +69,49 @@ OREF_AREA_THRESHOLDS = sorted(
     ).split(",") if t.strip()
 )
 
+API_URL = os.environ.get("API_URL", "http://red-alert-api:8890")
+
 # Single API key for all LLM calls (intel + sitrep) via OpenRouter
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+
+
+# ── Dynamic settings (managed via API/Postgres) ────────────────────────────
+
+_settings_cache: dict[str, str] = {}
+_settings_last_fetch: float = 0.0
+_SETTINGS_TTL = 30  # seconds
+
+
+async def _refresh_thresholds_from_api() -> list[int] | None:
+    """Fetch oref_area_thresholds from the management settings API.
+
+    Cached for _SETTINGS_TTL seconds. Returns None if unavailable or empty,
+    in which case the caller should fall back to the env-derived defaults.
+    """
+    global _settings_cache, _settings_last_fetch
+    now = time.time()
+    if now - _settings_last_fetch < _SETTINGS_TTL and _settings_cache:
+        raw = _settings_cache.get("oref_area_thresholds", "")
+    else:
+        try:
+            async with httpx.AsyncClient(timeout=5) as client:
+                resp = await client.get(f"{API_URL}/api/settings")
+                resp.raise_for_status()
+                _settings_cache = resp.json() or {}
+                _settings_last_fetch = now
+                raw = _settings_cache.get("oref_area_thresholds", "")
+        except Exception as exc:
+            log.debug("settings fetch failed: %s", exc)
+            return None
+
+    if not raw:
+        return None
+    try:
+        parsed = sorted({int(t.strip()) for t in raw.split(",") if t.strip()})
+        return parsed or None
+    except ValueError:
+        log.warning("invalid oref_area_thresholds in settings: %r", raw)
+        return None
 
 
 # ── Notification helpers ────────────────────────────────────────────────────
@@ -197,6 +241,7 @@ async def run():
         log.info("Oref volumetric: %s", OREF_PROXY_URL)
         tasks.append(oref_poll_loop(
             OREF_PROXY_URL, OREF_POLL_INTERVAL, OREF_AREA_THRESHOLDS, notify_volumetric,
+            thresholds_provider=_refresh_thresholds_from_api,
         ))
 
     if OPENROUTER_API_KEY:
