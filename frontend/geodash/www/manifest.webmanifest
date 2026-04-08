@@ -1,0 +1,56 @@
+{
+  "name": "Red Alert Geodash",
+  "short_name": "Red Alert",
+  "description": "Real-time monitoring of Israel Homefront Command (Pikud HaOref) rocket alerts.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1a1a2e",
+  "theme_color": "#e94560",
+  "lang": "en",
+  "categories": ["news", "utilities", "weather"],
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mobile view",
+      "short_name": "Mobile",
+      "url": "/mobile"
+    },
+    {
+      "name": "Map",
+      "short_name": "Map",
+      "url": "/map"
+    },
+    {
+      "name": "History",
+      "short_name": "History",
+      "url": "/history"
+    }
+  ]
+}

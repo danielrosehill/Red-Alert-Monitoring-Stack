@@ -1422,6 +1422,33 @@ async def serve_settings():
     return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
 
 
+# ── PWA: manifest + service worker ──────────────────────────────────────────
+# The service worker MUST be served from the site root (not /static/) so its
+# scope covers the whole app. Same for the manifest, which we keep at root for
+# tidiness.
+
+@app.get("/manifest.webmanifest")
+async def serve_manifest():
+    return FileResponse(
+        PUBLIC_DIR / "manifest.webmanifest",
+        media_type="application/manifest+json",
+        headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
+@app.get("/sw.js")
+async def serve_service_worker():
+    return FileResponse(
+        PUBLIC_DIR / "sw.js",
+        media_type="application/javascript",
+        headers={
+            # Required so browsers always check for an updated SW.
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Service-Worker-Allowed": "/",
+        },
+    )
+
+
 # Auth endpoints return success for local deployment (no auth needed)
 @app.get("/api/check-auth")
 async def check_auth():
