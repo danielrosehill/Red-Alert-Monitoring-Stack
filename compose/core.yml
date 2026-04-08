@@ -1,0 +1,96 @@
+# =============================================================================
+# Red Alert Monitoring Stack — Core / Minimal
+# =============================================================================
+# A stripped-down stack with only the essentials:
+#   - oref-proxy     : polls Pikud HaOref (data source, required)
+#   - timescaledb    : storage backend for geodash history
+#   - geodash        : real-time map dashboard
+#   - osint-notifier : Pushover volumetric-threshold notifications
+#
+# No Home Assistant bridge, no Telegram, no AI/SITREP, no TTS, no SMS, no MCP,
+# no management UI, no unified API.
+#
+# Usage:
+#   cp .env.example .env   # fill in PUSHOVER_API_TOKEN / PUSHOVER_USER_KEY
+#   docker compose -f compose/core.yml up -d
+# =============================================================================
+
+services:
+  oref-proxy:
+    image: danielrosehill/redalert-oref-proxy:latest
+    container_name: oref-proxy
+    restart: unless-stopped
+    ports:
+      - "${OREF_PROXY_PORT:-8764}:${OREF_PROXY_PORT:-8764}"
+    environment:
+      - PORT=${OREF_PROXY_PORT:-8764}
+    networks:
+      - redalert
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: timescaledb
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - timescaledb-data:/var/lib/postgresql/data
+      - ../db/schema.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-redalert}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-redalert-dev-password}
+      - POSTGRES_DB=${POSTGRES_DB:-redalert}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-redalert} -d ${POSTGRES_DB:-redalert}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - redalert
+
+  geodash:
+    image: danielrosehill/redalert-geodash:latest
+    container_name: geodash
+    restart: unless-stopped
+    ports:
+      - "${GEODASH_PORT:-8083}:${GEODASH_PORT:-8083}"
+    environment:
+      - PORT=${GEODASH_PORT:-8083}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://redalert:redalert-dev-password@timescaledb:5432/redalert}
+      - ALERT_AREA=${ALERT_AREA:-}
+    depends_on:
+      oref-proxy:
+        condition: service_started
+      timescaledb:
+        condition: service_healthy
+    networks:
+      - redalert
+
+  osint-notifier:
+    image: danielrosehill/redalert-osint-notifier:latest
+    container_name: osint-notifier
+    restart: unless-stopped
+    environment:
+      - PUSHOVER_APP_TOKEN=${PUSHOVER_API_TOKEN}
+      - PUSHOVER_GROUP_KEY=${PUSHOVER_USER_KEY}
+      - OREF_PROXY_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}/api/alerts
+      - OREF_PROXY_BASE_URL=http://oref-proxy:${OREF_PROXY_PORT:-8764}
+      - OREF_ENABLED=${OREF_ENABLED:-true}
+      - OREF_AREA_THRESHOLDS=${OREF_AREA_THRESHOLDS:-50,100,200,300,400,500,600,700,800,900,1000}
+      - LOCATION_NAME=${LOCATION_NAME:-Jerusalem}
+      - INTEL_ENABLED=false
+      - SITREP_ENABLED=false
+    depends_on:
+      - oref-proxy
+    networks:
+      - redalert
+
+networks:
+  redalert:
+    name: redalert
+    driver: bridge
+
+volumes:
+  timescaledb-data:
+    name: redalert-timescaledb-data
