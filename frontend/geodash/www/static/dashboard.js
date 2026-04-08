@@ -915,11 +915,11 @@ function processAlerts(alerts) {
             monStatus.textContent = translateTitle(localInfo.title) || CATEGORY_LABELS[localInfo.category] || localInfo.title;
             monStatus.style.color = CATEGORY_COLORS[localInfo.category] || '#e94560';
         } else {
-            monStatus.textContent = 'All clear';
+            monStatus.textContent = 'No alert in your area';
             monStatus.style.color = '#7eddb8';
         }
     } else {
-        monStatus.textContent = 'All clear';
+        monStatus.textContent = 'No alert in your area';
         monStatus.style.color = '#7eddb8';
     }
 
@@ -1322,7 +1322,7 @@ function buildAreaSelector() {
             if (areaName) areaName.textContent = `Jerusalem — ${opt.en}`;
             // Update monitoring status immediately
             const monStatus = document.getElementById('monitoring-status');
-            monStatus.textContent = 'All clear';
+            monStatus.textContent = 'No alert in your area';
             monStatus.style.color = '#7eddb8';
             // Re-evaluate current alerts for the new area
             if (cache_alerts_raw.length > 0) {
@@ -1346,7 +1346,7 @@ async function init() {
     }
     const monStatus = document.getElementById('monitoring-status');
     if (monStatus) {
-        monStatus.textContent = 'All clear';
+        monStatus.textContent = 'No alert in your area';
     }
 
     await loadPolygons();
