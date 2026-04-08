@@ -1445,8 +1445,6 @@ async function init() {
     // ── News Ticker ─────────────────────────────────────────────────────────
     initNewsTicker();
 
-    // ── Auto-refresh on new deployment ───────────────────────────────────────
-    initVersionChecker();
 }
 
 // ── News Ticker ─────────────────────────────────────────────────────────────
